@@ -1,0 +1,47 @@
+{
+  "auth": {
+    "welcome": "yOdin-ə xoş gəldiniz",
+    "subtitle": "Mədəniyyətlər arasında əlaqə",
+    "login": "Daxil ol",
+    "register": "Hesab yarat",
+    "email": "Email",
+    "password": "Şifrə",
+    "firstName": "Ad",
+    "lastName": "Soyad",
+    "nationality": "Milliyyətiniz",
+    "location": "Yeriniz",
+    "next": "İrəli",
+    "finish": "Başlayaq"
+  },
+  "feed": {
+    "title": "Lent",
+    "empty": "Hələ müzakirə yoxdur. İlk ol!",
+    "replies": "{{count}} cavab"
+  },
+  "notifications": {
+    "title": "Bildirişlər",
+    "empty": "Hələ bildiriş yoxdur",
+    "replied": "müzakirənizə cavab verdi"
+  },
+  "newDiscussion": {
+    "placeholder": "Nə düşünürsən?",
+    "post": "Paylaş"
+  },
+  "profile": {
+    "title": "Profil",
+    "myDiscussions": "Müzakirələrim",
+    "saved": "Saxlanılanlar",
+    "languages": "Dillər",
+    "addLanguage": "Dil əlavə et",
+    "settings": "Parametrlər",
+    "logout": "Çıxış"
+  },
+  "settings": {
+    "title": "Parametrlər",
+    "language": "Tətbiq dili",
+    "theme": "Tema",
+    "notifications": "Bildirişlər",
+    "privacy": "Məxfilik",
+    "about": "yOdin haqqında"
+  }
+}

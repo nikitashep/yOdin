@@ -1,0 +1,47 @@
+{
+  "auth": {
+    "welcome": "Welcome to yOdin",
+    "subtitle": "Connect across cultures",
+    "login": "Log In",
+    "register": "Create Account",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "nationality": "Your Nationality",
+    "location": "Your Location",
+    "next": "Next",
+    "finish": "Let's Go"
+  },
+  "feed": {
+    "title": "Feed",
+    "empty": "No discussions yet. Be the first!",
+    "replies": "{{count}} replies"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications yet",
+    "replied": "replied to your discussion"
+  },
+  "newDiscussion": {
+    "placeholder": "What's on your mind?",
+    "post": "Post"
+  },
+  "profile": {
+    "title": "Profile",
+    "myDiscussions": "My Discussions",
+    "saved": "Saved",
+    "languages": "Languages",
+    "addLanguage": "Add Language",
+    "settings": "Settings",
+    "logout": "Log Out"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "App Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "about": "About yOdin"
+  }
+}

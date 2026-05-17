@@ -1,0 +1,47 @@
+{
+  "auth": {
+    "welcome": "Добро пожаловать в yOdin",
+    "subtitle": "Связывайтесь через культуры",
+    "login": "Войти",
+    "register": "Создать аккаунт",
+    "email": "Email",
+    "password": "Пароль",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "nationality": "Ваша национальность",
+    "location": "Ваше местоположение",
+    "next": "Далее",
+    "finish": "Начать"
+  },
+  "feed": {
+    "title": "Лента",
+    "empty": "Пока нет дискуссий. Будь первым!",
+    "replies": "{{count}} ответов"
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "empty": "Уведомлений пока нет",
+    "replied": "ответил на вашу дискуссию"
+  },
+  "newDiscussion": {
+    "placeholder": "О чём думаешь?",
+    "post": "Опубликовать"
+  },
+  "profile": {
+    "title": "Профиль",
+    "myDiscussions": "Мои дискуссии",
+    "saved": "Сохранённые",
+    "languages": "Языки",
+    "addLanguage": "Добавить язык",
+    "settings": "Настройки",
+    "logout": "Выйти"
+  },
+  "settings": {
+    "title": "Настройки",
+    "language": "Язык приложения",
+    "theme": "Тема",
+    "notifications": "Уведомления",
+    "privacy": "Конфиденциальность",
+    "about": "О yOdin"
+  }
+}

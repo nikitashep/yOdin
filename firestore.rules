@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users — only the owner can write their own profile
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Discussions — authenticated users can read and create
+    // Only the author can delete their own discussion
+    match /discussions/{discussionId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.question is string
+        && request.resource.data.question.size() > 0
+        && request.resource.data.question.size() <= 500;
+      allow update: if request.auth != null
+        && (
+          resource.data.authorId == request.auth.uid
+          || onlyUpdatingField(request, 'savedBy')
+          || onlyUpdatingField(request, 'replyCount')
+        );
+      allow delete: if request.auth != null
+        && resource.data.authorId == request.auth.uid;
+
+      // Replies — authenticated users can read and create
+      match /replies/{replyId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null
+          && request.resource.data.authorId == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 1000;
+        allow delete: if request.auth != null
+          && resource.data.authorId == request.auth.uid;
+      }
+    }
+
+    // Notifications — only the recipient can read/update their notifications
+    match /notifications/{notificationId} {
+      allow read, update: if request.auth != null
+        && resource.data.toUserId == request.auth.uid;
+      allow create: if request.auth != null;
+    }
+
+    function onlyUpdatingField(req, field) {
+      return req.resource.data.diff(resource.data).affectedKeys().hasOnly([field]);
+    }
+  }
+}
