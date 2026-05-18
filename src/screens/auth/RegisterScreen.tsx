@@ -13,7 +13,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { registerUser, loginUser } from '../../services/authService';
 import { getErrorMessage } from '../../services/errorHandler';
-import { useAuthStore } from '../../store/useAuthStore';
 import { Colors } from '../../theme/colors';
 import { Typography } from '../../theme/typography';
 
@@ -21,7 +20,6 @@ type Mode = 'register' | 'login';
 
 export default function RegisterScreen({ navigation, route }: any) {
   const { t } = useTranslation();
-  const { setProfile } = useAuthStore();
   const [mode, setMode] = useState<Mode>(route?.params?.mode ?? 'register');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -32,21 +30,21 @@ export default function RegisterScreen({ navigation, route }: any) {
 
   async function handleSubmit() {
     setError('');
-    if (!email.trim() || !password) { setError('Please fill in all fields.'); return; }
+    if (!email.trim() || !password) { setError(t('errors.fillAllFields')); return; }
     if (mode === 'register' && (!firstName.trim() || !lastName.trim())) {
-      setError('Please enter your name.'); return;
+      setError(t('errors.enterName')); return;
     }
     setLoading(true);
     try {
       if (mode === 'register') {
         await registerUser(email.trim(), password, firstName.trim(), lastName.trim());
-        setProfile({ firstName: firstName.trim(), lastName: lastName.trim() } as any);
-        navigation.navigate('Onboarding');
+        // RootNavigator handles routing via onAuthStateChanged
       } else {
         await loginUser(email.trim(), password);
+        // RootNavigator handles routing via onAuthStateChanged
       }
     } catch (e) {
-      setError(getErrorMessage(e));
+      setError(getErrorMessage(e, t));
     } finally {
       setLoading(false);
     }

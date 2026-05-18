@@ -37,7 +37,7 @@ export interface Reply {
   createdAt: number;
 }
 
-export interface Notification {
+export interface AppNotification {
   id: string;
   type: 'reply';
   fromUserId: string;

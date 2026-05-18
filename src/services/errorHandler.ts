@@ -1,21 +1,20 @@
-const firebaseErrors: Record<string, string> = {
-  'auth/email-already-in-use': 'This email is already registered.',
-  'auth/invalid-email': 'Invalid email address.',
-  'auth/weak-password': 'Password must be at least 6 characters.',
-  'auth/user-not-found': 'No account found with this email.',
-  'auth/wrong-password': 'Incorrect password.',
-  'auth/invalid-credential': 'Incorrect email or password.',
-  'auth/too-many-requests': 'Too many attempts. Please try again later.',
-  'auth/network-request-failed': 'No internet connection.',
-  'auth/user-disabled': 'This account has been disabled.',
-  'auth/already-initialized': 'Auth already initialized.',
+const firebaseErrorKeys: Record<string, string> = {
+  'auth/email-already-in-use': 'errors.emailAlreadyInUse',
+  'auth/invalid-email': 'errors.invalidEmail',
+  'auth/weak-password': 'errors.weakPassword',
+  'auth/user-not-found': 'errors.userNotFound',
+  'auth/wrong-password': 'errors.wrongPassword',
+  'auth/invalid-credential': 'errors.invalidCredential',
+  'auth/too-many-requests': 'errors.tooManyRequests',
+  'auth/network-request-failed': 'errors.networkRequestFailed',
+  'auth/user-disabled': 'errors.userDisabled',
 };
 
-export function getErrorMessage(error: unknown): string {
+export function getErrorMessage(error: unknown, t: (key: string) => string): string {
   if (error instanceof Error) {
     const code = (error as any).code as string | undefined;
-    if (code && firebaseErrors[code]) return firebaseErrors[code];
+    if (code && firebaseErrorKeys[code]) return t(firebaseErrorKeys[code]);
     return error.message;
   }
-  return 'Something went wrong. Please try again.';
+  return t('errors.generic');
 }

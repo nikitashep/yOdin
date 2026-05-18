@@ -55,7 +55,7 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
   }, [visible]);
 
   async function handlePost() {
-    if (!question.trim()) { setError('Please write your question.'); return; }
+    if (!question.trim()) { setError(t('errors.writeQuestion')); return; }
     if (!profile) return;
     Keyboard.dismiss();
     setLoading(true);
@@ -84,7 +84,7 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
       });
       onClose();
     } catch (e) {
-      setError(getErrorMessage(e));
+      setError(getErrorMessage(e, t));
     } finally {
       setLoading(false);
     }

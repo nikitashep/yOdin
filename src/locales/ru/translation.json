@@ -70,5 +70,34 @@
     "location": "Местоположение",
     "save": "Сохранить",
     "saving": "Сохранение..."
+  },
+  "deleteDiscussion": {
+    "title": "Удалить дискуссию",
+    "message": "Вы уверены, что хотите удалить эту дискуссию?",
+    "cancel": "Отмена",
+    "delete": "Удалить"
+  },
+  "time": {
+    "justNow": "только что",
+    "minutesAgo": "{{count}} мин. назад",
+    "hoursAgo": "{{count}} ч. назад",
+    "daysAgo": "{{count}} д. назад"
+  },
+  "errors": {
+    "generic": "Что-то пошло не так. Попробуйте снова.",
+    "emailAlreadyInUse": "Этот email уже зарегистрирован.",
+    "invalidEmail": "Неверный адрес email.",
+    "weakPassword": "Пароль должен быть не менее 6 символов.",
+    "userNotFound": "Аккаунт с таким email не найден.",
+    "wrongPassword": "Неверный email или пароль.",
+    "invalidCredential": "Неверный email или пароль.",
+    "tooManyRequests": "Слишком много попыток. Повторите позже.",
+    "networkRequestFailed": "Нет подключения к интернету.",
+    "userDisabled": "Этот аккаунт заблокирован.",
+    "fillAllFields": "Пожалуйста, заполните все поля.",
+    "enterName": "Пожалуйста, введите ваше имя.",
+    "selectNationalityAndLocation": "Пожалуйста, выберите национальность и страну.",
+    "writeQuestion": "Напишите ваш вопрос.",
+    "photoUploadFailed": "Не удалось загрузить фото. Попробуйте снова."
   }
 }

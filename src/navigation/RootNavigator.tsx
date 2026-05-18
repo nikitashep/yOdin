@@ -14,13 +14,14 @@ type AppState = 'loading' | 'auth' | 'onboarding' | 'main';
 
 export default function RootNavigator() {
   const [appState, setAppState] = useState<AppState>('loading');
-  const { profile, setProfile } = useAuthStore();
+  const { profile, setProfile, setFirebaseUser } = useAuthStore();
 
   useEffect(() => {
     let unsub: (() => void) | null = null;
 
     auth.authStateReady().then(() => {
       unsub = onAuthStateChanged(auth, async (user: User | null) => {
+        setFirebaseUser(user);
         if (!user) {
           setAppState('auth');
           return;
@@ -38,7 +39,7 @@ export default function RootNavigator() {
     if (profile?.nationality && appState === 'onboarding') {
       setAppState('main');
     }
-  }, [profile]);
+  }, [profile, appState]);
 
   if (appState === 'loading') return null;
 

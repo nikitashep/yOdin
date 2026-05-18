@@ -4,15 +4,13 @@ import {
   Text,
   FlatList,
   StyleSheet,
-  TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { collection, query, where, orderBy, getDocs, updateDoc, doc } from 'firebase/firestore';
-import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import { useNotificationStore } from '../store/useNotificationStore';
-import { Notification } from '../types';
+import { fetchNotifications, markNotificationsRead } from '../services/notificationService';
+import { AppNotification } from '../types';
 import { Colors } from '../theme/colors';
 import { Typography } from '../theme/typography';
 
@@ -29,25 +27,17 @@ export default function NotificationsScreen() {
   async function loadNotifications() {
     setLoading(true);
     try {
-      const snap = await getDocs(
-        query(
-          collection(db, 'notifications'),
-          where('toUserId', '==', profile!.uid),
-          orderBy('createdAt', 'desc'),
-        ),
-      );
-      const data = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Notification));
+      const data = await fetchNotifications(profile!.uid);
       setNotifications(data);
-      data.filter((n) => !n.read).forEach((n) => {
-        updateDoc(doc(db, 'notifications', n.id), { read: true }).catch(() => {});
-      });
+      const unreadIds = data.filter((n) => !n.read).map((n) => n.id);
+      await markNotificationsRead(unreadIds);
     } catch {
     } finally {
       setLoading(false);
     }
   }
 
-  function renderItem({ item }: { item: Notification }) {
+  function renderItem({ item }: { item: AppNotification }) {
     const initials = item.fromUserName?.split(' ').map((w) => w[0]).join('').toUpperCase() ?? '?';
     return (
       <View style={[styles.item, !item.read && styles.itemUnread]}>
@@ -62,7 +52,7 @@ export default function NotificationsScreen() {
           <Text style={styles.question} numberOfLines={2}>
             "{item.discussionQuestion}"
           </Text>
-          <Text style={styles.time}>{formatTime(item.createdAt)}</Text>
+          <Text style={styles.time}>{formatTime(item.createdAt, t)}</Text>
         </View>
         {!item.read && <View style={styles.dot} />}
       </View>
@@ -97,16 +87,16 @@ export default function NotificationsScreen() {
   );
 }
 
-function formatTime(timestamp: any): string {
+function formatTime(timestamp: any, t: (key: string, opts?: any) => string): string {
   if (!timestamp) return '';
   const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
   const diff = Date.now() - date.getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t('time.justNow');
+  if (mins < 60) return t('time.minutesAgo', { count: mins });
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+  if (hrs < 24) return t('time.hoursAgo', { count: hrs });
+  return t('time.daysAgo', { count: Math.floor(hrs / 24) });
 }
 
 const styles = StyleSheet.create({

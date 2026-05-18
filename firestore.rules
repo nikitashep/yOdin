@@ -20,8 +20,8 @@ service cloud.firestore {
       allow update: if request.auth != null
         && (
           resource.data.authorId == request.auth.uid
-          || onlyUpdatingField(request, 'savedBy')
-          || onlyUpdatingField(request, 'replyCount')
+          || savedByUpdate()
+          || replyCountUpdate()
         );
       allow delete: if request.auth != null
         && resource.data.authorId == request.auth.uid;
@@ -39,11 +39,32 @@ service cloud.firestore {
       }
     }
 
-    // Notifications — only the recipient can read/update their notifications
+    // Notifications — recipient can read/update; only the authenticated sender can create
     match /notifications/{notificationId} {
       allow read, update: if request.auth != null
         && resource.data.toUserId == request.auth.uid;
-      allow create: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.fromUserId == request.auth.uid
+        && request.resource.data.toUserId is string
+        && request.resource.data.discussionId is string
+        && request.resource.data.discussionQuestion is string;
+    }
+
+    // savedBy update: user can only add or remove their own UID from the array
+    function savedByUpdate() {
+      let before = resource.data.savedBy;
+      let after = request.resource.data.savedBy;
+      let uid = request.auth.uid;
+      let diff = onlyUpdatingField(request, 'savedBy');
+      let adding = after.hasAll(before) && after.removeAll(before) == [uid];
+      let removing = before.hasAll(after) && before.removeAll(after) == [uid];
+      return diff && (adding || removing);
+    }
+
+    // replyCount update: can only increment by exactly 1
+    function replyCountUpdate() {
+      return onlyUpdatingField(request, 'replyCount')
+        && request.resource.data.replyCount == resource.data.replyCount + 1;
     }
 
     function onlyUpdatingField(req, field) {

@@ -69,5 +69,34 @@
     "location": "Yer",
     "save": "Yadda saxla",
     "saving": "Saxlanılır..."
+  },
+  "deleteDiscussion": {
+    "title": "Müzakirəni sil",
+    "message": "Bu müzakirəni silmək istədiyinizə əminsiniz?",
+    "cancel": "Ləğv et",
+    "delete": "Sil"
+  },
+  "time": {
+    "justNow": "indicə",
+    "minutesAgo": "{{count}} dəq. əvvəl",
+    "hoursAgo": "{{count}} s. əvvəl",
+    "daysAgo": "{{count}} g. əvvəl"
+  },
+  "errors": {
+    "generic": "Xəta baş verdi. Yenidən cəhd edin.",
+    "emailAlreadyInUse": "Bu email artıq qeydiyyatdan keçib.",
+    "invalidEmail": "Yanlış email ünvanı.",
+    "weakPassword": "Şifrə ən az 6 simvoldan ibarət olmalıdır.",
+    "userNotFound": "Bu email ilə hesab tapılmadı.",
+    "wrongPassword": "Yanlış email və ya şifrə.",
+    "invalidCredential": "Yanlış email və ya şifrə.",
+    "tooManyRequests": "Çox sayda cəhd. Sonra yenidən cəhd edin.",
+    "networkRequestFailed": "İnternet bağlantısı yoxdur.",
+    "userDisabled": "Bu hesab bloklanıb.",
+    "fillAllFields": "Zəhmət olmasa bütün sahələri doldurun.",
+    "enterName": "Zəhmət olmasa adınızı daxil edin.",
+    "selectNationalityAndLocation": "Zəhmət olmasa milliyyət və ölkə seçin.",
+    "writeQuestion": "Sualınızı yazın.",
+    "photoUploadFailed": "Şəkil yüklənmədi. Yenidən cəhd edin."
   }
 }

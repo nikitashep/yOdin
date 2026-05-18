@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -18,11 +18,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from '@react-navigation/native';
-import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
-import { db } from '../services/firebase';
 import { logoutUser, updateUserProfile } from '../services/authService';
 import { uploadAvatar } from '../services/storageService';
-import { deleteDiscussion } from '../services/discussionService';
+import { deleteDiscussion, fetchUserDiscussions, fetchSavedDiscussions } from '../services/discussionService';
 import { setAppLanguage, AppLang } from '../services/i18n';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
@@ -43,6 +41,7 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(true);
   const [menuVisible, setMenuVisible] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState('');
   const [langModal, setLangModal] = useState(false);
   const [privacyModal, setPrivacyModal] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
@@ -53,44 +52,28 @@ export default function ProfileScreen() {
   const [editSaving, setEditSaving] = useState(false);
   const menuAnim = useState(new Animated.Value(-SCREEN_WIDTH * 0.7))[0];
 
-  useEffect(() => {
-    if (profile?.uid) loadDiscussions();
-  }, [profile?.uid]);
-
   useFocusEffect(
     useCallback(() => {
       if (profile?.uid) loadDiscussions();
     }, [profile?.uid]),
   );
 
-  useEffect(() => {
-    Animated.timing(menuAnim, {
-      toValue: menuVisible ? 0 : -SCREEN_WIDTH * 0.7,
-      duration: 280,
-      useNativeDriver: true,
-    }).start();
-  }, [menuVisible]);
+  Animated.timing(menuAnim, {
+    toValue: menuVisible ? 0 : -SCREEN_WIDTH * 0.7,
+    duration: 280,
+    useNativeDriver: true,
+  }).start();
 
   async function loadDiscussions() {
     if (!profile?.uid) return;
     setLoading(true);
     try {
-      const mySnap = await getDocs(
-        query(
-          collection(db, 'discussions'),
-          where('authorId', '==', profile.uid),
-          orderBy('createdAt', 'desc'),
-        ),
-      );
-      setMyDiscussions(mySnap.docs.map((d) => ({ id: d.id, ...d.data() } as Discussion)));
-
-      const savedSnap = await getDocs(
-        query(
-          collection(db, 'discussions'),
-          where('savedBy', 'array-contains', profile.uid),
-        ),
-      );
-      setSavedDiscussions(savedSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Discussion)));
+      const [mine, saved] = await Promise.all([
+        fetchUserDiscussions(profile.uid),
+        fetchSavedDiscussions(profile.uid),
+      ]);
+      setMyDiscussions(mine);
+      setSavedDiscussions(saved);
     } catch (e) {
       console.error('loadDiscussions error:', e);
     } finally {
@@ -113,11 +96,13 @@ export default function ProfileScreen() {
     if (!profile?.uid) return;
 
     setUploadingPhoto(true);
+    setPhotoError('');
     try {
       const url = await uploadAvatar(profile.uid, result.assets[0].uri);
       await updateUserProfile(profile.uid, { photoURL: url });
       setProfile({ ...profile, photoURL: url });
     } catch {
+      setPhotoError(t('errors.photoUploadFailed'));
     } finally {
       setUploadingPhoto(false);
     }
@@ -125,12 +110,12 @@ export default function ProfileScreen() {
 
   function handleDelete(id: string) {
     Alert.alert(
-      'Delete Discussion',
-      'Are you sure you want to delete this discussion?',
+      t('deleteDiscussion.title'),
+      t('deleteDiscussion.message'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('deleteDiscussion.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('deleteDiscussion.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -236,6 +221,7 @@ export default function ProfileScreen() {
             <Text style={styles.name}>{profile?.firstName} {profile?.lastName}</Text>
             <Text style={styles.nationality}>{flag}  {profile?.nationality}</Text>
             <Text style={styles.location}>📍 {profile?.location}</Text>
+            {photoError ? <Text style={styles.photoError}>{photoError}</Text> : null}
           </View>
         </View>
         <TouchableOpacity style={styles.menuBtn} onPress={() => setMenuVisible(true)}>
@@ -495,6 +481,11 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   location: { fontSize: Typography.fontSizeSM, color: Colors.textSecondary },
+  photoError: {
+    fontSize: Typography.fontSizeXS,
+    color: Colors.notification,
+    marginTop: 4,
+  },
   menuBtn: { padding: 8 },
   menuBtnText: { fontSize: 22, color: Colors.textPrimary, letterSpacing: 1 },
   tabs: {

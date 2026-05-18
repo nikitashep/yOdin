@@ -2,6 +2,7 @@ import {
   collection,
   addDoc,
   getDocs,
+  getDoc,
   query,
   where,
   orderBy,
@@ -49,17 +50,41 @@ export async function fetchDiscussions(
   return { discussions, lastDoc };
 }
 
+export async function fetchDiscussionById(discussionId: string): Promise<Discussion | null> {
+  const snap = await getDoc(doc(db, 'discussions', discussionId));
+  return snap.exists() ? ({ id: snap.id, ...snap.data() } as Discussion) : null;
+}
+
+export async function fetchUserDiscussions(uid: string): Promise<Discussion[]> {
+  const snap = await getDocs(
+    query(
+      collection(db, 'discussions'),
+      where('authorId', '==', uid),
+      orderBy('createdAt', 'desc'),
+    ),
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Discussion));
+}
+
+export async function fetchSavedDiscussions(uid: string): Promise<Discussion[]> {
+  const snap = await getDocs(
+    query(collection(db, 'discussions'), where('savedBy', 'array-contains', uid)),
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Discussion));
+}
+
 export async function addReply(
   discussionId: string,
   data: Omit<Reply, 'id' | 'createdAt'>,
-): Promise<void> {
-  await addDoc(collection(db, 'discussions', discussionId, 'replies'), {
+): Promise<string> {
+  const ref = await addDoc(collection(db, 'discussions', discussionId, 'replies'), {
     ...data,
     createdAt: serverTimestamp(),
   });
   await updateDoc(doc(db, 'discussions', discussionId), {
     replyCount: increment(1),
   });
+  return ref.id;
 }
 
 export async function fetchReplies(discussionId: string): Promise<Reply[]> {

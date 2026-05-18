@@ -69,5 +69,34 @@
     "location": "Location",
     "save": "Save Changes",
     "saving": "Saving..."
+  },
+  "deleteDiscussion": {
+    "title": "Delete Discussion",
+    "message": "Are you sure you want to delete this discussion?",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "emailAlreadyInUse": "This email is already registered.",
+    "invalidEmail": "Invalid email address.",
+    "weakPassword": "Password must be at least 6 characters.",
+    "userNotFound": "No account found with this email.",
+    "wrongPassword": "Incorrect email or password.",
+    "invalidCredential": "Incorrect email or password.",
+    "tooManyRequests": "Too many attempts. Please try again later.",
+    "networkRequestFailed": "No internet connection.",
+    "userDisabled": "This account has been disabled.",
+    "fillAllFields": "Please fill in all fields.",
+    "enterName": "Please enter your name.",
+    "selectNationalityAndLocation": "Please select both your nationality and location.",
+    "writeQuestion": "Please write your question.",
+    "photoUploadFailed": "Failed to upload photo. Please try again."
   }
 }

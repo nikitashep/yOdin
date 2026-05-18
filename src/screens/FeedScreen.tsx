@@ -21,10 +21,9 @@ import { Typography } from '../theme/typography';
 export default function FeedScreen({ navigation }: any) {
   const { t } = useTranslation();
   const { profile } = useAuthStore();
-  const { discussions, setDiscussions, appendDiscussions, setLoading, isLoading, toggleSaved } = useFeedStore();
+  const { discussions, setDiscussions, appendDiscussions, setLoading, isLoading, setHasMore, hasMore, toggleSaved } = useFeedStore();
   const [refreshing, setRefreshing] = useState(false);
   const [lastDoc, setLastDoc] = useState<any>(null);
-  const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -41,7 +40,7 @@ export default function FeedScreen({ navigation }: any) {
       setLastDoc(last);
       setHasMore(data.length === 15);
     } catch (e: any) {
-      setError(e.message ?? 'Failed to load feed');
+      setError(e.message ?? t('errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -50,11 +49,16 @@ export default function FeedScreen({ navigation }: any) {
   async function loadMore() {
     if (!hasMore || isLoading || !lastDoc || !profile?.location) return;
     setLoading(true);
-    const { discussions: data, lastDoc: last } = await fetchDiscussions(profile.location, lastDoc);
-    appendDiscussions(data);
-    setLastDoc(last);
-    setHasMore(data.length === 15);
-    setLoading(false);
+    try {
+      const { discussions: data, lastDoc: last } = await fetchDiscussions(profile.location, lastDoc);
+      appendDiscussions(data);
+      setLastDoc(last);
+      setHasMore(data.length === 15);
+    } catch {
+      // silent — pagination failure shouldn't disrupt existing content
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function onRefresh() {
@@ -106,7 +110,7 @@ export default function FeedScreen({ navigation }: any) {
             {t('feed.replies', { count: item.replyCount })}
           </Text>
           <View style={styles.cardFooterRight}>
-            <Text style={styles.time}>{formatTime(item.createdAt)}</Text>
+            <Text style={styles.time}>{formatTime(item.createdAt, t)}</Text>
             <TouchableOpacity onPress={() => handleSave(item)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
               <Ionicons
                 name={isSaved ? 'bookmark' : 'bookmark-outline'}
@@ -174,16 +178,16 @@ function getFlagEmoji(countryCode: string): string {
     .join('');
 }
 
-function formatTime(timestamp: any): string {
+function formatTime(timestamp: any, t: (key: string, opts?: any) => string): string {
   if (!timestamp) return '';
   const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
   const diff = Date.now() - date.getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t('time.justNow');
+  if (mins < 60) return t('time.minutesAgo', { count: mins });
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+  if (hrs < 24) return t('time.hoursAgo', { count: hrs });
+  return t('time.daysAgo', { count: Math.floor(hrs / 24) });
 }
 
 const styles = StyleSheet.create({

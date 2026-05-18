@@ -12,23 +12,17 @@ import {
   Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  collection,
-  query,
-  orderBy,
-  getDocs,
-  addDoc,
-  serverTimestamp,
-  doc,
-  getDoc,
-  updateDoc,
-  increment,
-} from 'firebase/firestore';
 import { useTranslation } from 'react-i18next';
-import { db } from '../services/firebase';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
-import { saveDiscussion, unsaveDiscussion } from '../services/discussionService';
+import {
+  fetchDiscussionById,
+  fetchReplies,
+  addReply,
+  saveDiscussion,
+  unsaveDiscussion,
+} from '../services/discussionService';
+import { createNotification } from '../services/notificationService';
 import { Reply, Discussion } from '../types';
 import { Colors } from '../theme/colors';
 import { Typography } from '../theme/typography';
@@ -41,6 +35,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
   const [discussion, setDiscussion] = useState<Discussion | null>(null);
   const [replies, setReplies] = useState<Reply[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const listRef = useRef<FlatList>(null);
@@ -51,14 +46,14 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
 
   async function loadAll() {
     setLoading(true);
+    setError('');
     try {
-      const discSnap = await getDoc(doc(db, 'discussions', discussionId));
-      if (discSnap.exists()) setDiscussion({ id: discSnap.id, ...discSnap.data() } as Discussion);
-
-      const repSnap = await getDocs(
-        query(collection(db, 'discussions', discussionId, 'replies'), orderBy('createdAt', 'asc')),
-      );
-      setReplies(repSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Reply)));
+      const disc = await fetchDiscussionById(discussionId);
+      if (disc) setDiscussion(disc);
+      const reps = await fetchReplies(discussionId);
+      setReplies(reps);
+    } catch (e: any) {
+      setError(e.message ?? t('errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -68,7 +63,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
     if (!text.trim() || !profile || !discussion) return;
     setSending(true);
     try {
-      const replyData = {
+      const replyData: Omit<Reply, 'id' | 'createdAt'> = {
         discussionId,
         authorId: profile.uid,
         authorName: `${profile.firstName} ${profile.lastName}`,
@@ -76,36 +71,24 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
         authorNationality: profile.nationality,
         authorCountryCode: profile.countryCode,
         text: text.trim(),
-        createdAt: serverTimestamp(),
       };
 
-      const ref = await addDoc(
-        collection(db, 'discussions', discussionId, 'replies'),
-        replyData,
-      );
+      const replyId = await addReply(discussionId, replyData);
 
-      await updateDoc(doc(db, 'discussions', discussionId), {
-        replyCount: increment(1),
-      });
-
-      // Уведомление автору дискуссии (если это не сам автор)
       if (discussion.authorId !== profile.uid) {
-        await addDoc(collection(db, 'notifications'), {
+        await createNotification({
           toUserId: discussion.authorId,
-          type: 'reply',
           fromUserId: profile.uid,
           fromUserName: `${profile.firstName} ${profile.lastName}`,
           fromUserPhoto: profile.photoURL ?? '',
           discussionId,
           discussionQuestion: discussion.question,
-          createdAt: serverTimestamp(),
-          read: false,
         });
       }
 
       setReplies((prev) => [
         ...prev,
-        { id: ref.id, ...replyData, createdAt: Date.now() as any },
+        { id: replyId, ...replyData, createdAt: Date.now() as any },
       ]);
       incrementReplyCount(discussionId);
       setText('');
@@ -209,6 +192,10 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
       {loading ? (
         <View style={styles.center}>
           <ActivityIndicator color={Colors.primary} size="large" />
+        </View>
+      ) : error ? (
+        <View style={styles.center}>
+          <Text style={{ color: Colors.notification, textAlign: 'center', padding: 24 }}>{error}</Text>
         </View>
       ) : (
         <>

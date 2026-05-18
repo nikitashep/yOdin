@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors } from '../theme/colors';
+import { useNotificationStore } from '../store/useNotificationStore';
 import FeedStack from './FeedStack';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -12,6 +13,20 @@ const Tab = createBottomTabNavigator();
 function TabBarIcon({ focused, emoji }: { focused: boolean; emoji: string }) {
   return (
     <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.45 }}>{emoji}</Text>
+  );
+}
+
+function NotificationsIcon({ focused }: { focused: boolean }) {
+  const unreadCount = useNotificationStore((s) => s.unreadCount);
+  return (
+    <View>
+      <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.45 }}>🔔</Text>
+      {unreadCount > 0 && (
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
+        </View>
+      )}
+    </View>
   );
 }
 
@@ -42,7 +57,7 @@ export default function TabNavigator() {
           name="Notifications"
           component={NotificationsScreen}
           options={{
-            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} emoji="🔔" />,
+            tabBarIcon: ({ focused }) => <NotificationsIcon focused={focused} />,
           }}
         />
         <Tab.Screen
@@ -110,5 +125,23 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '300',
     lineHeight: 32,
+  },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -8,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: Colors.notification,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '700',
+    lineHeight: 12,
   },
 });

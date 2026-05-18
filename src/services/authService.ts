@@ -4,7 +4,7 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import { User } from '../types';
 
@@ -26,7 +26,7 @@ export async function registerUser(
     location: '',
     photoURL: '',
     languages: [],
-    createdAt: serverTimestamp(),
+    createdAt: Date.now(),
   });
 }
 

@@ -13,9 +13,11 @@
       "backgroundColor": "#5B4FE8"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "az.birklik.yodin"
     },
     "android": {
+      "package": "az.birklik.yodin",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#5B4FE8"
