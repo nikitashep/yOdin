@@ -18,7 +18,8 @@ import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
 import { createDiscussion } from '../services/discussionService';
 import { getErrorMessage } from '../services/errorHandler';
-import { Colors } from '../theme/colors';
+import { useTheme } from '../hooks/useTheme';
+import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 
 interface Props {
@@ -28,6 +29,8 @@ interface Props {
 
 export default function NewDiscussionModal({ visible, onClose }: Props) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const { profile } = useAuthStore();
   const { prependDiscussion } = useFeedStore();
   const [question, setQuestion] = useState('');
@@ -136,7 +139,7 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
               <TextInput
                 style={styles.input}
                 placeholder={t('newDiscussion.placeholder')}
-                placeholderTextColor={Colors.textSecondary}
+                placeholderTextColor={colors.textSecondary}
                 value={question}
                 onChangeText={setQuestion}
                 multiline
@@ -166,92 +169,94 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: { flex: 1, justifyContent: 'flex-end' },
-  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.4)' },
-  sheet: {
-    backgroundColor: Colors.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-    paddingTop: 12,
-    minHeight: 320,
-  },
-  handle: {
-    width: 40,
-    height: 4,
-    backgroundColor: Colors.border,
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginBottom: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  headerTitle: {
-    fontSize: Typography.fontSizeLG,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.textPrimary,
-  },
-  closeBtn: { padding: 4 },
-  closeText: { fontSize: 18, color: Colors.textSecondary },
-  body: { flexDirection: 'row', gap: 16, marginBottom: 12 },
-  authorCol: { alignItems: 'center', width: 64 },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: Colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 6,
-  },
-  avatarText: {
-    fontSize: Typography.fontSizeMD,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.primary,
-  },
-  avatarImage: { width: 48, height: 48, borderRadius: 24 },
-  authorName: {
-    fontSize: Typography.fontSizeXS,
-    fontWeight: Typography.fontWeightMedium,
-    color: Colors.textPrimary,
-    textAlign: 'center',
-  },
-  authorFlag: { fontSize: 18, marginTop: 4 },
-  inputCol: { flex: 1 },
-  input: {
-    fontSize: Typography.fontSizeMD,
-    color: Colors.textPrimary,
-    lineHeight: 22,
-    minHeight: 120,
-    textAlignVertical: 'top',
-  },
-  charCount: {
-    fontSize: Typography.fontSizeXS,
-    color: Colors.textSecondary,
-    textAlign: 'right',
-    marginTop: 4,
-  },
-  error: {
-    color: Colors.notification,
-    fontSize: Typography.fontSizeSM,
-    marginBottom: 12,
-  },
-  postBtn: {
-    backgroundColor: Colors.primary,
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  postBtnDisabled: { opacity: 0.4 },
-  postBtnText: {
-    color: '#fff',
-    fontSize: Typography.fontSizeMD,
-    fontWeight: Typography.fontWeightSemiBold,
-  },
-});
+function makeStyles(c: ColorPalette) {
+  return StyleSheet.create({
+    overlay: { flex: 1, justifyContent: 'flex-end' },
+    backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.4)' },
+    sheet: {
+      backgroundColor: c.surface,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      paddingHorizontal: 20,
+      paddingBottom: 40,
+      paddingTop: 12,
+      minHeight: 320,
+    },
+    handle: {
+      width: 40,
+      height: 4,
+      backgroundColor: c.border,
+      borderRadius: 2,
+      alignSelf: 'center',
+      marginBottom: 16,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    headerTitle: {
+      fontSize: Typography.fontSizeLG,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
+    },
+    closeBtn: { padding: 4 },
+    closeText: { fontSize: 18, color: c.textSecondary },
+    body: { flexDirection: 'row', gap: 16, marginBottom: 12 },
+    authorCol: { alignItems: 'center', width: 64 },
+    avatar: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: c.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 6,
+    },
+    avatarText: {
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightBold,
+      color: c.primary,
+    },
+    avatarImage: { width: 48, height: 48, borderRadius: 24 },
+    authorName: {
+      fontSize: Typography.fontSizeXS,
+      fontWeight: Typography.fontWeightMedium,
+      color: c.textPrimary,
+      textAlign: 'center',
+    },
+    authorFlag: { fontSize: 18, marginTop: 4 },
+    inputCol: { flex: 1 },
+    input: {
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+      lineHeight: 22,
+      minHeight: 120,
+      textAlignVertical: 'top',
+    },
+    charCount: {
+      fontSize: Typography.fontSizeXS,
+      color: c.textSecondary,
+      textAlign: 'right',
+      marginTop: 4,
+    },
+    error: {
+      color: c.notification,
+      fontSize: Typography.fontSizeSM,
+      marginBottom: 12,
+    },
+    postBtn: {
+      backgroundColor: c.primary,
+      borderRadius: 16,
+      paddingVertical: 16,
+      alignItems: 'center',
+    },
+    postBtnDisabled: { opacity: 0.4 },
+    postBtnText: {
+      color: '#fff',
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightSemiBold,
+    },
+  });
+}

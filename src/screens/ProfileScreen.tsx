@@ -20,21 +20,27 @@ import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from '@react-navigation/native';
 import { logoutUser, updateUserProfile } from '../services/authService';
 import { uploadAvatar } from '../services/storageService';
-import { deleteDiscussion, fetchUserDiscussions, fetchSavedDiscussions } from '../services/discussionService';
+import { deleteDiscussion, unsaveDiscussion, fetchUserDiscussions, fetchSavedDiscussions } from '../services/discussionService';
 import { setAppLanguage, AppLang } from '../services/i18n';
+import { useThemeStore, ThemePreference } from '../store/useThemeStore';
+import { useTheme } from '../hooks/useTheme';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
 import { Discussion } from '../types';
 import { COUNTRIES, Country } from '../data/countries';
-import { Colors } from '../theme/colors';
+import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
+  const preference = useThemeStore((s) => s.preference);
+  const setPreference = useThemeStore((s) => s.setPreference);
   const { profile, setProfile, reset } = useAuthStore();
-  const { removeDiscussion } = useFeedStore();
+  const { removeDiscussion, toggleSaved } = useFeedStore();
   const [tab, setTab] = useState<'mine' | 'saved'>('mine');
   const [myDiscussions, setMyDiscussions] = useState<Discussion[]>([]);
   const [savedDiscussions, setSavedDiscussions] = useState<Discussion[]>([]);
@@ -43,8 +49,11 @@ export default function ProfileScreen() {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoError, setPhotoError] = useState('');
   const [langModal, setLangModal] = useState(false);
+  const [themeModal, setThemeModal] = useState(false);
   const [privacyModal, setPrivacyModal] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
+  const [editFirstName, setEditFirstName] = useState('');
+  const [editLastName, setEditLastName] = useState('');
   const [editNationality, setEditNationality] = useState<Country | null>(null);
   const [editLocation, setEditLocation] = useState<Country | null>(null);
   const [editPickerFor, setEditPickerFor] = useState<'nationality' | 'location' | null>(null);
@@ -135,20 +144,22 @@ export default function ProfileScreen() {
 
   function openEditProfile() {
     setMenuVisible(false);
-    const nat = COUNTRIES.find((c) => c.code === profile?.countryCode) ?? null;
-    const loc = COUNTRIES.find((c) => c.name === profile?.location) ?? null;
-    setEditNationality(nat);
-    setEditLocation(loc);
+    setEditFirstName(profile?.firstName ?? '');
+    setEditLastName(profile?.lastName ?? '');
+    setEditNationality(COUNTRIES.find((c) => c.code === profile?.countryCode) ?? null);
+    setEditLocation(COUNTRIES.find((c) => c.name === profile?.location) ?? null);
     setEditPickerFor(null);
     setEditSearch('');
     setEditVisible(true);
   }
 
   async function handleSaveProfile() {
-    if (!editNationality || !editLocation || !profile?.uid) return;
+    if (!profile?.uid || !editFirstName.trim() || !editLastName.trim() || !editNationality || !editLocation) return;
     setEditSaving(true);
     try {
       const updated = {
+        firstName: editFirstName.trim(),
+        lastName: editLastName.trim(),
         nationality: editNationality.name,
         countryCode: editNationality.code,
         location: editLocation.name,
@@ -160,6 +171,17 @@ export default function ProfileScreen() {
       console.error('Save profile error:', e);
     } finally {
       setEditSaving(false);
+    }
+  }
+
+  async function handleUnsave(id: string) {
+    if (!profile?.uid) return;
+    try {
+      await unsaveDiscussion(profile.uid, id);
+      setSavedDiscussions((prev) => prev.filter((d) => d.id !== id));
+      toggleSaved(id, profile.uid);
+    } catch (e) {
+      console.error('Unsave failed:', e);
     }
   }
 
@@ -180,6 +202,12 @@ export default function ProfileScreen() {
 
   const data = tab === 'mine' ? myDiscussions : savedDiscussions;
 
+  const themeOptions: { value: ThemePreference; label: string; icon: string }[] = [
+    { value: 'system', label: t('settings.themeSystem'), icon: '📱' },
+    { value: 'light', label: t('settings.themeLight'), icon: '☀️' },
+    { value: 'dark', label: t('settings.themeDark'), icon: '🌙' },
+  ];
+
   function renderDiscussion({ item }: { item: Discussion }) {
     return (
       <View style={styles.card}>
@@ -190,7 +218,12 @@ export default function ProfileScreen() {
           </Text>
           {tab === 'mine' && (
             <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-              <Ionicons name="trash-outline" size={18} color={Colors.notification} />
+              <Ionicons name="trash-outline" size={18} color={colors.notification} />
+            </TouchableOpacity>
+          )}
+          {tab === 'saved' && (
+            <TouchableOpacity onPress={() => handleUnsave(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Ionicons name="bookmark" size={18} color={colors.primary} />
             </TouchableOpacity>
           )}
         </View>
@@ -252,7 +285,7 @@ export default function ProfileScreen() {
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator color={Colors.primary} />
+          <ActivityIndicator color={colors.primary} />
         </View>
       ) : (
         <FlatList
@@ -292,6 +325,11 @@ export default function ProfileScreen() {
           <Text style={styles.menuItemText}>{t('settings.language')}</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuVisible(false); setThemeModal(true); }}>
+          <Text style={styles.menuItemEmoji}>🌙</Text>
+          <Text style={styles.menuItemText}>{t('settings.theme')}</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuVisible(false); setPrivacyModal(true); }}>
           <Text style={styles.menuItemEmoji}>🔒</Text>
           <Text style={styles.menuItemText}>{t('settings.privacy')}</Text>
@@ -301,7 +339,7 @@ export default function ProfileScreen() {
 
         <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
           <Text style={styles.menuItemEmoji}>🚪</Text>
-          <Text style={[styles.menuItemText, { color: Colors.notification }]}>
+          <Text style={[styles.menuItemText, { color: colors.notification }]}>
             {t('profile.logout')}
           </Text>
         </TouchableOpacity>
@@ -314,20 +352,40 @@ export default function ProfileScreen() {
             <>
               <View style={styles.editHeader}>
                 <TouchableOpacity onPress={() => setEditVisible(false)}>
-                  <Ionicons name="close" size={24} color={Colors.textSecondary} />
+                  <Ionicons name="close" size={24} color={colors.textSecondary} />
                 </TouchableOpacity>
                 <Text style={styles.editTitle}>{t('editProfile.title')}</Text>
                 <View style={{ width: 24 }} />
               </View>
 
               <View style={styles.editBody}>
+                <Text style={styles.editLabel}>{t('auth.firstName')}</Text>
+                <TextInput
+                  style={styles.editInput}
+                  value={editFirstName}
+                  onChangeText={setEditFirstName}
+                  placeholder={t('auth.firstName')}
+                  placeholderTextColor={colors.textSecondary}
+                  autoCorrect={false}
+                />
+
+                <Text style={styles.editLabel}>{t('auth.lastName')}</Text>
+                <TextInput
+                  style={styles.editInput}
+                  value={editLastName}
+                  onChangeText={setEditLastName}
+                  placeholder={t('auth.lastName')}
+                  placeholderTextColor={colors.textSecondary}
+                  autoCorrect={false}
+                />
+
                 <Text style={styles.editLabel}>{t('editProfile.nationality')}</Text>
                 <TouchableOpacity style={styles.pickerBtn} onPress={() => { setEditSearch(''); setEditPickerFor('nationality'); }}>
                   {editNationality
                     ? <Text style={styles.pickerValue}>{editNationality.flag}  {editNationality.name}</Text>
                     : <Text style={styles.pickerPlaceholder}>{t('auth.selectNationality')}</Text>
                   }
-                  <Ionicons name="chevron-forward" size={18} color={Colors.textSecondary} />
+                  <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
                 </TouchableOpacity>
 
                 <Text style={styles.editLabel}>{t('editProfile.location')}</Text>
@@ -336,14 +394,14 @@ export default function ProfileScreen() {
                     ? <Text style={styles.pickerValue}>📍  {editLocation.name}</Text>
                     : <Text style={styles.pickerPlaceholder}>{t('auth.selectLocation')}</Text>
                   }
-                  <Ionicons name="chevron-forward" size={18} color={Colors.textSecondary} />
+                  <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
                 </TouchableOpacity>
               </View>
 
               <TouchableOpacity
-                style={[styles.saveBtn, (editSaving || !editNationality || !editLocation) && styles.saveBtnDisabled]}
+                style={[styles.saveBtn, (editSaving || !editFirstName.trim() || !editLastName.trim() || !editNationality || !editLocation) && styles.saveBtnDisabled]}
                 onPress={handleSaveProfile}
-                disabled={editSaving || !editNationality || !editLocation}
+                disabled={editSaving || !editFirstName.trim() || !editLastName.trim() || !editNationality || !editLocation}
               >
                 {editSaving
                   ? <ActivityIndicator color="#fff" />
@@ -355,7 +413,7 @@ export default function ProfileScreen() {
             <>
               <View style={styles.editHeader}>
                 <TouchableOpacity onPress={() => setEditPickerFor(null)}>
-                  <Ionicons name="arrow-back" size={24} color={Colors.textSecondary} />
+                  <Ionicons name="arrow-back" size={24} color={colors.textSecondary} />
                 </TouchableOpacity>
                 <Text style={styles.editTitle}>
                   {editPickerFor === 'nationality' ? t('auth.selectNationalityTitle') : t('auth.selectLocationTitle')}
@@ -365,7 +423,7 @@ export default function ProfileScreen() {
               <TextInput
                 style={styles.editSearch}
                 placeholder={t('auth.search')}
-                placeholderTextColor={Colors.textSecondary}
+                placeholderTextColor={colors.textSecondary}
                 value={editSearch}
                 onChangeText={setEditSearch}
                 autoCorrect={false}
@@ -387,7 +445,7 @@ export default function ProfileScreen() {
                     <Text style={styles.countryName}>{item.name}</Text>
                     {((editPickerFor === 'nationality' && editNationality?.code === item.code) ||
                       (editPickerFor === 'location' && editLocation?.name === item.name)) && (
-                      <Ionicons name="checkmark" size={20} color={Colors.primary} style={{ marginLeft: 'auto' }} />
+                      <Ionicons name="checkmark" size={20} color={colors.primary} style={{ marginLeft: 'auto' }} />
                     )}
                   </TouchableOpacity>
                 )}
@@ -420,6 +478,28 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </Modal>
 
+      {/* Theme picker */}
+      <Modal visible={themeModal} transparent animationType="fade" onRequestClose={() => setThemeModal(false)}>
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setThemeModal(false)}>
+          <View style={styles.langSheet}>
+            <Text style={styles.langTitle}>{t('settings.theme')}</Text>
+            {themeOptions.map((opt) => (
+              <TouchableOpacity
+                key={opt.value}
+                style={styles.langItem}
+                onPress={() => { setPreference(opt.value); setThemeModal(false); }}
+              >
+                <Text style={styles.langFlag}>{opt.icon}</Text>
+                <Text style={styles.langLabel}>{opt.label}</Text>
+                {preference === opt.value && (
+                  <Ionicons name="checkmark" size={20} color={colors.primary} style={{ marginLeft: 'auto' }} />
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
       {/* Privacy */}
       <Modal visible={privacyModal} transparent animationType="slide" onRequestClose={() => setPrivacyModal(false)}>
         <View style={styles.privacySheet}>
@@ -442,305 +522,318 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 56,
-    paddingBottom: 20,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-  },
-  profileRow: { flexDirection: 'row', alignItems: 'center', flex: 1 },
-  avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: Colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  avatarText: {
-    fontSize: Typography.fontSizeXL,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.primary,
-  },
-  info: { flex: 1 },
-  name: {
-    fontSize: Typography.fontSizeLG,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.textPrimary,
-    marginBottom: 4,
-  },
-  nationality: {
-    fontSize: Typography.fontSizeSM,
-    color: Colors.textSecondary,
-    marginBottom: 2,
-  },
-  location: { fontSize: Typography.fontSizeSM, color: Colors.textSecondary },
-  photoError: {
-    fontSize: Typography.fontSizeXS,
-    color: Colors.notification,
-    marginTop: 4,
-  },
-  menuBtn: { padding: 8 },
-  menuBtnText: { fontSize: 22, color: Colors.textPrimary, letterSpacing: 1 },
-  tabs: {
-    flexDirection: 'row',
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
-  },
-  tabActive: { borderBottomColor: Colors.primary },
-  tabText: {
-    fontSize: Typography.fontSizeSM,
-    fontWeight: Typography.fontWeightMedium,
-    color: Colors.textSecondary,
-  },
-  tabTextActive: { color: Colors.primary, fontWeight: Typography.fontWeightSemiBold },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  empty: { alignItems: 'center', paddingTop: 60 },
-  emptyEmoji: { fontSize: 40, marginBottom: 12 },
-  emptyText: { fontSize: Typography.fontSizeMD, color: Colors.textSecondary },
-  avatarImage: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-  },
-  avatarOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    borderRadius: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarEditBadge: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    backgroundColor: Colors.primary,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarEditText: { fontSize: 11 },
-  card: {
-    backgroundColor: Colors.surface,
-    borderRadius: 14,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  cardQuestion: {
-    fontSize: Typography.fontSizeMD,
-    color: Colors.textPrimary,
-    marginBottom: 8,
-    lineHeight: 22,
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  cardMeta: { fontSize: Typography.fontSizeSM, color: Colors.primary },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    zIndex: 10,
-  },
-  menu: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: SCREEN_WIDTH * 0.7,
-    backgroundColor: Colors.surface,
-    paddingTop: 80,
-    paddingHorizontal: 24,
-    zIndex: 11,
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 0 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  menuTitle: {
-    fontSize: Typography.fontSizeXL,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.textPrimary,
-    marginBottom: 32,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    gap: 16,
-  },
-  menuItemEmoji: { fontSize: 20 },
-  menuItemText: {
-    fontSize: Typography.fontSizeMD,
-    color: Colors.textPrimary,
-    fontWeight: Typography.fontWeightMedium,
-  },
-  menuDivider: {
-    height: 1,
-    backgroundColor: Colors.border,
-    marginVertical: 8,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  langSheet: {
-    backgroundColor: Colors.surface,
-    borderRadius: 20,
-    padding: 24,
-    width: SCREEN_WIDTH * 0.8,
-  },
-  langTitle: {
-    fontSize: Typography.fontSizeLG,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.textPrimary,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  langItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    gap: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  langFlag: { fontSize: 24 },
-  langLabel: {
-    fontSize: Typography.fontSizeMD,
-    color: Colors.textPrimary,
-    fontWeight: Typography.fontWeightMedium,
-  },
-  privacySheet: {
-    flex: 1,
-    backgroundColor: Colors.background,
-    marginTop: 80,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-  },
-  privacyHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  privacyTitle: {
-    fontSize: Typography.fontSizeLG,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.textPrimary,
-  },
-  privacyClose: { fontSize: 20, color: Colors.textSecondary, padding: 4 },
-  privacyBody: { padding: 24 },
-  privacyText: {
-    fontSize: Typography.fontSizeMD,
-    color: Colors.textSecondary,
-    lineHeight: 24,
-  },
-  editSheet: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  editHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  editTitle: {
-    fontSize: Typography.fontSizeLG,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.textPrimary,
-  },
-  editBody: {
-    padding: 24,
-    flex: 1,
-  },
-  editLabel: {
-    fontSize: Typography.fontSizeSM,
-    fontWeight: Typography.fontWeightSemiBold,
-    color: Colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 8,
-  },
-  pickerBtn: {
-    backgroundColor: Colors.surface,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    marginBottom: 24,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  pickerValue: { fontSize: Typography.fontSizeMD, color: Colors.textPrimary, flex: 1 },
-  pickerPlaceholder: { fontSize: Typography.fontSizeMD, color: Colors.textSecondary, flex: 1 },
-  saveBtn: {
-    backgroundColor: Colors.primary,
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: 'center',
-    margin: 24,
-    marginTop: 0,
-  },
-  saveBtnDisabled: { opacity: 0.5 },
-  saveBtnText: {
-    color: '#fff',
-    fontSize: Typography.fontSizeMD,
-    fontWeight: Typography.fontWeightSemiBold,
-  },
-  editSearch: {
-    marginHorizontal: 16,
-    marginVertical: 12,
-    backgroundColor: Colors.surface,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: Typography.fontSizeMD,
-    color: Colors.textPrimary,
-  },
-  countryItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  countryFlag: { fontSize: 24, marginRight: 12 },
-  countryName: { fontSize: Typography.fontSizeMD, color: Colors.textPrimary, flex: 1 },
-});
+function makeStyles(c: ColorPalette) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: c.background },
+    header: {
+      paddingHorizontal: 20,
+      paddingTop: 56,
+      paddingBottom: 20,
+      backgroundColor: c.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
+    },
+    profileRow: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+    avatar: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+      backgroundColor: c.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 16,
+    },
+    avatarText: {
+      fontSize: Typography.fontSizeXL,
+      fontWeight: Typography.fontWeightBold,
+      color: c.primary,
+    },
+    info: { flex: 1 },
+    name: {
+      fontSize: Typography.fontSizeLG,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
+      marginBottom: 4,
+    },
+    nationality: {
+      fontSize: Typography.fontSizeSM,
+      color: c.textSecondary,
+      marginBottom: 2,
+    },
+    location: { fontSize: Typography.fontSizeSM, color: c.textSecondary },
+    photoError: {
+      fontSize: Typography.fontSizeXS,
+      color: c.notification,
+      marginTop: 4,
+    },
+    menuBtn: { padding: 8 },
+    menuBtnText: { fontSize: 22, color: c.textPrimary, letterSpacing: 1 },
+    tabs: {
+      flexDirection: 'row',
+      backgroundColor: c.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+    },
+    tab: {
+      flex: 1,
+      paddingVertical: 14,
+      alignItems: 'center',
+      borderBottomWidth: 2,
+      borderBottomColor: 'transparent',
+    },
+    tabActive: { borderBottomColor: c.primary },
+    tabText: {
+      fontSize: Typography.fontSizeSM,
+      fontWeight: Typography.fontWeightMedium,
+      color: c.textSecondary,
+    },
+    tabTextActive: { color: c.primary, fontWeight: Typography.fontWeightSemiBold },
+    center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    empty: { alignItems: 'center', paddingTop: 60 },
+    emptyEmoji: { fontSize: 40, marginBottom: 12 },
+    emptyText: { fontSize: Typography.fontSizeMD, color: c.textSecondary },
+    avatarImage: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+    },
+    avatarOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0,0,0,0.45)',
+      borderRadius: 32,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    avatarEditBadge: {
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      backgroundColor: c.primary,
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    avatarEditText: { fontSize: 11 },
+    card: {
+      backgroundColor: c.surface,
+      borderRadius: 14,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    cardQuestion: {
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+      marginBottom: 8,
+      lineHeight: 22,
+    },
+    cardFooter: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    cardMeta: { fontSize: Typography.fontSizeSM, color: c.primary },
+    backdrop: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0,0,0,0.3)',
+      zIndex: 10,
+    },
+    menu: {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      bottom: 0,
+      width: SCREEN_WIDTH * 0.7,
+      backgroundColor: c.surface,
+      paddingTop: 80,
+      paddingHorizontal: 24,
+      zIndex: 11,
+      shadowColor: '#000',
+      shadowOffset: { width: 4, height: 0 },
+      shadowOpacity: 0.15,
+      shadowRadius: 12,
+      elevation: 8,
+    },
+    menuTitle: {
+      fontSize: Typography.fontSizeXL,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
+      marginBottom: 32,
+    },
+    menuItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 16,
+      gap: 16,
+    },
+    menuItemEmoji: { fontSize: 20 },
+    menuItemText: {
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+      fontWeight: Typography.fontWeightMedium,
+    },
+    menuDivider: {
+      height: 1,
+      backgroundColor: c.border,
+      marginVertical: 8,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.4)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    langSheet: {
+      backgroundColor: c.surface,
+      borderRadius: 20,
+      padding: 24,
+      width: SCREEN_WIDTH * 0.8,
+    },
+    langTitle: {
+      fontSize: Typography.fontSizeLG,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
+      marginBottom: 20,
+      textAlign: 'center',
+    },
+    langItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 14,
+      gap: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+    },
+    langFlag: { fontSize: 24 },
+    langLabel: {
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+      fontWeight: Typography.fontWeightMedium,
+    },
+    privacySheet: {
+      flex: 1,
+      backgroundColor: c.background,
+      marginTop: 80,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+    },
+    privacyHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+    },
+    privacyTitle: {
+      fontSize: Typography.fontSizeLG,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
+    },
+    privacyClose: { fontSize: 20, color: c.textSecondary, padding: 4 },
+    privacyBody: { padding: 24 },
+    privacyText: {
+      fontSize: Typography.fontSizeMD,
+      color: c.textSecondary,
+      lineHeight: 24,
+    },
+    editSheet: {
+      flex: 1,
+      backgroundColor: c.background,
+    },
+    editHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      paddingBottom: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+    },
+    editTitle: {
+      fontSize: Typography.fontSizeLG,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
+    },
+    editBody: {
+      padding: 24,
+      flex: 1,
+    },
+    editLabel: {
+      fontSize: Typography.fontSizeSM,
+      fontWeight: Typography.fontWeightSemiBold,
+      color: c.textSecondary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 8,
+    },
+    editInput: {
+      backgroundColor: c.surface,
+      borderWidth: 1.5,
+      borderColor: c.border,
+      borderRadius: 14,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      marginBottom: 24,
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+    },
+    pickerBtn: {
+      backgroundColor: c.surface,
+      borderWidth: 1.5,
+      borderColor: c.border,
+      borderRadius: 14,
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+      marginBottom: 24,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    pickerValue: { fontSize: Typography.fontSizeMD, color: c.textPrimary, flex: 1 },
+    pickerPlaceholder: { fontSize: Typography.fontSizeMD, color: c.textSecondary, flex: 1 },
+    saveBtn: {
+      backgroundColor: c.primary,
+      borderRadius: 16,
+      paddingVertical: 16,
+      alignItems: 'center',
+      margin: 24,
+      marginTop: 0,
+    },
+    saveBtnDisabled: { opacity: 0.5 },
+    saveBtnText: {
+      color: '#fff',
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightSemiBold,
+    },
+    editSearch: {
+      marginHorizontal: 16,
+      marginVertical: 12,
+      backgroundColor: c.surface,
+      borderWidth: 1.5,
+      borderColor: c.border,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+    },
+    countryItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+    },
+    countryFlag: { fontSize: 24, marginRight: 12 },
+    countryName: { fontSize: Typography.fontSizeMD, color: c.textPrimary, flex: 1 },
+  });
+}

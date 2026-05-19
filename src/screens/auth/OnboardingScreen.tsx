@@ -15,12 +15,15 @@ import { updateUserProfile, getUserProfile } from '../../services/authService';
 import { getErrorMessage } from '../../services/errorHandler';
 import { useAuthStore } from '../../store/useAuthStore';
 import { COUNTRIES, Country } from '../../data/countries';
-import { Colors } from '../../theme/colors';
+import { useTheme } from '../../hooks/useTheme';
+import { ColorPalette } from '../../theme/colors';
 import { Typography } from '../../theme/typography';
 
 export default function OnboardingScreen() {
   const { t } = useTranslation();
-  const { profile, setProfile } = useAuthStore();
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
+  const { setProfile } = useAuthStore();
   const [nationality, setNationality] = useState<Country | null>(null);
   const [location, setLocation] = useState<Country | null>(null);
   const [modalType, setModalType] = useState<'nationality' | 'location' | null>(null);
@@ -45,7 +48,7 @@ export default function OnboardingScreen() {
 
   async function handleFinish() {
     if (!nationality || !location) {
-      setError(t('errors.selectNationalityAndLocation'));
+      setError('Please select both your nationality and location.');
       return;
     }
     const uid = auth.currentUser?.uid;
@@ -61,8 +64,7 @@ export default function OnboardingScreen() {
       const fullProfile = await getUserProfile(uid);
       setProfile(fullProfile);
     } catch (e) {
-      setError(getErrorMessage(e, t));
-    } finally {
+      setError(getErrorMessage(e));
       setLoading(false);
     }
   }
@@ -114,7 +116,7 @@ export default function OnboardingScreen() {
           <TextInput
             style={styles.search}
             placeholder={t('auth.search')}
-            placeholderTextColor={Colors.textSecondary}
+            placeholderTextColor={colors.textSecondary}
             value={search}
             onChangeText={setSearch}
             autoCorrect={false}
@@ -135,93 +137,95 @@ export default function OnboardingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-    paddingHorizontal: 24,
-    paddingTop: 80,
-  },
-  title: {
-    fontSize: Typography.fontSizeXXL,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.textPrimary,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: Typography.fontSizeMD,
-    color: Colors.textSecondary,
-    marginBottom: 40,
-    lineHeight: 22,
-  },
-  label: {
-    fontSize: Typography.fontSizeSM,
-    fontWeight: Typography.fontWeightSemiBold,
-    color: Colors.textSecondary,
-    marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  pickerBtn: {
-    backgroundColor: Colors.surface,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    marginBottom: 24,
-  },
-  pickerValue: { fontSize: Typography.fontSizeMD, color: Colors.textPrimary },
-  pickerPlaceholder: { fontSize: Typography.fontSizeMD, color: Colors.textSecondary },
-  error: { color: Colors.notification, fontSize: Typography.fontSizeSM, marginBottom: 12 },
-  btn: {
-    backgroundColor: Colors.primary,
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  btnDisabled: { opacity: 0.6 },
-  btnText: {
-    color: '#fff',
-    fontSize: Typography.fontSizeMD,
-    fontWeight: Typography.fontWeightSemiBold,
-  },
-  modal: { flex: 1, backgroundColor: Colors.background },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 12,
-  },
-  modalTitle: {
-    fontSize: Typography.fontSizeLG,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.textPrimary,
-  },
-  modalClose: { fontSize: 20, color: Colors.textSecondary, padding: 4 },
-  search: {
-    marginHorizontal: 16,
-    marginBottom: 8,
-    backgroundColor: Colors.surface,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: Typography.fontSizeMD,
-    color: Colors.textPrimary,
-  },
-  countryItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  countryFlag: { fontSize: 24, marginRight: 12 },
-  countryName: { fontSize: Typography.fontSizeMD, color: Colors.textPrimary },
-});
+function makeStyles(c: ColorPalette) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: c.background,
+      paddingHorizontal: 24,
+      paddingTop: 80,
+    },
+    title: {
+      fontSize: Typography.fontSizeXXL,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: Typography.fontSizeMD,
+      color: c.textSecondary,
+      marginBottom: 40,
+      lineHeight: 22,
+    },
+    label: {
+      fontSize: Typography.fontSizeSM,
+      fontWeight: Typography.fontWeightSemiBold,
+      color: c.textSecondary,
+      marginBottom: 8,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    pickerBtn: {
+      backgroundColor: c.surface,
+      borderWidth: 1.5,
+      borderColor: c.border,
+      borderRadius: 14,
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+      marginBottom: 24,
+    },
+    pickerValue: { fontSize: Typography.fontSizeMD, color: c.textPrimary },
+    pickerPlaceholder: { fontSize: Typography.fontSizeMD, color: c.textSecondary },
+    error: { color: c.notification, fontSize: Typography.fontSizeSM, marginBottom: 12 },
+    btn: {
+      backgroundColor: c.primary,
+      borderRadius: 16,
+      paddingVertical: 16,
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    btnDisabled: { opacity: 0.6 },
+    btnText: {
+      color: '#fff',
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightSemiBold,
+    },
+    modal: { flex: 1, backgroundColor: c.background },
+    modalHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      paddingBottom: 12,
+    },
+    modalTitle: {
+      fontSize: Typography.fontSizeLG,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
+    },
+    modalClose: { fontSize: 20, color: c.textSecondary, padding: 4 },
+    search: {
+      marginHorizontal: 16,
+      marginBottom: 8,
+      backgroundColor: c.surface,
+      borderWidth: 1.5,
+      borderColor: c.border,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+    },
+    countryItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+    },
+    countryFlag: { fontSize: 24, marginRight: 12 },
+    countryName: { fontSize: Typography.fontSizeMD, color: c.textPrimary },
+  });
+}

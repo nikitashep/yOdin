@@ -59,6 +59,9 @@
     "editProfile": "Profili redaktə et",
     "language": "Tətbiq dili",
     "theme": "Tema",
+    "themeSystem": "Sistem",
+    "themeLight": "İşıqlı",
+    "themeDark": "Qaranlıq",
     "notifications": "Bildirişlər",
     "privacy": "Məxfilik",
     "about": "yOdin haqqında"

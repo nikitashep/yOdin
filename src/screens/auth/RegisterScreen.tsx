@@ -13,13 +13,16 @@ import {
 import { useTranslation } from 'react-i18next';
 import { registerUser, loginUser } from '../../services/authService';
 import { getErrorMessage } from '../../services/errorHandler';
-import { Colors } from '../../theme/colors';
+import { useTheme } from '../../hooks/useTheme';
+import { ColorPalette } from '../../theme/colors';
 import { Typography } from '../../theme/typography';
 
 type Mode = 'register' | 'login';
 
 export default function RegisterScreen({ navigation, route }: any) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const [mode, setMode] = useState<Mode>(route?.params?.mode ?? 'register');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -38,10 +41,8 @@ export default function RegisterScreen({ navigation, route }: any) {
     try {
       if (mode === 'register') {
         await registerUser(email.trim(), password, firstName.trim(), lastName.trim());
-        // RootNavigator handles routing via onAuthStateChanged
       } else {
         await loginUser(email.trim(), password);
-        // RootNavigator handles routing via onAuthStateChanged
       }
     } catch (e) {
       setError(getErrorMessage(e, t));
@@ -66,7 +67,7 @@ export default function RegisterScreen({ navigation, route }: any) {
             <TextInput
               style={[styles.input, { flex: 1 }]}
               placeholder={t('auth.firstName')}
-              placeholderTextColor={Colors.textSecondary}
+              placeholderTextColor={colors.textSecondary}
               value={firstName}
               onChangeText={setFirstName}
               autoCapitalize="words"
@@ -75,7 +76,7 @@ export default function RegisterScreen({ navigation, route }: any) {
             <TextInput
               style={[styles.input, { flex: 1 }]}
               placeholder={t('auth.lastName')}
-              placeholderTextColor={Colors.textSecondary}
+              placeholderTextColor={colors.textSecondary}
               value={lastName}
               onChangeText={setLastName}
               autoCapitalize="words"
@@ -86,7 +87,7 @@ export default function RegisterScreen({ navigation, route }: any) {
         <TextInput
           style={styles.input}
           placeholder={t('auth.email')}
-          placeholderTextColor={Colors.textSecondary}
+          placeholderTextColor={colors.textSecondary}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -97,7 +98,7 @@ export default function RegisterScreen({ navigation, route }: any) {
         <TextInput
           style={styles.input}
           placeholder={t('auth.password')}
-          placeholderTextColor={Colors.textSecondary}
+          placeholderTextColor={colors.textSecondary}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -129,56 +130,58 @@ export default function RegisterScreen({ navigation, route }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: Colors.background,
-    paddingHorizontal: 24,
-    paddingTop: 64,
-    paddingBottom: 40,
-  },
-  back: { marginBottom: 32 },
-  backText: { fontSize: 24, color: Colors.textPrimary },
-  title: {
-    fontSize: Typography.fontSizeXXL,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.textPrimary,
-    marginBottom: 32,
-  },
-  row: { flexDirection: 'row', marginBottom: 0 },
-  input: {
-    backgroundColor: Colors.surface,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: Typography.fontSizeMD,
-    color: Colors.textPrimary,
-    marginBottom: 12,
-  },
-  error: {
-    color: Colors.notification,
-    fontSize: Typography.fontSizeSM,
-    marginBottom: 12,
-  },
-  btn: {
-    backgroundColor: Colors.primary,
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  btnDisabled: { opacity: 0.6 },
-  btnText: {
-    color: '#fff',
-    fontSize: Typography.fontSizeMD,
-    fontWeight: Typography.fontWeightSemiBold,
-  },
-  switchMode: { alignItems: 'center', marginTop: 20 },
-  switchText: {
-    color: Colors.primary,
-    fontSize: Typography.fontSizeSM,
-    fontWeight: Typography.fontWeightMedium,
-  },
-});
+function makeStyles(c: ColorPalette) {
+  return StyleSheet.create({
+    container: {
+      flexGrow: 1,
+      backgroundColor: c.background,
+      paddingHorizontal: 24,
+      paddingTop: 64,
+      paddingBottom: 40,
+    },
+    back: { marginBottom: 32 },
+    backText: { fontSize: 24, color: c.textPrimary },
+    title: {
+      fontSize: Typography.fontSizeXXL,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
+      marginBottom: 32,
+    },
+    row: { flexDirection: 'row', marginBottom: 0 },
+    input: {
+      backgroundColor: c.surface,
+      borderWidth: 1.5,
+      borderColor: c.border,
+      borderRadius: 14,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+      marginBottom: 12,
+    },
+    error: {
+      color: c.notification,
+      fontSize: Typography.fontSizeSM,
+      marginBottom: 12,
+    },
+    btn: {
+      backgroundColor: c.primary,
+      borderRadius: 16,
+      paddingVertical: 16,
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    btnDisabled: { opacity: 0.6 },
+    btnText: {
+      color: '#fff',
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightSemiBold,
+    },
+    switchMode: { alignItems: 'center', marginTop: 20 },
+    switchText: {
+      color: c.primary,
+      fontSize: Typography.fontSizeSM,
+      fontWeight: Typography.fontWeightMedium,
+    },
+  });
+}

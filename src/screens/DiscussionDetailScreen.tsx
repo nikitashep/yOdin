@@ -24,12 +24,15 @@ import {
 } from '../services/discussionService';
 import { createNotification } from '../services/notificationService';
 import { Reply, Discussion } from '../types';
-import { Colors } from '../theme/colors';
+import { useTheme } from '../hooks/useTheme';
+import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 
 export default function DiscussionDetailScreen({ route, navigation }: any) {
   const { discussionId } = route.params;
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const { profile } = useAuthStore();
   const { incrementReplyCount, toggleSaved } = useFeedStore();
   const [discussion, setDiscussion] = useState<Discussion | null>(null);
@@ -184,18 +187,18 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
           <Ionicons
             name={isSaved ? 'bookmark' : 'bookmark-outline'}
             size={22}
-            color={isSaved ? Colors.primary : Colors.textSecondary}
+            color={isSaved ? colors.primary : colors.textSecondary}
           />
         </TouchableOpacity>
       </View>
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator color={Colors.primary} size="large" />
+          <ActivityIndicator color={colors.primary} size="large" />
         </View>
       ) : error ? (
         <View style={styles.center}>
-          <Text style={{ color: Colors.notification, textAlign: 'center', padding: 24 }}>{error}</Text>
+          <Text style={{ color: colors.notification, textAlign: 'center', padding: 24 }}>{error}</Text>
         </View>
       ) : (
         <>
@@ -241,7 +244,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
         <TextInput
           style={styles.input}
           placeholder={t('discussion.replyPlaceholder')}
-          placeholderTextColor={Colors.textSecondary}
+          placeholderTextColor={colors.textSecondary}
           value={text}
           onChangeText={setText}
           multiline
@@ -262,137 +265,139 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 56,
-    paddingBottom: 12,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    gap: 12,
-  },
-  backBtn: { padding: 4 },
-  backText: { fontSize: 24, color: Colors.textPrimary },
-  headerTitle: {
-    fontSize: Typography.fontSizeLG,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.textPrimary,
-    flex: 1,
-  },
-  saveBtn: { padding: 4 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  questionBlock: {
-    backgroundColor: Colors.surface,
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  questionAuthorRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 12 },
-  qAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  qAvatarText: {
-    fontSize: Typography.fontSizeMD,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.primary,
-  },
-  qAvatarImage: { width: 40, height: 40, borderRadius: 20 },
-  replyAvatarImage: { width: 32, height: 32, borderRadius: 16 },
-  qAuthorName: {
-    fontSize: Typography.fontSizeMD,
-    fontWeight: Typography.fontWeightSemiBold,
-    color: Colors.textPrimary,
-  },
-  qAuthorMeta: { fontSize: Typography.fontSizeSM, color: Colors.textSecondary },
-  questionText: {
-    fontSize: Typography.fontSizeLG,
-    color: Colors.textPrimary,
-    lineHeight: 26,
-    fontWeight: Typography.fontWeightMedium,
-  },
-  repliesList: { padding: 16, gap: 12, flexGrow: 1 },
-  emptyReplies: { alignItems: 'center', paddingTop: 40 },
-  emptyText: { fontSize: Typography.fontSizeMD, color: Colors.textSecondary },
-  replyRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
-  replyRowMe: { justifyContent: 'flex-end' },
-  replyAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: Colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  replyAvatarMe: { backgroundColor: Colors.primary },
-  replyAvatarText: {
-    fontSize: Typography.fontSizeXS,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.primary,
-  },
-  replyAvatarTextMe: { color: '#fff' },
-  replyBubble: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    borderBottomLeftRadius: 4,
-    padding: 12,
-    maxWidth: '75%',
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  replyBubbleMe: {
-    backgroundColor: Colors.primary,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 4,
-    borderWidth: 0,
-  },
-  replyAuthor: {
-    fontSize: Typography.fontSizeXS,
-    fontWeight: Typography.fontWeightSemiBold,
-    color: Colors.primary,
-    marginBottom: 4,
-  },
-  replyText: { fontSize: Typography.fontSizeMD, color: Colors.textPrimary, lineHeight: 20 },
-  replyTextMe: { color: '#fff' },
-  inputBar: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 12,
-    backgroundColor: Colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    gap: 10,
-  },
-  input: {
-    flex: 1,
-    backgroundColor: Colors.background,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    fontSize: Typography.fontSizeMD,
-    color: Colors.textPrimary,
-    maxHeight: 100,
-  },
-  sendBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: Colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sendBtnDisabled: { opacity: 0.4 },
-  sendText: { color: '#fff', fontSize: 20, fontWeight: Typography.fontWeightBold },
-});
+function makeStyles(c: ColorPalette) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: c.background },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      paddingTop: 56,
+      paddingBottom: 12,
+      backgroundColor: c.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+      gap: 12,
+    },
+    backBtn: { padding: 4 },
+    backText: { fontSize: 24, color: c.textPrimary },
+    headerTitle: {
+      fontSize: Typography.fontSizeLG,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
+      flex: 1,
+    },
+    saveBtn: { padding: 4 },
+    center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    questionBlock: {
+      backgroundColor: c.surface,
+      padding: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+    },
+    questionAuthorRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 12 },
+    qAvatar: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: c.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    qAvatarText: {
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightBold,
+      color: c.primary,
+    },
+    qAvatarImage: { width: 40, height: 40, borderRadius: 20 },
+    replyAvatarImage: { width: 32, height: 32, borderRadius: 16 },
+    qAuthorName: {
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightSemiBold,
+      color: c.textPrimary,
+    },
+    qAuthorMeta: { fontSize: Typography.fontSizeSM, color: c.textSecondary },
+    questionText: {
+      fontSize: Typography.fontSizeLG,
+      color: c.textPrimary,
+      lineHeight: 26,
+      fontWeight: Typography.fontWeightMedium,
+    },
+    repliesList: { padding: 16, gap: 12, flexGrow: 1 },
+    emptyReplies: { alignItems: 'center', paddingTop: 40 },
+    emptyText: { fontSize: Typography.fontSizeMD, color: c.textSecondary },
+    replyRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
+    replyRowMe: { justifyContent: 'flex-end' },
+    replyAvatar: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: c.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    replyAvatarMe: { backgroundColor: c.primary },
+    replyAvatarText: {
+      fontSize: Typography.fontSizeXS,
+      fontWeight: Typography.fontWeightBold,
+      color: c.primary,
+    },
+    replyAvatarTextMe: { color: '#fff' },
+    replyBubble: {
+      backgroundColor: c.surface,
+      borderRadius: 16,
+      borderBottomLeftRadius: 4,
+      padding: 12,
+      maxWidth: '75%',
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    replyBubbleMe: {
+      backgroundColor: c.primary,
+      borderBottomLeftRadius: 16,
+      borderBottomRightRadius: 4,
+      borderWidth: 0,
+    },
+    replyAuthor: {
+      fontSize: Typography.fontSizeXS,
+      fontWeight: Typography.fontWeightSemiBold,
+      color: c.primary,
+      marginBottom: 4,
+    },
+    replyText: { fontSize: Typography.fontSizeMD, color: c.textPrimary, lineHeight: 20 },
+    replyTextMe: { color: '#fff' },
+    inputBar: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      paddingBottom: Platform.OS === 'ios' ? 28 : 12,
+      backgroundColor: c.surface,
+      borderTopWidth: 1,
+      borderTopColor: c.border,
+      gap: 10,
+    },
+    input: {
+      flex: 1,
+      backgroundColor: c.background,
+      borderWidth: 1.5,
+      borderColor: c.border,
+      borderRadius: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+      maxHeight: 100,
+    },
+    sendBtn: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: c.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    sendBtnDisabled: { opacity: 0.4 },
+    sendText: { color: '#fff', fontSize: 20, fontWeight: Typography.fontWeightBold },
+  });
+}

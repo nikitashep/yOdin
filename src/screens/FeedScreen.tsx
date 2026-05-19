@@ -13,15 +13,20 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
+import { useNotificationStore } from '../store/useNotificationStore';
 import { fetchDiscussions, saveDiscussion, unsaveDiscussion } from '../services/discussionService';
 import { Discussion } from '../types';
-import { Colors } from '../theme/colors';
+import { useTheme } from '../hooks/useTheme';
+import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 
 export default function FeedScreen({ navigation }: any) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = makeStyles(colors);
   const { profile } = useAuthStore();
   const { discussions, setDiscussions, appendDiscussions, setLoading, isLoading, setHasMore, hasMore, toggleSaved } = useFeedStore();
+  const unreadCount = useNotificationStore((s) => s.unreadCount);
   const [refreshing, setRefreshing] = useState(false);
   const [lastDoc, setLastDoc] = useState<any>(null);
   const [error, setError] = useState('');
@@ -115,7 +120,7 @@ export default function FeedScreen({ navigation }: any) {
               <Ionicons
                 name={isSaved ? 'bookmark' : 'bookmark-outline'}
                 size={20}
-                color={isSaved ? Colors.primary : Colors.textSecondary}
+                color={isSaved ? colors.primary : colors.textSecondary}
               />
             </TouchableOpacity>
           </View>
@@ -127,21 +132,39 @@ export default function FeedScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>{t('feed.title')}</Text>
-        {profile && (
-          <Text style={styles.headerSub}>
-            {getFlagEmoji(profile.countryCode)}  {profile.location}
-          </Text>
-        )}
+        <View>
+          <Text style={styles.headerTitle}>{t('feed.title')}</Text>
+          {profile && (
+            <Text style={styles.headerSub}>
+              {getFlagEmoji(profile.countryCode)}  {profile.location}
+            </Text>
+          )}
+        </View>
+        <TouchableOpacity
+          style={styles.bellBtn}
+          onPress={() => navigation.navigate('Notifications')}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Ionicons
+            name={unreadCount > 0 ? 'notifications' : 'notifications-outline'}
+            size={24}
+            color={colors.textPrimary}
+          />
+          {unreadCount > 0 && (
+            <View style={styles.bellBadge}>
+              <Text style={styles.bellBadgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
 
       {error ? (
         <View style={styles.center}>
-          <Text style={{ color: Colors.notification, textAlign: 'center', padding: 24 }}>{error}</Text>
+          <Text style={{ color: colors.notification, textAlign: 'center', padding: 24 }}>{error}</Text>
         </View>
       ) : isLoading && discussions.length === 0 ? (
         <View style={styles.center}>
-          <ActivityIndicator color={Colors.primary} size="large" />
+          <ActivityIndicator color={colors.primary} size="large" />
         </View>
       ) : (
         <FlatList
@@ -149,7 +172,7 @@ export default function FeedScreen({ navigation }: any) {
           keyExtractor={(item) => item.id}
           renderItem={renderCard}
           contentContainerStyle={discussions.length === 0 ? styles.center : styles.list}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
           onEndReached={loadMore}
           onEndReachedThreshold={0.3}
           ListEmptyComponent={
@@ -160,7 +183,7 @@ export default function FeedScreen({ navigation }: any) {
           }
           ListFooterComponent={
             isLoading && discussions.length > 0
-              ? <ActivityIndicator color={Colors.primary} style={{ padding: 16 }} />
+              ? <ActivityIndicator color={colors.primary} style={{ padding: 16 }} />
               : null
           }
         />
@@ -190,92 +213,111 @@ function formatTime(timestamp: any, t: (key: string, opts?: any) => string): str
   return t('time.daysAgo', { count: Math.floor(hrs / 24) });
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 56,
-    paddingBottom: 16,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  },
-  headerTitle: {
-    fontSize: Typography.fontSizeXL,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.textPrimary,
-  },
-  headerSub: {
-    fontSize: Typography.fontSizeSM,
-    color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  list: { padding: 16, gap: 12 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  empty: { alignItems: 'center', paddingTop: 80 },
-  emptyEmoji: { fontSize: 48, marginBottom: 12 },
-  emptyText: {
-    fontSize: Typography.fontSizeMD,
-    color: Colors.textSecondary,
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: Colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  avatarText: {
-    fontSize: Typography.fontSizeLG,
-    fontWeight: Typography.fontWeightBold,
-    color: Colors.primary,
-  },
-  avatarImage: { width: 44, height: 44, borderRadius: 22 },
-  authorInfo: { flex: 1 },
-  authorName: {
-    fontSize: Typography.fontSizeMD,
-    fontWeight: Typography.fontWeightSemiBold,
-    color: Colors.textPrimary,
-  },
-  authorMeta: {
-    fontSize: Typography.fontSizeSM,
-    color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  question: {
-    fontSize: Typography.fontSizeMD,
-    color: Colors.textPrimary,
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cardFooterRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  replies: {
-    fontSize: Typography.fontSizeSM,
-    color: Colors.primary,
-    fontWeight: Typography.fontWeightMedium,
-  },
-  time: {
-    fontSize: Typography.fontSizeSM,
-    color: Colors.textSecondary,
-  },
-});
+function makeStyles(c: ColorPalette) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: c.background },
+    header: {
+      paddingHorizontal: 20,
+      paddingTop: 56,
+      paddingBottom: 16,
+      backgroundColor: c.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    bellBtn: { position: 'relative', padding: 4 },
+    bellBadge: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      minWidth: 16,
+      height: 16,
+      borderRadius: 8,
+      backgroundColor: c.notification,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 3,
+    },
+    bellBadgeText: { color: '#fff', fontSize: 9, fontWeight: '700', lineHeight: 11 },
+    headerTitle: {
+      fontSize: Typography.fontSizeXL,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
+    },
+    headerSub: {
+      fontSize: Typography.fontSizeSM,
+      color: c.textSecondary,
+      marginTop: 2,
+    },
+    list: { padding: 16, gap: 12 },
+    center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    empty: { alignItems: 'center', paddingTop: 80 },
+    emptyEmoji: { fontSize: 48, marginBottom: 12 },
+    emptyText: {
+      fontSize: Typography.fontSizeMD,
+      color: c.textSecondary,
+      textAlign: 'center',
+    },
+    card: {
+      backgroundColor: c.surface,
+      borderRadius: 16,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+    avatar: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: c.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 12,
+    },
+    avatarText: {
+      fontSize: Typography.fontSizeLG,
+      fontWeight: Typography.fontWeightBold,
+      color: c.primary,
+    },
+    avatarImage: { width: 44, height: 44, borderRadius: 22 },
+    authorInfo: { flex: 1 },
+    authorName: {
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightSemiBold,
+      color: c.textPrimary,
+    },
+    authorMeta: {
+      fontSize: Typography.fontSizeSM,
+      color: c.textSecondary,
+      marginTop: 2,
+    },
+    question: {
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+      lineHeight: 22,
+      marginBottom: 12,
+    },
+    cardFooter: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    cardFooterRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    replies: {
+      fontSize: Typography.fontSizeSM,
+      color: c.primary,
+      fontWeight: Typography.fontWeightMedium,
+    },
+    time: {
+      fontSize: Typography.fontSizeSM,
+      color: c.textSecondary,
+    },
+  });
+}

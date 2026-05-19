@@ -1,4 +1,6 @@
-export const Colors = {
+export type ColorPalette = typeof LightColors;
+
+export const LightColors = {
   primary: '#5B4FE8',
   primaryLight: '#EAE8FF',
   accent: '#FF6B6B',
@@ -13,3 +15,22 @@ export const Colors = {
   tabBarActive: '#5B4FE8',
   tabBarInactive: '#9CA3AF',
 };
+
+export const DarkColors: ColorPalette = {
+  primary: '#7C71F0',
+  primaryLight: '#2D2B4E',
+  accent: '#FF6B6B',
+  background: '#0F0F1A',
+  surface: '#1A1A2E',
+  textPrimary: '#F0F0FF',
+  textSecondary: '#8B8FA8',
+  border: '#2D2D45',
+  success: '#10B981',
+  notification: '#EF4444',
+  tabBar: '#1A1A2E',
+  tabBarActive: '#7C71F0',
+  tabBarInactive: '#6B7280',
+};
+
+// Legacy export — screens use useTheme() hook instead
+export const Colors = LightColors;

@@ -1,40 +1,21 @@
 import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Colors } from '../theme/colors';
-import { useNotificationStore } from '../store/useNotificationStore';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../hooks/useTheme';
 import FeedStack from './FeedStack';
-import NotificationsScreen from '../screens/NotificationsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import NewDiscussionModal from '../screens/NewDiscussionModal';
 
 const Tab = createBottomTabNavigator();
 
-function TabBarIcon({ focused, emoji }: { focused: boolean; emoji: string }) {
-  return (
-    <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.45 }}>{emoji}</Text>
-  );
-}
-
-function NotificationsIcon({ focused }: { focused: boolean }) {
-  const unreadCount = useNotificationStore((s) => s.unreadCount);
-  return (
-    <View>
-      <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.45 }}>🔔</Text>
-      {unreadCount > 0 && (
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
-        </View>
-      )}
-    </View>
-  );
-}
-
 function EmptyScreen() {
-  return <View style={{ flex: 1, backgroundColor: Colors.background }} />;
+  const { colors } = useTheme();
+  return <View style={{ flex: 1, backgroundColor: colors.background }} />;
 }
 
 export default function TabNavigator() {
+  const { colors } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
@@ -42,7 +23,7 @@ export default function TabNavigator() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarStyle: styles.tabBar,
+          tabBarStyle: [styles.tabBar, { backgroundColor: colors.tabBar }],
           tabBarShowLabel: false,
         }}
       >
@@ -50,14 +31,13 @@ export default function TabNavigator() {
           name="Feed"
           component={FeedStack}
           options={{
-            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} emoji="🌐" />,
-          }}
-        />
-        <Tab.Screen
-          name="Notifications"
-          component={NotificationsScreen}
-          options={{
-            tabBarIcon: ({ focused }) => <NotificationsIcon focused={focused} />,
+            tabBarIcon: ({ focused }) => (
+              <Ionicons
+                name={focused ? 'earth' : 'earth-outline'}
+                size={24}
+                color={focused ? colors.tabBarActive : colors.tabBarInactive}
+              />
+            ),
           }}
         />
         <Tab.Screen
@@ -66,12 +46,12 @@ export default function TabNavigator() {
           options={{
             tabBarButton: () => (
               <TouchableOpacity
-                style={styles.plusWrap}
+                style={styles.addWrap}
                 onPress={() => setModalVisible(true)}
                 activeOpacity={0.85}
               >
-                <View style={styles.plusBtn}>
-                  <Text style={styles.plusText}>+</Text>
+                <View style={[styles.addBtn, { borderColor: colors.background, shadowColor: colors.primary }]}>
+                  <Ionicons name="add" size={28} color="#fff" />
                 </View>
               </TouchableOpacity>
             ),
@@ -81,67 +61,51 @@ export default function TabNavigator() {
           name="Profile"
           component={ProfileScreen}
           options={{
-            tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} emoji="👤" />,
+            tabBarIcon: ({ focused }) => (
+              <Ionicons
+                name={focused ? 'person' : 'person-outline'}
+                size={24}
+                color={focused ? colors.tabBarActive : colors.tabBarInactive}
+              />
+            ),
           }}
         />
       </Tab.Navigator>
 
-      <NewDiscussionModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-      />
+      <NewDiscussionModal visible={modalVisible} onClose={() => setModalVisible(false)} />
     </>
   );
 }
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: Colors.tabBar,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    height: 64,
-    paddingBottom: 8,
+    borderTopWidth: 0,
+    height: 72,
+    paddingBottom: 10,
+    overflow: 'visible',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 16,
   },
-  plusWrap: {
+  addWrap: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: -18,
   },
-  plusBtn: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: Colors.primary,
+  addBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#5B4FE8',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  plusText: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: '300',
-    lineHeight: 32,
-  },
-  badge: {
-    position: 'absolute',
-    top: -4,
-    right: -8,
-    minWidth: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: Colors.notification,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 3,
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 10,
-    fontWeight: '700',
-    lineHeight: 12,
+    borderWidth: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.45,
+    shadowRadius: 12,
+    elevation: 10,
   },
 });

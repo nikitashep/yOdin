@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { initializeAuth, getAuth } from 'firebase/auth';
+// @ts-ignore — getReactNativePersistence exists in the RN bundle, not in Node types
 import { getReactNativePersistence } from '@firebase/auth';
 import { createAsyncStorage } from '@react-native-async-storage/async-storage';
 import { getFirestore } from 'firebase/firestore';

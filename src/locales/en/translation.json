@@ -59,6 +59,9 @@
     "editProfile": "Edit Profile",
     "language": "App Language",
     "theme": "Theme",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark",
     "notifications": "Notifications",
     "privacy": "Privacy",
     "about": "About yOdin"

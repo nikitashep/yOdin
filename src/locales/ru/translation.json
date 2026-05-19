@@ -60,6 +60,9 @@
     "editProfile": "Редактировать профиль",
     "language": "Язык приложения",
     "theme": "Тема",
+    "themeSystem": "Системная",
+    "themeLight": "Светлая",
+    "themeDark": "Тёмная",
     "notifications": "Уведомления",
     "privacy": "Конфиденциальность",
     "about": "О yOdin"
