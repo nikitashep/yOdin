@@ -41,7 +41,7 @@ function makeStyles(c: ColorPalette) {
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: c.primary,
+      backgroundColor: '#5B4FE8',
       paddingHorizontal: 32,
       paddingBottom: 48,
       justifyContent: 'space-between',
@@ -78,7 +78,7 @@ function makeStyles(c: ColorPalette) {
       alignItems: 'center',
     },
     primaryBtnText: {
-      color: c.primary,
+      color: '#5B4FE8',
       fontSize: Typography.fontSizeMD,
       fontWeight: Typography.fontWeightSemiBold,
     },

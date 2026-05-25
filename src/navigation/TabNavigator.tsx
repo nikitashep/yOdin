@@ -4,7 +4,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../hooks/useTheme';
 import FeedStack from './FeedStack';
-import ProfileScreen from '../screens/ProfileScreen';
+import ProfileStack from './ProfileStack';
 import NewDiscussionModal from '../screens/NewDiscussionModal';
 
 const Tab = createBottomTabNavigator();
@@ -59,7 +59,7 @@ export default function TabNavigator() {
         />
         <Tab.Screen
           name="Profile"
-          component={ProfileScreen}
+          component={ProfileStack}
           options={{
             tabBarIcon: ({ focused }) => (
               <Ionicons

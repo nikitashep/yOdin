@@ -64,7 +64,7 @@ const LANGUAGES = [
   { code: 'bn', label: 'বাংলা', flag: '🇧🇩' },
 ] as const;
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }: any) {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const styles = makeStyles(colors);
@@ -242,24 +242,34 @@ export default function ProfileScreen() {
 
   function renderDiscussion({ item }: { item: Discussion }) {
     return (
-      <View style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        activeOpacity={0.85}
+        onPress={() => navigation.navigate('DiscussionDetail', { discussionId: item.id, question: item.question })}
+      >
         <Text style={styles.cardQuestion}>{item.question}</Text>
         <View style={styles.cardFooter}>
           <Text style={styles.cardMeta}>
             {t('feed.replies', { count: item.replyCount })}
           </Text>
           {tab === 'mine' && (
-            <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <TouchableOpacity
+              onPress={(e) => { e.stopPropagation(); handleDelete(item.id); }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
               <Ionicons name="trash-outline" size={18} color={colors.notification} />
             </TouchableOpacity>
           )}
           {tab === 'saved' && (
-            <TouchableOpacity onPress={() => handleUnsave(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <TouchableOpacity
+              onPress={(e) => { e.stopPropagation(); handleUnsave(item.id); }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
               <Ionicons name="bookmark" size={18} color={colors.primary} />
             </TouchableOpacity>
           )}
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 
