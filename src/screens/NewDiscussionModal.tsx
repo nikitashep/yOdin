@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
 import { createDiscussion } from '../services/discussionService';
+import { getFlagEmoji } from '../utils/flagEmoji';
 import { getErrorMessage } from '../services/errorHandler';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
@@ -97,10 +98,7 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
     ? `${profile.firstName?.charAt(0) ?? ''}${profile.lastName?.charAt(0) ?? ''}`
     : '?';
 
-  const flag = profile?.countryCode
-    ? profile.countryCode.toUpperCase().split('').map((c: string) =>
-        String.fromCodePoint(c.charCodeAt(0) + 127397)).join('')
-    : '🌐';
+  const flag = getFlagEmoji(profile?.countryCode ?? '');
 
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>

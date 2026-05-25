@@ -25,7 +25,7 @@
   "feed": {
     "title": "פיד",
     "empty": "עדיין אין דיונים. היה הראשון!",
-    "replies_one": "תגובה {{count}}",
+    "replies_one": "{{count}} תגובה",
     "replies_other": "{{count}} תגובות"
   },
   "discussion": {

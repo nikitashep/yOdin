@@ -10,7 +10,7 @@ export async function uploadAvatar(uid: string, uri: string): Promise<string> {
     xhr.open('GET', uri, true);
     xhr.send(null);
   });
-  const storageRef = ref(storage, `avatars/${uid}/photo.jpg`);
+  const storageRef = ref(storage, `avatars/${uid}/${Date.now()}.jpg`);
   await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' });
   return await getDownloadURL(storageRef);
 }

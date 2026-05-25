@@ -26,7 +26,8 @@
     "title": "Flux",
     "empty": "Nicio discuție încă. Fii primul!",
     "replies_one": "{{count}} răspuns",
-    "replies_other": "{{count}} răspunsuri"
+    "replies_few": "{{count}} răspunsuri",
+    "replies_other": "{{count}} de răspunsuri"
   },
   "discussion": {
     "title": "Discuție",

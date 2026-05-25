@@ -24,6 +24,7 @@ import {
 } from '../services/discussionService';
 import { createNotification } from '../services/notificationService';
 import { Reply, Discussion } from '../types';
+import { getFlagEmoji } from '../utils/flagEmoji';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
@@ -131,9 +132,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
     }
   }
 
-  const flag = (code: string) =>
-    code?.toUpperCase().split('').map((c) =>
-      String.fromCodePoint(c.charCodeAt(0) + 127397)).join('') ?? '🌐';
+  const flag = getFlagEmoji;
 
   function renderReply({ item }: { item: Reply }) {
     const isMe = item.authorId === profile?.uid;

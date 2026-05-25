@@ -4,16 +4,19 @@ export type AuthStackParamList = {
   Onboarding: undefined;
 };
 
-export type TabParamList = {
-  Feed: undefined;
+export type FeedStackParamList = {
+  FeedHome: undefined;
+  DiscussionDetail: { discussionId: string; question: string };
   Notifications: undefined;
-  NewDiscussion: undefined;
-  Profile: undefined;
 };
 
-export type RootStackParamList = {
-  Auth: undefined;
-  Main: undefined;
-  DiscussionDetail: { discussionId: string };
-  UserProfile: { userId: string };
+export type ProfileStackParamList = {
+  ProfileHome: undefined;
+  DiscussionDetail: { discussionId: string; question: string };
+};
+
+export type TabParamList = {
+  Feed: undefined;
+  NewDiscussion: undefined;
+  Profile: undefined;
 };

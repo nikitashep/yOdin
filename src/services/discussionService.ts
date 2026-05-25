@@ -16,6 +16,8 @@ import {
   arrayUnion,
   arrayRemove,
   increment,
+  writeBatch,
+  QueryConstraint,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { Discussion, Reply } from '../types';
@@ -37,7 +39,7 @@ export async function fetchDiscussions(
   location: string,
   cursor?: DocumentSnapshot,
 ): Promise<{ discussions: Discussion[]; lastDoc: DocumentSnapshot | null }> {
-  const constraints: any[] = [
+  const constraints: QueryConstraint[] = [
     where('location', '==', location),
     orderBy('createdAt', 'desc'),
     limit(PAGE_SIZE),
@@ -114,5 +116,11 @@ export async function unsaveDiscussion(userId: string, discussionId: string): Pr
 }
 
 export async function deleteDiscussion(discussionId: string): Promise<void> {
-  await deleteDoc(doc(db, 'discussions', discussionId));
+  const repliesSnap = await getDocs(collection(db, 'discussions', discussionId, 'replies'));
+  const batch = writeBatch(db);
+  repliesSnap.docs.forEach((replyDoc) => batch.delete(replyDoc.ref));
+  batch.delete(doc(db, 'discussions', discussionId));
+  await batch.commit();
 }
+
+export { PAGE_SIZE };

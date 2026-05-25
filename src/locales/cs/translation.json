@@ -26,6 +26,7 @@
     "title": "Přehled",
     "empty": "Zatím žádné diskuse. Buďte první!",
     "replies_one": "{{count}} odpověď",
+    "replies_few": "{{count}} odpovědi",
     "replies_other": "{{count}} odpovědí"
   },
   "discussion": {

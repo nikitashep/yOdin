@@ -27,6 +27,7 @@ import { useThemeStore, ThemePreference } from '../store/useThemeStore';
 import { useTheme } from '../hooks/useTheme';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
+import { useNotificationStore } from '../store/useNotificationStore';
 import { Discussion } from '../types';
 import { COUNTRIES, Country } from '../data/countries';
 import { ColorPalette } from '../theme/colors';
@@ -117,8 +118,8 @@ export default function ProfileScreen({ navigation }: any) {
       ]);
       setMyDiscussions(mine);
       setSavedDiscussions(saved);
-    } catch (e) {
-      console.error('loadDiscussions error:', e);
+    } catch {
+      Alert.alert(t('errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -165,8 +166,8 @@ export default function ProfileScreen({ navigation }: any) {
               await deleteDiscussion(id);
               removeDiscussion(id);
               setMyDiscussions((prev) => prev.filter((d) => d.id !== id));
-            } catch (e) {
-              console.error('Delete failed:', e);
+            } catch {
+              Alert.alert(t('errors.generic'));
             }
           },
         },
@@ -199,8 +200,8 @@ export default function ProfileScreen({ navigation }: any) {
       await updateUserProfile(profile.uid, updated);
       setProfile({ ...profile, ...updated });
       setEditVisible(false);
-    } catch (e) {
-      console.error('Save profile error:', e);
+    } catch {
+      Alert.alert(t('errors.generic'));
     } finally {
       setEditSaving(false);
     }
@@ -212,8 +213,8 @@ export default function ProfileScreen({ navigation }: any) {
       await unsaveDiscussion(profile.uid, id);
       setSavedDiscussions((prev) => prev.filter((d) => d.id !== id));
       toggleSaved(id, profile.uid);
-    } catch (e) {
-      console.error('Unsave failed:', e);
+    } catch {
+      Alert.alert(t('errors.generic'));
     }
   }
 
@@ -221,6 +222,8 @@ export default function ProfileScreen({ navigation }: any) {
     setMenuVisible(false);
     await logoutUser();
     reset();
+    useFeedStore.setState({ discussions: [], hasMore: true, isLoading: false });
+    useNotificationStore.getState().setNotifications([]);
   }
 
   const flag = profile?.countryCode
@@ -290,19 +293,22 @@ export default function ProfileScreen({ navigation }: any) {
                 </View>
               )}
               <View style={styles.avatarEditBadge}>
-                <Text style={styles.avatarEditText}>📷</Text>
+                <Ionicons name="camera" size={11} color="#fff" />
               </View>
             </View>
           </TouchableOpacity>
           <View style={styles.info}>
             <Text style={styles.name}>{profile?.firstName} {profile?.lastName}</Text>
             <Text style={styles.nationality}>{flag}  {profile?.nationality}</Text>
-            <Text style={styles.location}>📍 {profile?.location}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Ionicons name="location-sharp" size={13} color={colors.textSecondary} style={{ marginRight: 4 }} />
+              <Text style={styles.location}>{profile?.location}</Text>
+            </View>
             {photoError ? <Text style={styles.photoError}>{photoError}</Text> : null}
           </View>
         </View>
         <TouchableOpacity style={styles.menuBtn} onPress={() => setMenuVisible(true)}>
-          <Text style={styles.menuBtnText}>⋯</Text>
+          <Ionicons name="ellipsis-horizontal" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -439,7 +445,7 @@ export default function ProfileScreen({ navigation }: any) {
                 <Text style={styles.editLabel}>{t('editProfile.location')}</Text>
                 <TouchableOpacity style={styles.pickerBtn} onPress={() => { setEditSearch(''); setEditPickerFor('location'); }}>
                   {editLocation
-                    ? <Text style={styles.pickerValue}>📍  {editLocation.name}</Text>
+                    ? <Text style={styles.pickerValue}>{editLocation.flag}  {editLocation.name}</Text>
                     : <Text style={styles.pickerPlaceholder}>{t('auth.selectLocation')}</Text>
                   }
                   <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
@@ -638,7 +644,6 @@ function makeStyles(c: ColorPalette) {
       marginTop: 4,
     },
     menuBtn: { padding: 8 },
-    menuBtnText: { fontSize: 22, color: c.textPrimary, letterSpacing: 1 },
     tabs: {
       flexDirection: 'row',
       backgroundColor: c.surface,
@@ -686,7 +691,6 @@ function makeStyles(c: ColorPalette) {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    avatarEditText: { fontSize: 11 },
     card: {
       backgroundColor: c.surface,
       borderRadius: 14,
@@ -761,11 +765,6 @@ function makeStyles(c: ColorPalette) {
       color: c.textPrimary,
       fontWeight: Typography.fontWeightMedium,
     },
-    menuDivider: {
-      height: 1,
-      backgroundColor: c.border,
-      marginVertical: 8,
-    },
     modalOverlay: {
       flex: 1,
       backgroundColor: 'rgba(0,0,0,0.4)',
@@ -793,7 +792,6 @@ function makeStyles(c: ColorPalette) {
       borderBottomWidth: 1,
       borderBottomColor: c.border,
     },
-    langFlag: { fontSize: 24 },
     langLabel: {
       fontSize: Typography.fontSizeMD,
       color: c.textPrimary,

@@ -14,7 +14,9 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
 import { useNotificationStore } from '../store/useNotificationStore';
-import { fetchDiscussions, saveDiscussion, unsaveDiscussion } from '../services/discussionService';
+import { fetchDiscussions, saveDiscussion, unsaveDiscussion, PAGE_SIZE } from '../services/discussionService';
+import { getFlagEmoji } from '../utils/flagEmoji';
+import { formatTime } from '../utils/formatTime';
 import { Discussion } from '../types';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
@@ -33,7 +35,7 @@ export default function FeedScreen({ navigation }: any) {
 
   useEffect(() => {
     loadFeed();
-  }, []);
+  }, [profile?.location]);
 
   async function loadFeed() {
     if (!profile?.location) return;
@@ -43,7 +45,7 @@ export default function FeedScreen({ navigation }: any) {
       const { discussions: data, lastDoc: last } = await fetchDiscussions(profile.location);
       setDiscussions(data);
       setLastDoc(last);
-      setHasMore(data.length === 15);
+      setHasMore(data.length === PAGE_SIZE);
     } catch (e: any) {
       setError(e.message ?? t('errors.generic'));
     } finally {
@@ -58,7 +60,7 @@ export default function FeedScreen({ navigation }: any) {
       const { discussions: data, lastDoc: last } = await fetchDiscussions(profile.location, lastDoc);
       appendDiscussions(data);
       setLastDoc(last);
-      setHasMore(data.length === 15);
+      setHasMore(data.length === PAGE_SIZE);
     } catch {
       // silent — pagination failure shouldn't disrupt existing content
     } finally {
@@ -192,26 +194,6 @@ export default function FeedScreen({ navigation }: any) {
   );
 }
 
-function getFlagEmoji(countryCode: string): string {
-  if (!countryCode) return '🌐';
-  return countryCode
-    .toUpperCase()
-    .split('')
-    .map((c) => String.fromCodePoint(c.charCodeAt(0) + 127397))
-    .join('');
-}
-
-function formatTime(timestamp: any, t: (key: string, opts?: any) => string): string {
-  if (!timestamp) return '';
-  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-  const diff = Date.now() - date.getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return t('time.justNow');
-  if (mins < 60) return t('time.minutesAgo', { count: mins });
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return t('time.hoursAgo', { count: hrs });
-  return t('time.daysAgo', { count: Math.floor(hrs / 24) });
-}
 
 function makeStyles(c: ColorPalette) {
   return StyleSheet.create({

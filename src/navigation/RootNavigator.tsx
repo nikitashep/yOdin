@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '../services/firebase';
@@ -41,7 +42,13 @@ export default function RootNavigator() {
     }
   }, [profile, appState]);
 
-  if (appState === 'loading') return null;
+  if (appState === 'loading') {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#F8F8FF', alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color="#5B4FE8" />
+      </View>
+    );
+  }
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

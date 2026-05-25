@@ -25,7 +25,11 @@
   "feed": {
     "title": "الرئيسية",
     "empty": "لا توجد نقاشات بعد. كن الأول!",
-    "replies_one": "{{count}} رد",
+    "replies_zero": "لا ردود",
+    "replies_one": "رد واحد",
+    "replies_two": "ردّان",
+    "replies_few": "{{count}} ردود",
+    "replies_many": "{{count}} ردًا",
     "replies_other": "{{count}} ردود"
   },
   "discussion": {

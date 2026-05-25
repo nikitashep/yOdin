@@ -26,6 +26,7 @@
     "title": "Стрічка",
     "empty": "Ще немає обговорень. Будьте першим!",
     "replies_one": "{{count}} відповідь",
+    "replies_few": "{{count}} відповіді",
     "replies_other": "{{count}} відповідей"
   },
   "discussion": {

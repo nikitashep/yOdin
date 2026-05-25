@@ -13,6 +13,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { useNotificationStore } from '../store/useNotificationStore';
 import { fetchNotifications, markNotificationsRead } from '../services/notificationService';
 import { AppNotification } from '../types';
+import { formatTime } from '../utils/formatTime';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
@@ -22,7 +23,7 @@ export default function NotificationsScreen({ navigation }: any) {
   const { colors } = useTheme();
   const styles = makeStyles(colors);
   const { profile } = useAuthStore();
-  const { notifications, setNotifications } = useNotificationStore();
+  const { notifications, setNotifications, markAllRead } = useNotificationStore();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,7 +36,10 @@ export default function NotificationsScreen({ navigation }: any) {
       const data = await fetchNotifications(profile!.uid);
       setNotifications(data);
       const unreadIds = data.filter((n) => !n.read).map((n) => n.id);
-      await markNotificationsRead(unreadIds);
+      if (unreadIds.length > 0) {
+        await markNotificationsRead(unreadIds);
+        markAllRead();
+      }
     } catch {
     } finally {
       setLoading(false);
@@ -107,17 +111,6 @@ export default function NotificationsScreen({ navigation }: any) {
   );
 }
 
-function formatTime(timestamp: any, t: (key: string, opts?: any) => string): string {
-  if (!timestamp) return '';
-  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-  const diff = Date.now() - date.getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return t('time.justNow');
-  if (mins < 60) return t('time.minutesAgo', { count: mins });
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return t('time.hoursAgo', { count: hrs });
-  return t('time.daysAgo', { count: Math.floor(hrs / 24) });
-}
 
 function makeStyles(c: ColorPalette) {
   return StyleSheet.create({
