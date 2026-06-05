@@ -43,7 +43,9 @@ export default function App() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    Promise.all([initTheme(), initLanguage()]).then(() => setReady(true));
+    Promise.all([initTheme(), initLanguage()])
+      .then(() => setReady(true))
+      .catch(() => setReady(true));
   }, []);
 
   if (!ready) return null;
