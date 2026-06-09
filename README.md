@@ -135,3 +135,7 @@ Your phone and computer must be on the **same Wi-Fi network**.
 | `Network request failed` | Phone and computer must be on the same Wi-Fi network |
 | Auth errors on register / login | Confirm **Email/Password** is enabled in Firebase Authentication |
 | Photo upload fails | Check that Storage is enabled and `storage.rules` was deployed |
+
+
+НИКИТА УСТАНОВИ NODE JS 
+ДАЛЬШЕ КОНТАКТ СО МНОЙ НАСЧЕТ FIREBASE И ПОКАЖУ КАК ЗАПУСТИТЬ А КАК ЗАПУСТИТЬ ЕСТЬ ПОДРОБНО В ЭТОМ РИДМИ
