@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
@@ -13,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
-import { fetchDiscussions, saveDiscussion, unsaveDiscussion, PAGE_SIZE } from '../services/discussionService';
+import { fetchDiscussions, fetchAllDiscussions, saveDiscussion, unsaveDiscussion, PAGE_SIZE } from '../services/discussionService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
 import { Discussion } from '../types';
@@ -34,6 +35,37 @@ export default function ForumScreen({ navigation }: any) {
   const [lastDoc, setLastDoc] = useState<any>(null);
   const [error, setError] = useState('');
   const [askVisible, setAskVisible] = useState(false);
+  const [search, setSearch] = useState('');
+  // Full question base for the location, lazily loaded the first time the user
+  // searches so the search covers the whole DB, not just the paginated feed.
+  const [allQuestions, setAllQuestions] = useState<Discussion[] | null>(null);
+  const [loadingAll, setLoadingAll] = useState(false);
+
+  const isSearching = search.trim().length > 0;
+
+  // Lazily pull the whole location's questions once a search begins.
+  useEffect(() => {
+    if (!isSearching || allQuestions !== null || loadingAll || !profile?.location) return;
+    setLoadingAll(true);
+    fetchAllDiscussions(profile.location)
+      .then(setAllQuestions)
+      .catch(() => setAllQuestions([]))
+      .finally(() => setLoadingAll(false));
+  }, [isSearching, allQuestions, loadingAll, profile?.location]);
+
+  // Keyword search: a question matches when it contains every whitespace-separated
+  // token of the query (case-insensitive). Searches the full base once loaded,
+  // falling back to the loaded feed while the full base is still fetching.
+  const searchPool = allQuestions ?? discussions;
+  const filteredDiscussions = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return discussions;
+    const tokens = q.split(/\s+/);
+    return searchPool.filter((d) => {
+      const text = d.question.toLowerCase();
+      return tokens.every((tok) => text.includes(tok));
+    });
+  }, [discussions, searchPool, search]);
 
   useEffect(() => {
     loadFeed();
@@ -72,6 +104,7 @@ export default function ForumScreen({ navigation }: any) {
 
   async function onRefresh() {
     setRefreshing(true);
+    setAllQuestions(null); // invalidate search cache so it reloads fresh
     await loadFeed();
     setRefreshing(false);
   }
@@ -156,27 +189,46 @@ export default function ForumScreen({ navigation }: any) {
         </View>
       </View>
 
+      <View style={styles.searchBar}>
+        <Ionicons name="search" size={18} color={colors.textSecondary} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder={t('forum.search')}
+          placeholderTextColor={colors.textSecondary}
+          value={search}
+          onChangeText={setSearch}
+          returnKeyType="search"
+          autoCorrect={false}
+        />
+        {isSearching && (
+          <TouchableOpacity onPress={() => setSearch('')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Ionicons name="close-circle" size={18} color={colors.textSecondary} />
+          </TouchableOpacity>
+        )}
+      </View>
+
       {error ? (
         <View style={styles.center}>
           <Text style={{ color: colors.notification, textAlign: 'center', padding: 24 }}>{error}</Text>
         </View>
-      ) : isLoading && discussions.length === 0 ? (
+      ) : (isLoading && discussions.length === 0) || (isSearching && loadingAll && !allQuestions) ? (
         <View style={styles.center}>
           <ActivityIndicator color={colors.primary} size="large" />
         </View>
       ) : (
         <FlatList
-          data={discussions}
+          data={filteredDiscussions}
           keyExtractor={(item) => item.id}
           renderItem={renderCard}
-          contentContainerStyle={discussions.length === 0 ? styles.center : styles.list}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={filteredDiscussions.length === 0 ? styles.center : styles.list}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
-          onEndReached={loadMore}
+          onEndReached={isSearching ? undefined : loadMore}
           onEndReachedThreshold={0.3}
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>💬</Text>
-              <Text style={styles.emptyText}>{t('forum.empty')}</Text>
+              <Text style={styles.emptyEmoji}>{isSearching ? '🔍' : '💬'}</Text>
+              <Text style={styles.emptyText}>{isSearching ? t('forum.nothingFound') : t('forum.empty')}</Text>
             </View>
           }
           ListFooterComponent={
@@ -192,7 +244,13 @@ export default function ForumScreen({ navigation }: any) {
         <Text style={styles.fabText}>{t('forum.ask')}</Text>
       </TouchableOpacity>
 
-      <NewDiscussionModal visible={askVisible} onClose={() => setAskVisible(false)} />
+      <NewDiscussionModal
+        visible={askVisible}
+        onClose={() => {
+          setAskVisible(false);
+          setAllQuestions(null); // a new question may have been added — refresh search cache
+        }}
+      />
     </View>
   );
 }
@@ -214,6 +272,25 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     backBtn: { padding: 4 },
     backText: { fontSize: 24, color: c.textPrimary },
+    searchBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      marginHorizontal: 16,
+      marginTop: 12,
+      paddingHorizontal: 14,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: c.surface,
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    searchInput: {
+      flex: 1,
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+      padding: 0,
+    },
     headerTitle: {
       fontSize: Typography.fontSizeXL,
       fontWeight: Typography.fontWeightBold,
