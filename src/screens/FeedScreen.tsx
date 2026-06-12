@@ -9,12 +9,14 @@ import {
   RefreshControl,
   Image,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { DocumentSnapshot } from 'firebase/firestore';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore, FeedFilter } from '../store/usePostStore';
-import { fetchPosts, PAGE_SIZE } from '../services/postService';
+import { fetchPosts, deletePost, PAGE_SIZE } from '../services/postService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
 import { Post, PostCategory, POST_CATEGORIES } from '../types';
@@ -32,9 +34,9 @@ export default function FeedScreen({ navigation }: any) {
   const insets = useSafeAreaInsets();
   const styles = makeStyles(colors, insets.top);
   const { profile } = useAuthStore();
-  const { posts, filter, setFilter, setPosts, appendPosts, setLoading, isLoading, setHasMore, hasMore } = usePostStore();
+  const { posts, filter, setFilter, setPosts, appendPosts, setLoading, isLoading, setHasMore, hasMore, removePost } = usePostStore();
   const [refreshing, setRefreshing] = useState(false);
-  const [lastDoc, setLastDoc] = useState<any>(null);
+  const [lastDoc, setLastDoc] = useState<DocumentSnapshot | null>(null);
   const [error, setError] = useState('');
   const [postModalVisible, setPostModalVisible] = useState(false);
 
@@ -81,6 +83,28 @@ export default function FeedScreen({ navigation }: any) {
     setRefreshing(false);
   }
 
+  function handleDelete(postId: string) {
+    Alert.alert(
+      t('deletePost.title'),
+      t('deletePost.message'),
+      [
+        { text: t('deletePost.cancel'), style: 'cancel' },
+        {
+          text: t('deletePost.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deletePost(postId);
+              removePost(postId);
+            } catch {
+              Alert.alert(t('errors.generic'));
+            }
+          },
+        },
+      ],
+    );
+  }
+
   function categoryColor(category: PostCategory): string {
     switch (category) {
       case 'news': return colors.primary;
@@ -91,6 +115,7 @@ export default function FeedScreen({ navigation }: any) {
 
   function renderCard({ item }: { item: Post }) {
     const badgeColor = categoryColor(item.category);
+    const isOwner = item.authorId === profile?.uid;
     return (
       <View style={styles.card}>
         <View style={styles.cardHeader}>
@@ -106,7 +131,7 @@ export default function FeedScreen({ navigation }: any) {
           <View style={styles.authorInfo}>
             <Text style={styles.authorName}>{item.authorName}</Text>
             <Text style={styles.authorMeta}>
-              {getFlagEmoji(item.authorCountryCode)}  {item.authorNationality}
+              {getFlagEmoji(item.authorCountryCode)}{'  '}{item.authorNationality}
             </Text>
           </View>
           <View style={[styles.categoryBadge, { backgroundColor: badgeColor + '22' }]}>
@@ -125,6 +150,14 @@ export default function FeedScreen({ navigation }: any) {
 
         <View style={styles.cardFooter}>
           <Text style={styles.time}>{formatTime(item.createdAt, t)}</Text>
+          {isOwner && (
+            <TouchableOpacity
+              onPress={() => handleDelete(item.id)}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Ionicons name="trash-outline" size={18} color={colors.notification} />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     );
@@ -137,7 +170,7 @@ export default function FeedScreen({ navigation }: any) {
           <Text style={styles.headerTitle}>{t('feed.title')}</Text>
           {profile && (
             <Text style={styles.headerSub}>
-              {getFlagEmoji(profile.countryCode)}  {profile.location}
+              {getFlagEmoji(profile.countryCode)}{'  '}{profile.location}
             </Text>
           )}
         </View>
@@ -173,7 +206,7 @@ export default function FeedScreen({ navigation }: any) {
           })}
           <TouchableOpacity
             style={styles.forumChip}
-            onPress={() => navigation.navigate('Forum')}
+            onPress={() => navigation.getParent()?.navigate('Forum')}
           >
             <Ionicons name="chatbubbles-outline" size={15} color="#fff" />
             <Text style={styles.forumChipText}>{t('forum.title')}</Text>
@@ -372,7 +405,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     cardFooter: {
       flexDirection: 'row',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-between',
       alignItems: 'center',
     },
     time: {

@@ -32,6 +32,8 @@ import { useNotificationStore } from '../store/useNotificationStore';
 import { Discussion } from '../types';
 import { COUNTRIES, Country } from '../data/countries';
 import { getRank } from '../utils/rank';
+import { getFlagEmoji } from '../utils/flagEmoji';
+import { usePostStore } from '../store/usePostStore';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 
@@ -226,13 +228,11 @@ export default function ProfileScreen({ navigation }: any) {
     await logoutUser();
     reset();
     useFeedStore.setState({ discussions: [], hasMore: true, isLoading: false });
+    usePostStore.setState({ posts: [], hasMore: true, isLoading: false, filter: 'all' });
     useNotificationStore.getState().setNotifications([]);
   }
 
-  const flag = profile?.countryCode
-    ? profile.countryCode.toUpperCase().split('').map((c: string) =>
-        String.fromCodePoint(c.charCodeAt(0) + 127397)).join('')
-    : '🌐';
+  const flag = profile?.countryCode ? getFlagEmoji(profile.countryCode) : '🌐';
 
   const initials = profile
     ? `${profile.firstName?.charAt(0) ?? ''}${profile.lastName?.charAt(0) ?? ''}`.toUpperCase()
@@ -755,7 +755,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
       bottom: 0,
       width: SCREEN_WIDTH * 0.7,
       backgroundColor: c.surface,
-      paddingTop: 80,
+      paddingTop: topInset + 24,
       paddingHorizontal: 24,
       zIndex: 11,
       shadowColor: '#000',

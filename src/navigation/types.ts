@@ -6,8 +6,6 @@ export type AuthStackParamList = {
 
 export type FeedStackParamList = {
   FeedHome: undefined;
-  Forum: undefined;
-  DiscussionDetail: { discussionId: string; question: string };
 };
 
 export type ProfileStackParamList = {

@@ -19,6 +19,7 @@ import { useFeedStore } from '../store/useFeedStore';
 import { createDiscussion } from '../services/discussionService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getErrorMessage } from '../services/errorHandler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
@@ -31,7 +32,8 @@ interface Props {
 export default function NewDiscussionModal({ visible, onClose }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const styles = makeStyles(colors);
+  const insets = useSafeAreaInsets();
+  const styles = makeStyles(colors, insets.bottom);
   const { profile } = useAuthStore();
   const { prependDiscussion } = useFeedStore();
   const [question, setQuestion] = useState('');
@@ -72,7 +74,6 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
         authorNationality: profile.nationality,
         authorCountryCode: profile.countryCode,
         question: question.trim(),
-        location: profile.location,
       });
       prependDiscussion({
         id,
@@ -82,8 +83,7 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
         authorNationality: profile.nationality,
         authorCountryCode: profile.countryCode,
         question: question.trim(),
-        location: profile.location,
-        createdAt: Date.now() as any,
+        createdAt: Date.now(),
         replyCount: 0,
       });
       onClose();
@@ -167,7 +167,7 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
   );
 }
 
-function makeStyles(c: ColorPalette) {
+function makeStyles(c: ColorPalette, bottomInset: number) {
   return StyleSheet.create({
     overlay: { flex: 1, justifyContent: 'flex-end' },
     backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.4)' },
@@ -176,7 +176,7 @@ function makeStyles(c: ColorPalette) {
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
       paddingHorizontal: 20,
-      paddingBottom: 40,
+      paddingBottom: Math.max(bottomInset, 16) + 24,
       paddingTop: 12,
       minHeight: 320,
     },

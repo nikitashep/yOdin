@@ -46,6 +46,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
   const [error, setError] = useState('');
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState('');
   const [accepting, setAccepting] = useState(false);
   const listRef = useRef<FlatList>(null);
 
@@ -83,6 +84,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
   async function sendReply() {
     if (!text.trim() || !profile || !discussion) return;
     setSending(true);
+    setSendError('');
     try {
       const replyData: Omit<Reply, 'id' | 'createdAt'> = {
         discussionId,
@@ -111,11 +113,13 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
 
       setReplies((prev) => [
         ...prev,
-        { id: replyId, ...replyData, createdAt: Date.now() as any },
+        { id: replyId, ...replyData, createdAt: Date.now() },
       ]);
       incrementReplyCount(discussionId);
       setText('');
       setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 100);
+    } catch (e: any) {
+      setSendError(e?.message ?? t('errors.generic'));
     } finally {
       setSending(false);
     }
@@ -303,7 +307,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={0}
     >
       <View style={styles.header}>
@@ -379,13 +383,16 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
         </>
       )}
 
+      {sendError ? (
+        <Text style={styles.sendErrorText}>{sendError}</Text>
+      ) : null}
       <View style={styles.inputBar}>
         <TextInput
           style={styles.input}
           placeholder={t('discussion.replyPlaceholder')}
           placeholderTextColor={colors.textSecondary}
           value={text}
-          onChangeText={setText}
+          onChangeText={(v) => { setText(v); if (sendError) setSendError(''); }}
           multiline
           maxLength={1000}
         />
@@ -584,6 +591,13 @@ function makeStyles(c: ColorPalette, topInset: number) {
       fontSize: Typography.fontSizeXS,
       fontWeight: Typography.fontWeightSemiBold,
       color: c.success,
+    },
+    sendErrorText: {
+      fontSize: Typography.fontSizeSM,
+      color: c.notification,
+      paddingHorizontal: 20,
+      paddingVertical: 6,
+      backgroundColor: c.surface,
     },
     inputBar: {
       flexDirection: 'row',

@@ -13,6 +13,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { registerUser, loginUser } from '../../services/authService';
 import { getErrorMessage } from '../../services/errorHandler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
 import { ColorPalette } from '../../theme/colors';
 import { Typography } from '../../theme/typography';
@@ -22,7 +23,8 @@ type Mode = 'register' | 'login';
 export default function RegisterScreen({ navigation, route }: any) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const styles = makeStyles(colors);
+  const insets = useSafeAreaInsets();
+  const styles = makeStyles(colors, insets.top);
   const [mode, setMode] = useState<Mode>(route?.params?.mode ?? 'register');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -130,13 +132,13 @@ export default function RegisterScreen({ navigation, route }: any) {
   );
 }
 
-function makeStyles(c: ColorPalette) {
+function makeStyles(c: ColorPalette, topInset: number) {
   return StyleSheet.create({
     container: {
       flexGrow: 1,
       backgroundColor: c.background,
       paddingHorizontal: 24,
-      paddingTop: 64,
+      paddingTop: topInset + 24,
       paddingBottom: 40,
     },
     back: { marginBottom: 32 },

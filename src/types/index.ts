@@ -39,7 +39,7 @@ export interface Discussion {
   authorNationality: string;
   authorCountryCode: string;
   question: string;
-  location: string;
+  location?: string;
   createdAt: number;
   replyCount: number;
   savedBy?: string[];

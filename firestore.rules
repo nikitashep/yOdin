@@ -2,17 +2,23 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Users — only the owner can write their own profile.
-    // Exception: anyone can increment points by exactly 1 (accepted answer award).
+    // Users — owner can update their own profile fields but NOT points.
+    // Points are awarded exclusively by the system (accepted-reply batch).
     match /users/{userId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow delete: if request.auth != null && request.auth.uid == userId;
+      // Owner may update any field except points/uid/createdAt (immutable or system-managed)
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['points', 'uid', 'createdAt']);
+      // Any authenticated user may increment another user's points by exactly +1 (accepted reply reward)
       allow update: if request.auth != null
         && onlyUpdatingField(request, 'points')
         && request.resource.data.points == resource.data.get('points', 0) + 1;
     }
 
-    // Posts — event feed cards; authenticated users can read and create
+    // Posts — location-scoped event feed cards.
     match /posts/{postId} {
       allow read: if request.auth != null;
       allow create: if request.auth != null
@@ -28,12 +34,8 @@ service cloud.firestore {
         && resource.data.authorId == request.auth.uid;
     }
 
-    // Discussions form per-nationality forums: a discussion belongs to its
-    // author's nationality (authorCountryCode). Only users of the SAME
-    // nationality may read it, post it, or reply to it.
+    // Discussions — per-nationality Q&A forum.
     match /discussions/{discussionId} {
-      // Read your nationality's forum, plus your own questions and the ones you
-      // saved (so the profile tabs keep working even after a nationality change).
       allow read: if canAccessDiscussion(resource.data);
       allow create: if request.auth != null
         && request.resource.data.authorId == request.auth.uid
@@ -41,17 +43,17 @@ service cloud.firestore {
         && request.resource.data.question is string
         && request.resource.data.question.size() > 0
         && request.resource.data.question.size() <= 500;
+      // Update is restricted to three specific operations — no free-form author update.
       allow update: if request.auth != null
         && (
-          resource.data.authorId == request.auth.uid
+          acceptedReplyUpdate()
           || savedByUpdate()
           || replyCountUpdate()
         );
       allow delete: if request.auth != null
         && resource.data.authorId == request.auth.uid;
 
-      // Replies — readable by anyone who can access the discussion; only
-      // same-nationality users may post (answer) in it.
+      // Replies — same-nationality users may read and post.
       match /replies/{replyId} {
         allow read: if canAccessDiscussion(discussionData(discussionId));
         allow create: if request.auth != null
@@ -70,7 +72,7 @@ service cloud.firestore {
       }
     }
 
-    // Notifications — recipient can read/update; only the authenticated sender can create
+    // Notifications — recipient reads/marks read; sender creates.
     match /notifications/{notificationId} {
       allow read: if request.auth != null
         && resource.data.toUserId == request.auth.uid;
@@ -84,9 +86,15 @@ service cloud.firestore {
         && request.resource.data.discussionQuestion is string;
     }
 
-    // savedBy update: user can only add or remove their own UID. Adding is
-    // restricted to the user's own nationality so saving can't be used to gain
-    // read access to another nationality's discussion; removing is always allowed.
+    // acceptedReplyId: only the question author may set it, and only once (immutable once answered).
+    function acceptedReplyUpdate() {
+      return resource.data.authorId == request.auth.uid
+        && onlyUpdatingField(request, 'acceptedReplyId')
+        && resource.data.get('acceptedReplyId', null) == null;
+    }
+
+    // savedBy update: user can only add or remove their own UID.
+    // Adding is restricted to same-nationality so saving can't grant cross-forum read access.
     function savedByUpdate() {
       let before = resource.data.get('savedBy', []);
       let after = request.resource.data.get('savedBy', []);
@@ -98,7 +106,7 @@ service cloud.firestore {
       return diff && (adding || removing);
     }
 
-    // replyCount update: can only increment by exactly 1
+    // replyCount update: increment only, by exactly 1.
     function replyCountUpdate() {
       return onlyUpdatingField(request, 'replyCount')
         && request.resource.data.replyCount == resource.data.replyCount + 1;
@@ -108,23 +116,18 @@ service cloud.firestore {
       return req.resource.data.diff(resource.data).affectedKeys().hasOnly([field]);
     }
 
-    // The signed-in user's own nationality code (from their user document).
     function myNationality() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.countryCode;
     }
 
-    // The full data of a discussion document by id.
     function discussionData(discussionId) {
       return get(/databases/$(database)/documents/discussions/$(discussionId)).data;
     }
 
-    // True when the signed-in user shares the given nationality code.
     function sameNationality(code) {
       return request.auth != null && myNationality() == code;
     }
 
-    // A user may access a discussion when it's in their nationality forum, or
-    // they authored it, or they previously saved it.
     function canAccessDiscussion(d) {
       return request.auth != null && (
         myNationality() == d.authorCountryCode
@@ -133,7 +136,6 @@ service cloud.firestore {
       );
     }
 
-    // Array may stay the same, or differ only by the requester's own UID
     function ownUidArrayChange(before, after) {
       let uid = request.auth.uid;
       return before == after

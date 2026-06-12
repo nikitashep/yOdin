@@ -69,7 +69,7 @@
     "themeDark": "Tmavý",
     "notifications": "Oznámení",
     "privacy": "Soukromí",
-    "privacyText": "yOdin shromažďuje pouze údaje, které poskytnete: vaše jméno, národnost, polohu a profilovou fotografii. Tyto informace jsou používány výhradně k přizpůsobení vašeho feedu a zobrazení vaší identity v diskusích.\\\\n\\\\nVaše data jsou bezpečně uložena ve Firebase a nikdy nejsou prodávána ani sdílena s třetími stranami.\\\\n\\\\nSvůj účet a všechna přidružená data můžete kdykoli smazat kontaktováním podpory.",
+    "privacyText": "yOdin shromažďuje pouze údaje, které poskytnete: vaše jméno, národnost, polohu a profilovou fotografii. Tyto informace jsou používány výhradně k přizpůsobení vašeho feedu a zobrazení vaší identity v diskusích.\n\nVaše data jsou bezpečně uložena ve Firebase a nikdy nejsou prodávána ani sdílena s třetími stranami.\n\nSvůj účet a všechna přidružená data můžete kdykoli smazat kontaktováním podpory.",
     "restartTitle": "Vyžadováno restartování",
     "restartMessage": "Zavřete a znovu otevřete aplikaci pro použití nového směru rozvržení.",
     "about": "O yOdin"
@@ -87,6 +87,7 @@
     "cancel": "Zrušit",
     "delete": "Smazat"
   },
+    "deletePost": { "title": "Smazat příspěvek", "message": "Opravdu chcete smazat tento příspěvek?", "cancel": "Zrušit", "delete": "Smazat" },
   "time": {
     "justNow": "právě teď",
     "minutesAgo": "před {{count}} min",

@@ -25,7 +25,7 @@ import { Discussion, Reply } from '../types';
 const PAGE_SIZE = 15;
 
 export async function createDiscussion(
-  data: Omit<Discussion, 'id' | 'createdAt' | 'replyCount'>,
+  data: Omit<Discussion, 'id' | 'createdAt' | 'replyCount' | 'location'>,
 ): Promise<string> {
   const ref = await addDoc(collection(db, 'discussions'), {
     ...data,

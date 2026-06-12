@@ -68,7 +68,7 @@
     "themeDark": "Sombre",
     "notifications": "Notifications",
     "privacy": "Confidentialité",
-    "privacyText": "yOdin collecte uniquement les données que vous fournissez : votre nom, nationalité, localisation et photo de profil. Ces informations sont utilisées uniquement pour personnaliser votre fil d'actualité et afficher votre identité dans les discussions.\\\\n\\\\nVos données sont stockées en toute sécurité dans Firebase et ne sont jamais vendues ni partagées avec des tiers.\\\\n\\\\nVous pouvez supprimer votre compte et toutes les données associées à tout moment en contactant le support.",
+    "privacyText": "yOdin collecte uniquement les données que vous fournissez : votre nom, nationalité, localisation et photo de profil. Ces informations sont utilisées uniquement pour personnaliser votre fil d'actualité et afficher votre identité dans les discussions.\n\nVos données sont stockées en toute sécurité dans Firebase et ne sont jamais vendues ni partagées avec des tiers.\n\nVous pouvez supprimer votre compte et toutes les données associées à tout moment en contactant le support.",
     "restartTitle": "Redémarrage requis",
     "restartMessage": "Fermez et rouvrez l'application pour appliquer la nouvelle direction.",
     "about": "À propos de yOdin"
@@ -86,6 +86,7 @@
     "cancel": "Annuler",
     "delete": "Supprimer"
   },
+    "deletePost": { "title": "Supprimer la publication", "message": "Êtes-vous sûr de vouloir supprimer cette publication ?", "cancel": "Annuler", "delete": "Supprimer" },
   "time": {
     "justNow": "à l'instant",
     "minutesAgo": "il y a {{count}} min",

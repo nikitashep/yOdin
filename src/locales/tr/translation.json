@@ -68,7 +68,7 @@
     "themeDark": "Koyu",
     "notifications": "Bildirimler",
     "privacy": "Gizlilik",
-    "privacyText": "yOdin yalnızca sağladığınız verileri toplar: adınız, milliyetiniz, konumunuz ve profil fotoğrafınız. Bu bilgiler yalnızca akışınızı kişiselleştirmek ve tartışmalardaki kimliğinizi göstermek için kullanılır.\\\\n\\\\nVerileriniz Firebase'de güvenli bir şekilde saklanır ve hiçbir zaman üçüncü taraflarla satılmaz veya paylaşılmaz.\\\\n\\\\nDestek ekibiyle iletişime geçerek hesabınızı ve tüm ilgili verileri istediğiniz zaman silebilirsiniz.",
+    "privacyText": "yOdin yalnızca sağladığınız verileri toplar: adınız, milliyetiniz, konumunuz ve profil fotoğrafınız. Bu bilgiler yalnızca akışınızı kişiselleştirmek ve tartışmalardaki kimliğinizi göstermek için kullanılır.\n\nVerileriniz Firebase'de güvenli bir şekilde saklanır ve hiçbir zaman üçüncü taraflarla satılmaz veya paylaşılmaz.\n\nDestek ekibiyle iletişime geçerek hesabınızı ve tüm ilgili verileri istediğiniz zaman silebilirsiniz.",
     "restartTitle": "Yeniden başlatma gerekiyor",
     "restartMessage": "Yeni düzen yönünü uygulamak için uygulamayı kapatıp yeniden açın.",
     "about": "yOdin Hakkında"
@@ -86,6 +86,7 @@
     "cancel": "İptal",
     "delete": "Sil"
   },
+    "deletePost": { "title": "Gönderiyi sil", "message": "Bu gönderiyi silmek istediğinizden emin misiniz?", "cancel": "İptal", "delete": "Sil" },
   "time": {
     "justNow": "şimdi",
     "minutesAgo": "{{count}} dk önce",
