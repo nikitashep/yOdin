@@ -16,8 +16,13 @@ export type ProfileStackParamList = {
   DiscussionDetail: { discussionId: string; question: string };
 };
 
+export type ForumStackParamList = {
+  ForumHome: undefined;
+  DiscussionDetail: { discussionId: string; question: string };
+};
+
 export type TabParamList = {
   Feed: undefined;
-  NewPost: undefined;
+  Forum: undefined;
   Profile: undefined;
 };

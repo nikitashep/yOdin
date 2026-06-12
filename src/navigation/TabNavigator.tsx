@@ -1,22 +1,30 @@
 import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import FeedStack from './FeedStack';
+import ForumStack from './ForumStack';
 import ProfileStack from './ProfileStack';
 import NewPostModal from '../screens/NewPostModal';
+import NewDiscussionModal from '../screens/NewDiscussionModal';
 
 const Tab = createBottomTabNavigator();
 
-function EmptyScreen() {
-  const { colors } = useTheme();
-  return <View style={{ flex: 1, backgroundColor: colors.background }} />;
-}
-
 export default function TabNavigator() {
   const { colors } = useTheme();
-  const [modalVisible, setModalVisible] = useState(false);
+  const insets = useSafeAreaInsets();
+  const [postModalVisible, setPostModalVisible] = useState(false);
+  const [questionModalVisible, setQuestionModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState('Feed');
+
+  // The floating "+" posts to whatever section the user is in:
+  // Forum → ask a question; anywhere else → post to the feed.
+  function handleAddPress() {
+    if (activeTab === 'Forum') setQuestionModalVisible(true);
+    else setPostModalVisible(true);
+  }
 
   return (
     <>
@@ -25,6 +33,14 @@ export default function TabNavigator() {
           headerShown: false,
           tabBarStyle: [styles.tabBar, { backgroundColor: colors.tabBar }],
           tabBarShowLabel: false,
+        }}
+        screenListeners={{
+          state: (e: any) => {
+            const navState = e.data?.state;
+            if (!navState) return;
+            const route = navState.routes[navState.index];
+            if (route?.name) setActiveTab(route.name);
+          },
         }}
       >
         <Tab.Screen
@@ -41,19 +57,15 @@ export default function TabNavigator() {
           }}
         />
         <Tab.Screen
-          name="NewPost"
-          component={EmptyScreen}
+          name="Forum"
+          component={ForumStack}
           options={{
-            tabBarButton: () => (
-              <TouchableOpacity
-                style={styles.addWrap}
-                onPress={() => setModalVisible(true)}
-                activeOpacity={0.85}
-              >
-                <View style={[styles.addBtn, { borderColor: colors.background, shadowColor: colors.primary }]}>
-                  <Ionicons name="add" size={28} color="#fff" />
-                </View>
-              </TouchableOpacity>
+            tabBarIcon: ({ focused }) => (
+              <Ionicons
+                name={focused ? 'chatbubbles' : 'chatbubbles-outline'}
+                size={24}
+                color={focused ? colors.tabBarActive : colors.tabBarInactive}
+              />
             ),
           }}
         />
@@ -72,7 +84,21 @@ export default function TabNavigator() {
         />
       </Tab.Navigator>
 
-      <NewPostModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+      {activeTab !== 'Profile' && (
+        <TouchableOpacity
+          style={[
+            styles.fab,
+            { bottom: insets.bottom + 84, backgroundColor: colors.primary, shadowColor: colors.primary },
+          ]}
+          onPress={handleAddPress}
+          activeOpacity={0.85}
+        >
+          <Ionicons name="add" size={30} color="#fff" />
+        </TouchableOpacity>
+      )}
+
+      <NewPostModal visible={postModalVisible} onClose={() => setPostModalVisible(false)} />
+      <NewDiscussionModal visible={questionModalVisible} onClose={() => setQuestionModalVisible(false)} />
     </>
   );
 }
@@ -82,27 +108,20 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     height: 72,
     paddingBottom: 10,
-    overflow: 'visible',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.08,
     shadowRadius: 16,
     elevation: 16,
   },
-  addWrap: {
-    flex: 1,
+  fab: {
+    position: 'absolute',
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -18,
-  },
-  addBtn: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: '#5B4FE8',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 4,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.45,
     shadowRadius: 12,

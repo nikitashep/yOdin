@@ -22,7 +22,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
-import NewDiscussionModal from './NewDiscussionModal';
 
 export default function ForumScreen({ navigation }: any) {
   const { t } = useTranslation();
@@ -34,7 +33,6 @@ export default function ForumScreen({ navigation }: any) {
   const [refreshing, setRefreshing] = useState(false);
   const [lastDoc, setLastDoc] = useState<any>(null);
   const [error, setError] = useState('');
-  const [askVisible, setAskVisible] = useState(false);
   const [search, setSearch] = useState('');
   // Full question base for the location, lazily loaded the first time the user
   // searches so the search covers the whole DB, not just the paginated feed.
@@ -53,10 +51,18 @@ export default function ForumScreen({ navigation }: any) {
       .finally(() => setLoadingAll(false));
   }, [isSearching, allQuestions, loadingAll, profile?.location]);
 
+  // Search pool: the full base once loaded, plus any questions in the store that
+  // aren't in it yet (e.g. one just asked via the tab "+"). Falls back to the
+  // loaded feed while the full base is still fetching.
+  const searchPool = useMemo(() => {
+    if (!allQuestions) return discussions;
+    const ids = new Set(allQuestions.map((d) => d.id));
+    const extra = discussions.filter((d) => !ids.has(d.id));
+    return extra.length ? [...extra, ...allQuestions] : allQuestions;
+  }, [allQuestions, discussions]);
+
   // Keyword search: a question matches when it contains every whitespace-separated
-  // token of the query (case-insensitive). Searches the full base once loaded,
-  // falling back to the loaded feed while the full base is still fetching.
-  const searchPool = allQuestions ?? discussions;
+  // token of the query (case-insensitive).
   const filteredDiscussions = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return discussions;
@@ -176,9 +182,11 @@ export default function ForumScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
+        {navigation.canGoBack() && (
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+            <Text style={styles.backText}>←</Text>
+          </TouchableOpacity>
+        )}
         <View style={{ flex: 1 }}>
           <Text style={styles.headerTitle}>{t('forum.title')}</Text>
           {profile && (
@@ -239,18 +247,6 @@ export default function ForumScreen({ navigation }: any) {
         />
       )}
 
-      <TouchableOpacity style={styles.fab} onPress={() => setAskVisible(true)} activeOpacity={0.85}>
-        <Ionicons name="help-circle-outline" size={20} color="#fff" />
-        <Text style={styles.fabText}>{t('forum.ask')}</Text>
-      </TouchableOpacity>
-
-      <NewDiscussionModal
-        visible={askVisible}
-        onClose={() => {
-          setAskVisible(false);
-          setAllQuestions(null); // a new question may have been added — refresh search cache
-        }}
-      />
     </View>
   );
 }
@@ -388,28 +384,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
     time: {
       fontSize: Typography.fontSizeSM,
       color: c.textSecondary,
-    },
-    fab: {
-      position: 'absolute',
-      bottom: 24,
-      right: 20,
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 6,
-      backgroundColor: c.primary,
-      paddingHorizontal: 18,
-      paddingVertical: 14,
-      borderRadius: 28,
-      shadowColor: c.primary,
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.4,
-      shadowRadius: 12,
-      elevation: 8,
-    },
-    fabText: {
-      color: '#fff',
-      fontSize: Typography.fontSizeMD,
-      fontWeight: Typography.fontWeightSemiBold,
     },
   });
 }
