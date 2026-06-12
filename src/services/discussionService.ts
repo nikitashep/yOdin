@@ -35,12 +35,15 @@ export async function createDiscussion(
   return ref.id;
 }
 
+// The forum is scoped by nationality: a discussion belongs to its author's
+// nationality forum (authorCountryCode), so people of the same nationality see
+// and answer each other regardless of where they live.
 export async function fetchDiscussions(
-  location: string,
+  nationalityCode: string,
   cursor?: DocumentSnapshot,
 ): Promise<{ discussions: Discussion[]; lastDoc: DocumentSnapshot | null }> {
   const constraints: QueryConstraint[] = [
-    where('location', '==', location),
+    where('authorCountryCode', '==', nationalityCode),
     orderBy('createdAt', 'desc'),
     limit(PAGE_SIZE),
   ];
@@ -52,18 +55,18 @@ export async function fetchDiscussions(
   return { discussions, lastDoc };
 }
 
-// Loads the whole question base for a location (capped) so the forum can run a
-// full-base keyword search client-side. Reuses the location+createdAt index.
+// Loads the whole nationality forum (capped) so search can run client-side over
+// the full base. Reuses the authorCountryCode+createdAt index.
 const SEARCH_FETCH_CAP = 500;
 
 export async function fetchAllDiscussions(
-  location: string,
+  nationalityCode: string,
   max: number = SEARCH_FETCH_CAP,
 ): Promise<Discussion[]> {
   const snap = await getDocs(
     query(
       collection(db, 'discussions'),
-      where('location', '==', location),
+      where('authorCountryCode', '==', nationalityCode),
       orderBy('createdAt', 'desc'),
       limit(max),
     ),
