@@ -24,12 +24,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
-import NewPostModal from './NewPostModal';
 import PostDetailModal from './PostDetailModal';
 
 const FILTERS: FeedFilter[] = ['all', ...POST_CATEGORIES];
 
-export default function FeedScreen({ navigation }: any) {
+export default function FeedScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -39,7 +38,6 @@ export default function FeedScreen({ navigation }: any) {
   const [refreshing, setRefreshing] = useState(false);
   const [lastDoc, setLastDoc] = useState<DocumentSnapshot | null>(null);
   const [error, setError] = useState('');
-  const [postModalVisible, setPostModalVisible] = useState(false);
   const [detailPostId, setDetailPostId] = useState<string | null>(null);
   const [detailVisible, setDetailVisible] = useState(false);
   const [detailWithComments, setDetailWithComments] = useState(false);
@@ -227,14 +225,6 @@ export default function FeedScreen({ navigation }: any) {
             </Text>
           )}
         </View>
-        <TouchableOpacity
-          style={styles.addBtn}
-          onPress={() => setPostModalVisible(true)}
-          activeOpacity={0.85}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Ionicons name="add" size={26} color="#fff" />
-        </TouchableOpacity>
       </View>
 
       <View style={styles.filterBar}>
@@ -257,13 +247,6 @@ export default function FeedScreen({ navigation }: any) {
               </TouchableOpacity>
             );
           })}
-          <TouchableOpacity
-            style={styles.forumChip}
-            onPress={() => navigation.getParent()?.navigate('Forum')}
-          >
-            <Ionicons name="chatbubbles-outline" size={15} color="#fff" />
-            <Text style={styles.forumChipText}>{t('forum.title')}</Text>
-          </TouchableOpacity>
         </ScrollView>
       </View>
 
@@ -298,7 +281,6 @@ export default function FeedScreen({ navigation }: any) {
         />
       )}
 
-      <NewPostModal visible={postModalVisible} onClose={() => setPostModalVisible(false)} />
       <PostDetailModal
         visible={detailVisible}
         postId={detailPostId}
@@ -321,19 +303,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-    },
-    addBtn: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: c.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
-      shadowColor: c.primary,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.35,
-      shadowRadius: 8,
-      elevation: 6,
     },
     headerTitle: {
       fontSize: Typography.fontSizeXL,
@@ -376,20 +345,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
       fontWeight: Typography.fontWeightMedium,
     },
     chipTextActive: { color: '#fff', fontWeight: Typography.fontWeightSemiBold },
-    forumChip: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 5,
-      paddingHorizontal: 14,
-      paddingVertical: 7,
-      borderRadius: 18,
-      backgroundColor: c.accent,
-    },
-    forumChipText: {
-      fontSize: Typography.fontSizeSM,
-      color: '#fff',
-      fontWeight: Typography.fontWeightSemiBold,
-    },
     list: { padding: 16, gap: 12 },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     empty: { alignItems: 'center', paddingTop: 80 },

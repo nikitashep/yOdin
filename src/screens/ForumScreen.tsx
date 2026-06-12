@@ -23,7 +23,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
-import NewDiscussionModal from './NewDiscussionModal';
 
 export default function ForumScreen({ navigation }: any) {
   const { t } = useTranslation();
@@ -36,7 +35,6 @@ export default function ForumScreen({ navigation }: any) {
   const [lastDoc, setLastDoc] = useState<DocumentSnapshot | null>(null);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
-  const [askVisible, setAskVisible] = useState(false);
   // Full question base for the location, lazily loaded the first time the user
   // searches so the search covers the whole DB, not just the paginated feed.
   const [allQuestions, setAllQuestions] = useState<Discussion[] | null>(null);
@@ -44,15 +42,15 @@ export default function ForumScreen({ navigation }: any) {
 
   const isSearching = search.trim().length > 0;
 
-  // Lazily pull the whole nationality forum once a search begins.
+  // Lazily pull the whole region forum once a search begins.
   useEffect(() => {
-    if (!isSearching || allQuestions !== null || loadingAll || !profile?.countryCode) return;
+    if (!isSearching || allQuestions !== null || loadingAll || !profile?.location) return;
     setLoadingAll(true);
-    fetchAllDiscussions(profile.countryCode)
+    fetchAllDiscussions(profile.location)
       .then(setAllQuestions)
       .catch(() => setAllQuestions([]))
       .finally(() => setLoadingAll(false));
-  }, [isSearching, allQuestions, loadingAll, profile?.countryCode]);
+  }, [isSearching, allQuestions, loadingAll, profile?.location]);
 
   // Search pool: the full base once loaded, plus any questions in the store that
   // aren't in it yet (e.g. one just asked via the tab "+"). Falls back to the
@@ -78,14 +76,14 @@ export default function ForumScreen({ navigation }: any) {
 
   useEffect(() => {
     loadFeed();
-  }, [profile?.countryCode]);
+  }, [profile?.location]);
 
   async function loadFeed() {
-    if (!profile?.countryCode) return;
+    if (!profile?.location) return;
     setError('');
     setLoading(true);
     try {
-      const { discussions: data, lastDoc: last } = await fetchDiscussions(profile.countryCode);
+      const { discussions: data, lastDoc: last } = await fetchDiscussions(profile.location);
       setDiscussions(data);
       setLastDoc(last);
       setHasMore(data.length === PAGE_SIZE);
@@ -97,10 +95,10 @@ export default function ForumScreen({ navigation }: any) {
   }
 
   async function loadMore() {
-    if (!hasMore || isLoading || !lastDoc || !profile?.countryCode) return;
+    if (!hasMore || isLoading || !lastDoc || !profile?.location) return;
     setLoading(true);
     try {
-      const { discussions: data, lastDoc: last } = await fetchDiscussions(profile.countryCode, lastDoc);
+      const { discussions: data, lastDoc: last } = await fetchDiscussions(profile.location, lastDoc);
       appendDiscussions(data);
       setLastDoc(last);
       setHasMore(data.length === PAGE_SIZE);
@@ -194,18 +192,10 @@ export default function ForumScreen({ navigation }: any) {
           <Text style={styles.headerTitle}>{t('forum.title')}</Text>
           {profile && (
             <Text style={styles.headerSub}>
-              {getFlagEmoji(profile.countryCode)}  {profile.nationality}
+              {getFlagEmoji(profile.countryCode)}  {profile.location}
             </Text>
           )}
         </View>
-        <TouchableOpacity
-          style={styles.addBtn}
-          onPress={() => setAskVisible(true)}
-          activeOpacity={0.85}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Ionicons name="add" size={26} color="#fff" />
-        </TouchableOpacity>
       </View>
 
       <View style={styles.searchBar}>
@@ -257,14 +247,6 @@ export default function ForumScreen({ navigation }: any) {
           }
         />
       )}
-
-      <NewDiscussionModal
-        visible={askVisible}
-        onClose={() => {
-          setAskVisible(false);
-          setAllQuestions(null); // a new question may have been added — refresh search cache
-        }}
-      />
     </View>
   );
 }
@@ -286,19 +268,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     backBtn: { padding: 4 },
     backText: { fontSize: 24, color: c.textPrimary },
-    addBtn: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: c.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
-      shadowColor: c.primary,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.35,
-      shadowRadius: 8,
-      elevation: 6,
-    },
     searchBar: {
       flexDirection: 'row',
       alignItems: 'center',
