@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -38,8 +38,24 @@ export default function ForumScreen({ navigation }: any) {
   const [search, setSearch] = useState('');
   const [algoliaHits, setAlgoliaHits] = useState<AlgoliaHit[]>([]);
   const [searching, setSearching] = useState(false);
+  // Tracks saved state for Algolia results not yet loaded into the store.
+  // Key = discussionId, value = whether the current user has saved it.
+  const [savedOverrides, setSavedOverrides] = useState<Record<string, boolean>>({});
 
   const isSearching = search.trim().length > 0;
+
+  const runSearch = useCallback(async (q: string) => {
+    if (!profile?.location) { setSearching(false); return; }
+    setSearching(true);
+    try {
+      const hits = await searchDiscussions(q, profile.location);
+      setAlgoliaHits(hits);
+    } catch {
+      setAlgoliaHits([]);
+    } finally {
+      setSearching(false);
+    }
+  }, [profile?.location]);
 
   // Debounced Algolia search — fires 300ms after the user stops typing
   useEffect(() => {
@@ -50,19 +66,9 @@ export default function ForumScreen({ navigation }: any) {
       return;
     }
     setSearching(true);
-    const timer = setTimeout(async () => {
-      if (!profile?.location) { setSearching(false); return; }
-      try {
-        const hits = await searchDiscussions(q, profile.location);
-        setAlgoliaHits(hits);
-      } catch {
-        setAlgoliaHits([]);
-      } finally {
-        setSearching(false);
-      }
-    }, 300);
+    const timer = setTimeout(() => runSearch(q), 300);
     return () => clearTimeout(timer);
-  }, [search, profile?.location]);
+  }, [search, runSearch]);
 
   // Map Algolia hits → Discussion objects, merging with store data where available
   // (store version has live savedBy/replyCount; Algolia version used as fallback)
@@ -132,22 +138,42 @@ export default function ForumScreen({ navigation }: any) {
     setAlgoliaHits([]);
     await loadFeed();
     setRefreshing(false);
+    // Re-run search after feed refresh because the useEffect won't fire again
+    // (search/location haven't changed).
+    const q = search.trim();
+    if (q) runSearch(q);
   }
 
   async function handleSave(item: Discussion) {
     if (!profile?.uid) return;
-    const isSaved = item.savedBy?.includes(profile.uid) ?? false;
-    toggleSaved(item.id, profile.uid);
-    try {
-      if (isSaved) await unsaveDiscussion(profile.uid, item.id);
-      else await saveDiscussion(profile.uid, item.id);
-    } catch {
+    const inStore = discussions.some((d) => d.id === item.id);
+    if (inStore) {
+      const isSaved = item.savedBy?.includes(profile.uid) ?? false;
       toggleSaved(item.id, profile.uid);
+      try {
+        if (isSaved) await unsaveDiscussion(profile.uid, item.id);
+        else await saveDiscussion(profile.uid, item.id);
+      } catch {
+        toggleSaved(item.id, profile.uid);
+      }
+    } else {
+      // Algolia-only result: manage saved state locally since it's not in the store.
+      const isSaved = savedOverrides[item.id] ?? false;
+      setSavedOverrides((prev) => ({ ...prev, [item.id]: !isSaved }));
+      try {
+        if (isSaved) await unsaveDiscussion(profile.uid, item.id);
+        else await saveDiscussion(profile.uid, item.id);
+      } catch {
+        setSavedOverrides((prev) => ({ ...prev, [item.id]: isSaved }));
+      }
     }
   }
 
   function renderCard({ item }: { item: Discussion }) {
-    const isSaved = item.savedBy?.includes(profile?.uid ?? '') ?? false;
+    const inStore = discussions.some((d) => d.id === item.id);
+    const isSaved = inStore
+      ? (item.savedBy?.includes(profile?.uid ?? '') ?? false)
+      : (savedOverrides[item.id] ?? false);
     const isAnswered = !!item.acceptedReplyId;
     return (
       <TouchableOpacity
