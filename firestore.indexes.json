@@ -69,9 +69,6 @@
       "collectionGroup": "posts",
       "queryScope": "COLLECTION",
       "fields": [
-<<<<<<< Updated upstream
-        { "fieldPath": "category", "order": "ASCENDING" },
-=======
         { "fieldPath": "authorNationality", "order": "ASCENDING" },
         { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
@@ -82,7 +79,6 @@
       "fields": [
         { "fieldPath": "category", "order": "ASCENDING" },
         { "fieldPath": "authorNationality", "order": "ASCENDING" },
->>>>>>> Stashed changes
         { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
     }
