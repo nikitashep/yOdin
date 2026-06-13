@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { DocumentSnapshot } from 'firebase/firestore';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore, FeedFilter } from '../store/usePostStore';
-import { fetchPosts, deletePost, votePost, PAGE_SIZE } from '../services/postService';
+import { fetchPosts, deletePost, votePost, savePost, unsavePost, PAGE_SIZE } from '../services/postService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
 import { Post, PostCategory, POST_CATEGORIES } from '../types';
@@ -25,16 +25,17 @@ import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 import PostDetailModal from './PostDetailModal';
+import FollowButton from '../components/FollowButton';
 
 const FILTERS: FeedFilter[] = ['all', ...POST_CATEGORIES];
 
-export default function FeedScreen() {
+export default function FeedScreen({ navigation }: any) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const styles = makeStyles(colors, insets.top);
   const { profile } = useAuthStore();
-  const { posts, filter, setFilter, setPosts, appendPosts, setLoading, isLoading, setHasMore, hasMore, removePost, setPostVote } = usePostStore();
+  const { posts, filter, setFilter, setPosts, appendPosts, setLoading, isLoading, setHasMore, hasMore, removePost, setPostVote, togglePostSaved } = usePostStore();
   const [refreshing, setRefreshing] = useState(false);
   const [lastDoc, setLastDoc] = useState<DocumentSnapshot | null>(null);
   const [error, setError] = useState('');
@@ -68,17 +69,30 @@ export default function FeedScreen() {
     }
   }
 
+  async function handleSave(item: Post) {
+    if (!profile?.uid) return;
+    const uid = profile.uid;
+    const isSaved = item.savedBy?.includes(uid) ?? false;
+    togglePostSaved(item.id, uid);
+    try {
+      if (isSaved) await unsavePost(uid, item.id);
+      else await savePost(uid, item.id);
+    } catch {
+      togglePostSaved(item.id, uid); // revert
+    }
+  }
+
   useEffect(() => {
     loadFeed();
-  }, [profile?.location, filter]);
+  }, [profile?.uid, filter]);
 
   async function loadFeed() {
-    if (!profile?.location) return;
+    if (!profile?.uid) return;
     setError('');
     setLoading(true);
     try {
       const category = filter === 'all' ? undefined : filter;
-      const { posts: data, lastDoc: last } = await fetchPosts(profile.location, category);
+      const { posts: data, lastDoc: last } = await fetchPosts(undefined, category);
       setPosts(data);
       setLastDoc(last);
       setHasMore(data.length === PAGE_SIZE);
@@ -90,11 +104,11 @@ export default function FeedScreen() {
   }
 
   async function loadMore() {
-    if (!hasMore || isLoading || !lastDoc || !profile?.location) return;
+    if (!hasMore || isLoading || !lastDoc || !profile?.uid) return;
     setLoading(true);
     try {
       const category = filter === 'all' ? undefined : filter;
-      const { posts: data, lastDoc: last } = await fetchPosts(profile.location, category, lastDoc);
+      const { posts: data, lastDoc: last } = await fetchPosts(undefined, category, lastDoc);
       appendPosts(data);
       setLastDoc(last);
       setHasMore(data.length === PAGE_SIZE);
@@ -149,6 +163,7 @@ export default function FeedScreen() {
     const likeCount = item.likes?.length ?? 0;
     const dislikeCount = item.dislikes?.length ?? 0;
     const commentCount = item.commentCount ?? 0;
+    const isSaved = item.savedBy?.includes(profile?.uid ?? '') ?? false;
     return (
       <TouchableOpacity
         style={styles.card}
@@ -156,25 +171,34 @@ export default function FeedScreen() {
         onPress={() => openDetail(item.id, false)}
       >
         <View style={styles.cardHeader}>
-          <View style={styles.avatar}>
-            {item.authorPhoto ? (
-              <Image source={{ uri: item.authorPhoto }} style={styles.avatarImage} />
-            ) : (
-              <Text style={styles.avatarText}>
-                {item.authorName?.charAt(0).toUpperCase()}
+          <TouchableOpacity
+            style={styles.authorTap}
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate('UserProfile', { userId: item.authorId })}
+          >
+            <View style={styles.avatar}>
+              {item.authorPhoto ? (
+                <Image source={{ uri: item.authorPhoto }} style={styles.avatarImage} />
+              ) : (
+                <Text style={styles.avatarText}>
+                  {item.authorName?.charAt(0).toUpperCase()}
+                </Text>
+              )}
+            </View>
+            <View style={styles.authorInfo}>
+              <Text style={styles.authorName}>{item.authorName}</Text>
+              <Text style={styles.authorMeta}>
+                {getFlagEmoji(item.authorCountryCode)}{'  '}{item.authorNationality}
               </Text>
-            )}
-          </View>
-          <View style={styles.authorInfo}>
-            <Text style={styles.authorName}>{item.authorName}</Text>
-            <Text style={styles.authorMeta}>
-              {getFlagEmoji(item.authorCountryCode)}{'  '}{item.authorNationality}
-            </Text>
-          </View>
-          <View style={[styles.categoryBadge, { backgroundColor: badgeColor + '22' }]}>
-            <Text style={[styles.categoryBadgeText, { color: badgeColor }]}>
-              {t(`categories.${item.category}`)}
-            </Text>
+            </View>
+          </TouchableOpacity>
+          <View style={styles.headerRight}>
+            <View style={[styles.categoryBadge, { backgroundColor: badgeColor + '22' }]}>
+              <Text style={[styles.categoryBadgeText, { color: badgeColor }]}>
+                {t(`categories.${item.category}`)}
+              </Text>
+            </View>
+            {!isOwner && <FollowButton targetUid={item.authorId} />}
           </View>
         </View>
 
@@ -198,6 +222,9 @@ export default function FeedScreen() {
             <TouchableOpacity style={styles.actionBtn} onPress={() => openDetail(item.id, true)} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
               <Ionicons name="chatbubble-outline" size={18} color={colors.textSecondary} />
               {commentCount > 0 && <Text style={styles.actionCount}>{commentCount}</Text>}
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionBtn} onPress={() => handleSave(item)} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
+              <Ionicons name={isSaved ? 'bookmark' : 'bookmark-outline'} size={18} color={isSaved ? colors.primary : colors.textSecondary} />
             </TouchableOpacity>
           </View>
           <Text style={styles.time}>{formatTime(item.createdAt, t)}</Text>
@@ -362,6 +389,8 @@ function makeStyles(c: ColorPalette, topInset: number) {
       borderColor: c.border,
     },
     cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+    authorTap: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+    headerRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     avatar: {
       width: 44,
       height: 44,

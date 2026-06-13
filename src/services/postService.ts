@@ -73,12 +73,15 @@ export async function fetchComments(postId: string): Promise<PostComment[]> {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as PostComment));
 }
 
+// The feed is global by default: posts from every region and nationality are
+// shown. Pass `location` to restrict to one country (future country filter).
 export async function fetchPosts(
-  location: string,
+  location?: string,
   category?: PostCategory,
   cursor?: DocumentSnapshot,
 ): Promise<{ posts: Post[]; lastDoc: DocumentSnapshot | null }> {
-  const constraints: QueryConstraint[] = [where('location', '==', location)];
+  const constraints: QueryConstraint[] = [];
+  if (location) constraints.push(where('location', '==', location));
   if (category) constraints.push(where('category', '==', category));
   constraints.push(orderBy('createdAt', 'desc'), limit(PAGE_SIZE));
   if (cursor) constraints.push(startAfter(cursor));
@@ -87,6 +90,32 @@ export async function fetchPosts(
   const posts = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Post));
   const lastDoc = snap.docs[snap.docs.length - 1] ?? null;
   return { posts, lastDoc };
+}
+
+export async function savePost(userId: string, postId: string): Promise<void> {
+  await updateDoc(doc(db, 'posts', postId), { savedBy: arrayUnion(userId) });
+}
+
+export async function unsavePost(userId: string, postId: string): Promise<void> {
+  await updateDoc(doc(db, 'posts', postId), { savedBy: arrayRemove(userId) });
+}
+
+export async function fetchUserPosts(uid: string): Promise<Post[]> {
+  const snap = await getDocs(
+    query(collection(db, 'posts'), where('authorId', '==', uid), orderBy('createdAt', 'desc')),
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Post));
+}
+
+export async function fetchSavedPosts(uid: string): Promise<Post[]> {
+  const snap = await getDocs(
+    query(
+      collection(db, 'posts'),
+      where('savedBy', 'array-contains', uid),
+      orderBy('createdAt', 'desc'),
+    ),
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Post));
 }
 
 export async function updatePostImage(postId: string, imageURL: string): Promise<void> {

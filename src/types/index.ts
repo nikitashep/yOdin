@@ -10,6 +10,7 @@ export interface User {
   languages?: string[];
   points?: number;
   createdAt: number;
+  following?: string[];
 }
 
 export type PostCategory = 'news' | 'events' | 'places';
@@ -32,6 +33,7 @@ export interface Post {
   likes?: string[];
   dislikes?: string[];
   commentCount?: number;
+  savedBy?: string[];
 }
 
 export interface PostComment {
