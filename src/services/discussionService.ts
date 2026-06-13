@@ -12,7 +12,6 @@ import {
   serverTimestamp,
   doc,
   updateDoc,
-  deleteDoc,
   arrayUnion,
   arrayRemove,
   increment,
@@ -53,25 +52,6 @@ export async function fetchDiscussions(
   const discussions = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Discussion));
   const lastDoc = snap.docs[snap.docs.length - 1] ?? null;
   return { discussions, lastDoc };
-}
-
-// Loads the whole region forum (capped) so search can run client-side over the
-// full base. Reuses the location+createdAt index.
-const SEARCH_FETCH_CAP = 500;
-
-export async function fetchAllDiscussions(
-  location: string,
-  max: number = SEARCH_FETCH_CAP,
-): Promise<Discussion[]> {
-  const snap = await getDocs(
-    query(
-      collection(db, 'discussions'),
-      where('location', '==', location),
-      orderBy('createdAt', 'desc'),
-      limit(max),
-    ),
-  );
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Discussion));
 }
 
 export async function fetchDiscussionById(discussionId: string): Promise<Discussion | null> {
@@ -162,9 +142,17 @@ export async function acceptReply(
   discussionId: string,
   replyId: string,
   replyAuthorId: string,
+  replyText: string,
+  replyAuthorName: string,
 ): Promise<void> {
   const batch = writeBatch(db);
-  batch.update(doc(db, 'discussions', discussionId), { acceptedReplyId: replyId });
+  // Denormalize the accepted answer onto the discussion so the forum feed can
+  // show it under the question without an extra read per card.
+  batch.update(doc(db, 'discussions', discussionId), {
+    acceptedReplyId: replyId,
+    acceptedReplyText: replyText,
+    acceptedReplyAuthorName: replyAuthorName,
+  });
   batch.update(doc(db, 'users', replyAuthorId), { points: increment(1) });
   await batch.commit();
 }

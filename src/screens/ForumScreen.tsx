@@ -177,6 +177,18 @@ export default function ForumScreen({ navigation }: any) {
           )}
         </View>
         <Text style={styles.question}>{item.question}</Text>
+        {isAnswered && item.acceptedReplyText ? (
+          <View style={styles.answerBox}>
+            <View style={styles.answerHeader}>
+              <Ionicons name="checkmark-circle" size={14} color={colors.success} />
+              <Text style={styles.answerLabel}>{t('discussion.acceptedAnswer')}</Text>
+            </View>
+            <Text style={styles.answerText} numberOfLines={3}>{item.acceptedReplyText}</Text>
+            {item.acceptedReplyAuthorName ? (
+              <Text style={styles.answerAuthor}>— {item.acceptedReplyAuthorName}</Text>
+            ) : null}
+          </View>
+        ) : null}
         <View style={styles.cardFooter}>
           <Text style={[styles.replies, isAnswered && { color: colors.success }]}>
             {t('feed.replies', { count: item.replyCount })}
@@ -381,6 +393,36 @@ function makeStyles(c: ColorPalette, topInset: number) {
       color: c.textPrimary,
       lineHeight: 22,
       marginBottom: 12,
+    },
+    answerBox: {
+      backgroundColor: c.surface,
+      borderLeftWidth: 3,
+      borderLeftColor: c.success,
+      borderRadius: 10,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      marginBottom: 12,
+    },
+    answerHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 5,
+      marginBottom: 5,
+    },
+    answerLabel: {
+      fontSize: Typography.fontSizeXS,
+      color: c.success,
+      fontWeight: Typography.fontWeightSemiBold,
+    },
+    answerText: {
+      fontSize: Typography.fontSizeSM,
+      color: c.textPrimary,
+      lineHeight: 19,
+    },
+    answerAuthor: {
+      fontSize: Typography.fontSizeXS,
+      color: c.textSecondary,
+      marginTop: 5,
     },
     cardFooter: {
       flexDirection: 'row',

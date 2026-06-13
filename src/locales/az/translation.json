@@ -34,7 +34,9 @@
     "firstReply": "Cavab verən ilk sən ol 💬",
     "replyPlaceholder": "Cavab yaz...",
     "acceptedAnswer": "Qəbul edilmiş cavab",
-    "markHelped": "Cavab kömək etdi"
+    "markHelped": "Cavab kömək etdi",
+    "reply": "Cavab ver",
+    "replyingTo": "{{name}} üçün cavab"
   },
   "newDiscussion": {
     "title": "Yeni müzakirə",
