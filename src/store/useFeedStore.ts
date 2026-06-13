@@ -11,7 +11,12 @@ interface FeedState {
   setLoading: (v: boolean) => void;
   setHasMore: (v: boolean) => void;
   incrementReplyCount: (discussionId: string) => void;
-  setAcceptedReply: (discussionId: string, replyId: string) => void;
+  setAcceptedReply: (
+    discussionId: string,
+    replyId: string,
+    text?: string,
+    authorName?: string,
+  ) => void;
   toggleSaved: (discussionId: string, userId: string) => void;
   removeDiscussion: (discussionId: string) => void;
 }
@@ -33,10 +38,17 @@ export const useFeedStore = create<FeedState>((set) => ({
         d.id === discussionId ? { ...d, replyCount: d.replyCount + 1 } : d,
       ),
     })),
-  setAcceptedReply: (discussionId, replyId) =>
+  setAcceptedReply: (discussionId, replyId, text, authorName) =>
     set((state) => ({
       discussions: state.discussions.map((d) =>
-        d.id === discussionId ? { ...d, acceptedReplyId: replyId } : d,
+        d.id === discussionId
+          ? {
+              ...d,
+              acceptedReplyId: replyId,
+              acceptedReplyText: text ?? d.acceptedReplyText,
+              acceptedReplyAuthorName: authorName ?? d.acceptedReplyAuthorName,
+            }
+          : d,
       ),
     })),
   toggleSaved: (discussionId, userId) =>

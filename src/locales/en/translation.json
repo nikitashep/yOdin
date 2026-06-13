@@ -34,7 +34,9 @@
     "firstReply": "Be the first to reply 💬",
     "replyPlaceholder": "Write a reply...",
     "acceptedAnswer": "Accepted answer",
-    "markHelped": "This helped"
+    "markHelped": "This helped",
+    "reply": "Reply",
+    "replyingTo": "Replying to {{name}}"
   },
   "newDiscussion": {
     "title": "New Discussion",

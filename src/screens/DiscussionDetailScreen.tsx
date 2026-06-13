@@ -6,7 +6,7 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
+  Keyboard,
   Platform,
   ActivityIndicator,
   Image,
@@ -31,6 +31,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
+import { TAB_BAR_HEIGHT } from '../constants/layout';
+
+const ROOT_KEY = '__root__';
+const INDENT_STEP = 16;
+const MAX_INDENT_DEPTH = 5;
 
 export default function DiscussionDetailScreen({ route, navigation }: any) {
   const { discussionId, question: questionParam } = route.params;
@@ -48,11 +53,33 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState('');
   const [accepting, setAccepting] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [replyingTo, setReplyingTo] = useState<Reply | null>(null);
   const listRef = useRef<FlatList>(null);
+  const inputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     loadAll();
   }, []);
+
+  // KeyboardAvoidingView misreads its frame inside the material-top-tabs pager,
+  // so we lift the composer manually. The bar sits above the bottom tab bar, so
+  // the lift is the keyboard height minus the tab bar it already clears.
+  useEffect(() => {
+    const showEvt = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvt = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showSub = Keyboard.addListener(showEvt, (e) =>
+      setKeyboardHeight(e.endCoordinates?.height ?? 0),
+    );
+    const hideSub = Keyboard.addListener(hideEvt, () => setKeyboardHeight(0));
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+  const keyboardLift =
+    keyboardHeight > 0 ? Math.max(keyboardHeight - TAB_BAR_HEIGHT - insets.bottom, 0) : 0;
 
   async function loadAll() {
     setLoading(true);
@@ -69,13 +96,31 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
     }
   }
 
-  // Accepted answer is pinned to the top of the list
-  const sortedReplies = useMemo(() => {
+  // Flatten the reply tree (Reddit-style threading) into an ordered list with a
+  // depth per node. `replies` already arrives in chronological order, so we keep
+  // insertion order within each parent bucket. The accepted answer is pinned to
+  // the top among the top-level replies.
+  const threadedReplies = useMemo(() => {
+    const ids = new Set(replies.map((r) => r.id));
+    const byParent = new Map<string, Reply[]>();
+    for (const r of replies) {
+      const key = r.parentReplyId && ids.has(r.parentReplyId) ? r.parentReplyId : ROOT_KEY;
+      const bucket = byParent.get(key);
+      if (bucket) bucket.push(r);
+      else byParent.set(key, [r]);
+    }
     const acceptedId = discussion?.acceptedReplyId;
-    if (!acceptedId) return replies;
-    const accepted = replies.find((r) => r.id === acceptedId);
-    if (!accepted) return replies;
-    return [accepted, ...replies.filter((r) => r.id !== acceptedId)];
+    const roots = byParent.get(ROOT_KEY) ?? [];
+    const orderedRoots = acceptedId
+      ? [...roots.filter((r) => r.id === acceptedId), ...roots.filter((r) => r.id !== acceptedId)]
+      : roots;
+    const out: { reply: Reply; depth: number }[] = [];
+    const walk = (node: Reply, depth: number) => {
+      out.push({ reply: node, depth });
+      for (const child of byParent.get(node.id) ?? []) walk(child, depth + 1);
+    };
+    for (const r of orderedRoots) walk(r, 0);
+    return out;
   }, [replies, discussion?.acceptedReplyId]);
 
   const isAnswered = !!discussion?.acceptedReplyId;
@@ -96,13 +141,17 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
         text: text.trim(),
         likes: [],
         dislikes: [],
+        parentReplyId: replyingTo?.id ?? null,
       };
 
       const replyId = await addReply(discussionId, replyData);
 
-      if (discussion.authorId !== profile.uid) {
+      // Notify whoever is being answered: the parent reply's author for a
+      // threaded reply, otherwise the question author.
+      const recipientId = replyingTo?.authorId ?? discussion.authorId;
+      if (recipientId !== profile.uid) {
         await createNotification({
-          toUserId: discussion.authorId,
+          toUserId: recipientId,
           fromUserId: profile.uid,
           fromUserName: `${profile.firstName} ${profile.lastName}`,
           fromUserPhoto: profile.photoURL ?? '',
@@ -117,6 +166,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
       ]);
       incrementReplyCount(discussionId);
       setText('');
+      setReplyingTo(null);
       setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 100);
     } catch (e: any) {
       setSendError(e?.message ?? t('errors.generic'));
@@ -152,10 +202,15 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
     if (!profile || !discussion || accepting || discussion.acceptedReplyId) return;
     setAccepting(true);
     const prevDiscussion = discussion;
-    setDiscussion({ ...discussion, acceptedReplyId: reply.id });
+    setDiscussion({
+      ...discussion,
+      acceptedReplyId: reply.id,
+      acceptedReplyText: reply.text,
+      acceptedReplyAuthorName: reply.authorName,
+    });
     try {
-      await acceptReply(discussionId, reply.id, reply.authorId);
-      setAcceptedReply(discussionId, reply.id);
+      await acceptReply(discussionId, reply.id, reply.authorId, reply.text, reply.authorName);
+      setAcceptedReply(discussionId, reply.id, reply.text, reply.authorName);
       if (reply.authorId !== profile.uid) {
         await createNotification(
           {
@@ -209,107 +264,110 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
 
   const flag = getFlagEmoji;
 
-  function renderReply({ item }: { item: Reply }) {
-    const isMe = item.authorId === profile?.uid;
-    const isAccepted = item.id === discussion?.acceptedReplyId;
-    const initials = item.authorName?.split(' ').map((w) => w[0]).join('').toUpperCase() ?? '?';
-    const liked = item.likes?.includes(profile?.uid ?? '') ?? false;
-    const disliked = item.dislikes?.includes(profile?.uid ?? '') ?? false;
-    const likeCount = item.likes?.length ?? 0;
-    const dislikeCount = item.dislikes?.length ?? 0;
-    const canAccept = isQuestionAuthor && !isAnswered && !isMe;
+  function startReplyTo(reply: Reply) {
+    setReplyingTo(reply);
+    setTimeout(() => inputRef.current?.focus(), 50);
+  }
+
+  function renderReply({ item }: { item: { reply: Reply; depth: number } }) {
+    const { reply, depth } = item;
+    const isMe = reply.authorId === profile?.uid;
+    const isAccepted = reply.id === discussion?.acceptedReplyId;
+    const initials = reply.authorName?.split(' ').map((w) => w[0]).join('').toUpperCase() ?? '?';
+    const liked = reply.likes?.includes(profile?.uid ?? '') ?? false;
+    const disliked = reply.dislikes?.includes(profile?.uid ?? '') ?? false;
+    const likeCount = reply.likes?.length ?? 0;
+    const dislikeCount = reply.dislikes?.length ?? 0;
+    const canAccept = isQuestionAuthor && !isAnswered && !isMe && depth === 0;
+    const indent = Math.min(depth, MAX_INDENT_DEPTH) * INDENT_STEP;
 
     return (
-      <View style={[styles.replyWrap, isAccepted && styles.replyWrapAccepted]}>
-        {isAccepted && (
-          <View style={styles.acceptedHeader}>
-            <Ionicons name="checkmark-circle" size={16} color={colors.success} />
-            <Text style={styles.acceptedHeaderText}>{t('discussion.acceptedAnswer')}</Text>
-          </View>
-        )}
-        <View style={[styles.replyRow, isMe && styles.replyRowMe]}>
-          {!isMe && (
+      <View style={{ marginLeft: indent }}>
+        <View
+          style={[
+            styles.replyCard,
+            depth > 0 && styles.replyCardNested,
+            isAccepted && styles.replyCardAccepted,
+          ]}
+        >
+          {isAccepted && (
+            <View style={styles.acceptedHeader}>
+              <Ionicons name="checkmark-circle" size={16} color={colors.success} />
+              <Text style={styles.acceptedHeaderText}>{t('discussion.acceptedAnswer')}</Text>
+            </View>
+          )}
+          <View style={styles.replyHeader}>
             <View style={styles.replyAvatar}>
-              {item.authorPhoto ? (
-                <Image source={{ uri: item.authorPhoto }} style={styles.replyAvatarImage} />
+              {reply.authorPhoto ? (
+                <Image source={{ uri: reply.authorPhoto }} style={styles.replyAvatarImage} />
               ) : (
                 <Text style={styles.replyAvatarText}>{initials}</Text>
               )}
             </View>
-          )}
-          <View style={[styles.replyBubble, isMe && styles.replyBubbleMe, isAccepted && styles.replyBubbleAccepted]}>
-            {!isMe && (
-              <Text style={styles.replyAuthor}>
-                {item.authorName}  {flag(item.authorCountryCode)}
-              </Text>
-            )}
-            <Text style={[styles.replyText, isMe && !isAccepted && styles.replyTextMe]}>{item.text}</Text>
+            <Text style={styles.replyAuthor} numberOfLines={1}>
+              {reply.authorName}  {flag(reply.authorCountryCode)}
+            </Text>
           </View>
-          {isMe && (
-            <View style={[styles.replyAvatar, styles.replyAvatarMe]}>
-              {profile?.photoURL ? (
-                <Image source={{ uri: profile.photoURL }} style={styles.replyAvatarImage} />
-              ) : (
-                <Text style={[styles.replyAvatarText, styles.replyAvatarTextMe]}>
-                  {`${profile?.firstName?.charAt(0) ?? ''}${profile?.lastName?.charAt(0) ?? ''}`.toUpperCase()}
-                </Text>
-              )}
-            </View>
-          )}
-        </View>
 
-        <View style={[styles.replyActions, isMe && styles.replyActionsMe]}>
-          <TouchableOpacity
-            style={styles.voteBtn}
-            onPress={() => handleVote(item, 'like')}
-            disabled={isMe}
-            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-          >
-            <Ionicons
-              name={liked ? 'thumbs-up' : 'thumbs-up-outline'}
-              size={16}
-              color={liked ? colors.primary : colors.textSecondary}
-            />
-            {likeCount > 0 && (
-              <Text style={[styles.voteCount, liked && { color: colors.primary }]}>{likeCount}</Text>
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.voteBtn}
-            onPress={() => handleVote(item, 'dislike')}
-            disabled={isMe}
-            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-          >
-            <Ionicons
-              name={disliked ? 'thumbs-down' : 'thumbs-down-outline'}
-              size={16}
-              color={disliked ? colors.notification : colors.textSecondary}
-            />
-            {dislikeCount > 0 && (
-              <Text style={[styles.voteCount, disliked && { color: colors.notification }]}>{dislikeCount}</Text>
-            )}
-          </TouchableOpacity>
-          {canAccept && (
+          <Text style={styles.replyText}>{reply.text}</Text>
+
+          <View style={styles.replyActions}>
             <TouchableOpacity
-              style={styles.acceptBtn}
-              onPress={() => handleAccept(item)}
-              disabled={accepting}
+              style={styles.voteBtn}
+              onPress={() => handleVote(reply, 'like')}
+              disabled={isMe}
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
             >
-              <Ionicons name="checkmark-circle-outline" size={15} color={colors.success} />
-              <Text style={styles.acceptBtnText}>{t('discussion.markHelped')}</Text>
+              <Ionicons
+                name={liked ? 'thumbs-up' : 'thumbs-up-outline'}
+                size={16}
+                color={liked ? colors.primary : colors.textSecondary}
+              />
+              {likeCount > 0 && (
+                <Text style={[styles.voteCount, liked && { color: colors.primary }]}>{likeCount}</Text>
+              )}
             </TouchableOpacity>
-          )}
+            <TouchableOpacity
+              style={styles.voteBtn}
+              onPress={() => handleVote(reply, 'dislike')}
+              disabled={isMe}
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+            >
+              <Ionicons
+                name={disliked ? 'thumbs-down' : 'thumbs-down-outline'}
+                size={16}
+                color={disliked ? colors.notification : colors.textSecondary}
+              />
+              {dislikeCount > 0 && (
+                <Text style={[styles.voteCount, disliked && { color: colors.notification }]}>{dislikeCount}</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.voteBtn}
+              onPress={() => startReplyTo(reply)}
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+            >
+              <Ionicons name="arrow-undo-outline" size={15} color={colors.textSecondary} />
+              <Text style={styles.voteCount}>{t('discussion.reply')}</Text>
+            </TouchableOpacity>
+            {canAccept && (
+              <TouchableOpacity
+                style={styles.acceptBtn}
+                onPress={() => handleAccept(reply)}
+                disabled={accepting}
+              >
+                <Ionicons name="checkmark-circle-outline" size={15} color={colors.success} />
+                <Text style={styles.acceptBtnText}>{t('discussion.markHelped')}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </View>
     );
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={0}
-    >
+    <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
@@ -370,8 +428,8 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
 
           <FlatList
             ref={listRef}
-            data={sortedReplies}
-            keyExtractor={(item) => item.id}
+            data={threadedReplies}
+            keyExtractor={(item) => item.reply.id}
             renderItem={renderReply}
             contentContainerStyle={styles.repliesList}
             ListEmptyComponent={
@@ -386,8 +444,31 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
       {sendError ? (
         <Text style={styles.sendErrorText}>{sendError}</Text>
       ) : null}
-      <View style={styles.inputBar}>
+      {replyingTo ? (
+        <View style={styles.replyingToBar}>
+          <Ionicons name="arrow-undo-outline" size={14} color={colors.primary} />
+          <Text style={styles.replyingToText} numberOfLines={1}>
+            {t('discussion.replyingTo', { name: replyingTo.authorName })}
+          </Text>
+          <TouchableOpacity
+            onPress={() => setReplyingTo(null)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="close-circle" size={18} color={colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
+      ) : null}
+      <View
+        style={[
+          styles.inputBar,
+          {
+            marginBottom: keyboardLift,
+            paddingBottom: keyboardHeight > 0 ? 12 : undefined,
+          },
+        ]}
+      >
         <TextInput
+          ref={inputRef}
           style={styles.input}
           placeholder={t('discussion.replyPlaceholder')}
           placeholderTextColor={colors.textSecondary}
@@ -407,7 +488,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
           }
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -461,7 +542,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
       color: c.primary,
     },
     qAvatarImage: { width: 40, height: 40, borderRadius: 20 },
-    replyAvatarImage: { width: 32, height: 32, borderRadius: 16 },
+    replyAvatarImage: { width: 28, height: 28, borderRadius: 14 },
     qAuthorName: {
       fontSize: Typography.fontSizeMD,
       fontWeight: Typography.fontWeightSemiBold,
@@ -488,16 +569,26 @@ function makeStyles(c: ColorPalette, topInset: number) {
       lineHeight: 26,
       fontWeight: Typography.fontWeightMedium,
     },
-    repliesList: { padding: 16, gap: 16, flexGrow: 1 },
+    repliesList: { padding: 16, gap: 10, flexGrow: 1 },
     emptyReplies: { alignItems: 'center', paddingTop: 40 },
     emptyText: { fontSize: Typography.fontSizeMD, color: c.textSecondary },
-    replyWrap: {},
-    replyWrapAccepted: {
-      backgroundColor: c.success + '14',
-      borderWidth: 1.5,
+    replyCard: {
+      backgroundColor: c.surface,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: c.border,
+      padding: 12,
+    },
+    replyCardNested: {
+      borderLeftWidth: 3,
+      borderLeftColor: c.primary,
+      borderTopLeftRadius: 4,
+      borderBottomLeftRadius: 4,
+    },
+    replyCardAccepted: {
       borderColor: c.success,
-      borderRadius: 16,
-      padding: 10,
+      borderWidth: 1.5,
+      backgroundColor: c.success + '0F',
     },
     acceptedHeader: {
       flexDirection: 'row',
@@ -510,62 +601,32 @@ function makeStyles(c: ColorPalette, topInset: number) {
       fontWeight: Typography.fontWeightSemiBold,
       color: c.success,
     },
-    replyRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
-    replyRowMe: { justifyContent: 'flex-end' },
+    replyHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
     replyAvatar: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
+      width: 28,
+      height: 28,
+      borderRadius: 14,
       backgroundColor: c.primaryLight,
       alignItems: 'center',
       justifyContent: 'center',
     },
-    replyAvatarMe: { backgroundColor: c.primary },
     replyAvatarText: {
       fontSize: Typography.fontSizeXS,
       fontWeight: Typography.fontWeightBold,
       color: c.primary,
     },
-    replyAvatarTextMe: { color: '#fff' },
-    replyBubble: {
-      backgroundColor: c.surface,
-      borderRadius: 16,
-      borderBottomLeftRadius: 4,
-      padding: 12,
-      maxWidth: '75%',
-      borderWidth: 1,
-      borderColor: c.border,
-    },
-    replyBubbleMe: {
-      backgroundColor: c.primary,
-      borderBottomLeftRadius: 16,
-      borderBottomRightRadius: 4,
-      borderWidth: 0,
-    },
-    replyBubbleAccepted: {
-      backgroundColor: c.surface,
-      borderWidth: 1,
-      borderColor: c.success,
-    },
     replyAuthor: {
-      fontSize: Typography.fontSizeXS,
+      flex: 1,
+      fontSize: Typography.fontSizeSM,
       fontWeight: Typography.fontWeightSemiBold,
-      color: c.primary,
-      marginBottom: 4,
+      color: c.textPrimary,
     },
-    replyText: { fontSize: Typography.fontSizeMD, color: c.textPrimary, lineHeight: 20 },
-    replyTextMe: { color: '#fff' },
+    replyText: { fontSize: Typography.fontSizeMD, color: c.textPrimary, lineHeight: 21 },
     replyActions: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 16,
-      marginTop: 6,
-      marginLeft: 44,
-    },
-    replyActionsMe: {
-      justifyContent: 'flex-end',
-      marginLeft: 0,
-      marginRight: 44,
+      gap: 18,
+      marginTop: 10,
     },
     voteBtn: {
       flexDirection: 'row',
@@ -591,6 +652,22 @@ function makeStyles(c: ColorPalette, topInset: number) {
       fontSize: Typography.fontSizeXS,
       fontWeight: Typography.fontWeightSemiBold,
       color: c.success,
+    },
+    replyingToBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: c.primaryLight,
+      borderTopWidth: 1,
+      borderTopColor: c.border,
+    },
+    replyingToText: {
+      flex: 1,
+      fontSize: Typography.fontSizeSM,
+      color: c.primary,
+      fontWeight: Typography.fontWeightMedium,
     },
     sendErrorText: {
       fontSize: Typography.fontSizeSM,

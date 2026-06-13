@@ -106,9 +106,12 @@ service cloud.firestore {
     }
 
     // acceptedReplyId: only the question author may set it, and only once (immutable once answered).
+    // The accepted answer text/author are denormalized alongside it so the forum
+    // feed can render the answer without an extra read.
     function acceptedReplyUpdate() {
       return resource.data.authorId == request.auth.uid
-        && onlyUpdatingField(request, 'acceptedReplyId')
+        && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['acceptedReplyId', 'acceptedReplyText', 'acceptedReplyAuthorName'])
         && resource.data.get('acceptedReplyId', null) == null;
     }
 

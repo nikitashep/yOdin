@@ -59,6 +59,8 @@ export interface Discussion {
   replyCount: number;
   savedBy?: string[];
   acceptedReplyId?: string;
+  acceptedReplyText?: string;
+  acceptedReplyAuthorName?: string;
 }
 
 export interface Reply {
@@ -73,6 +75,9 @@ export interface Reply {
   createdAt: number;
   likes?: string[];
   dislikes?: string[];
+  // Reddit-style threading: null/absent = top-level reply to the question,
+  // otherwise the id of the reply this one answers.
+  parentReplyId?: string | null;
 }
 
 export interface AppNotification {

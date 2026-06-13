@@ -17,6 +17,7 @@ import NotificationsStack from './NotificationsStack';
 import ProfileStack from './ProfileStack';
 import NewPostModal from '../screens/NewPostModal';
 import NewDiscussionModal from '../screens/NewDiscussionModal';
+import { TAB_BAR_HEIGHT } from '../constants/layout';
 
 // Tabs where the center button creates content; elsewhere it is inert.
 const CREATE_ROUTES = ['Forum', 'Feed'];
@@ -153,7 +154,7 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: c.tabBar,
-      height: 64 + bottomInset,
+      height: TAB_BAR_HEIGHT + bottomInset,
       paddingBottom: bottomInset,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: -3 },

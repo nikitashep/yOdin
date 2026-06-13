@@ -141,5 +141,7 @@ algolia
 trello 
 domains
 i18n
+firebase secret
+firebase functions
 
 
