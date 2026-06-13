@@ -76,8 +76,7 @@ export default function NewPostModal({ visible, onClose }: Props) {
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [16, 9],
+      allowsEditing: false,
       quality: 0.7,
     });
 
