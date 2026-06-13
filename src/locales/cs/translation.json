@@ -58,6 +58,11 @@
   "profile": {
     "title": "Profil",
     "myDiscussions": "Moje diskuse",
+    "myPosts": "Mé příspěvky",
+    "posts": "Příspěvky",
+    "discussions": "Diskuze",
+    "noPosts": "Zatím žádné příspěvky",
+    "noSavedPosts": "Žádné uložené příspěvky",
     "saved": "Uložené",
     "noDiscussions": "Zatím žádné diskuse",
     "noSaved": "Žádné uložené diskuse",

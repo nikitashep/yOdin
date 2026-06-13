@@ -57,6 +57,11 @@
   "profile": {
     "title": "프로필",
     "myDiscussions": "내 토론",
+    "myPosts": "내 게시물",
+    "posts": "게시물",
+    "discussions": "토론",
+    "noPosts": "아직 게시물이 없습니다",
+    "noSavedPosts": "저장된 게시물이 없습니다",
     "saved": "저장됨",
     "noDiscussions": "아직 토론이 없습니다",
     "noSaved": "저장된 토론이 없습니다",

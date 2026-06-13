@@ -57,6 +57,11 @@
   "profile": {
     "title": "个人资料",
     "myDiscussions": "我的讨论",
+    "myPosts": "我的帖子",
+    "posts": "帖子",
+    "discussions": "讨论",
+    "noPosts": "还没有帖子",
+    "noSavedPosts": "没有已保存的帖子",
     "saved": "已保存",
     "noDiscussions": "暂无讨论",
     "noSaved": "没有已保存的讨论",

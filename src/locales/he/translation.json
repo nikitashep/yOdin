@@ -57,6 +57,11 @@
   "profile": {
     "title": "פרופיל",
     "myDiscussions": "הדיונים שלי",
+    "myPosts": "הפוסטים שלי",
+    "posts": "פוסטים",
+    "discussions": "דיונים",
+    "noPosts": "אין פוסטים עדיין",
+    "noSavedPosts": "אין פוסטים שמורים",
     "saved": "שמורים",
     "noDiscussions": "עדיין אין דיונים",
     "noSaved": "אין דיונים שמורים",

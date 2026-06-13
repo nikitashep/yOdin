@@ -57,6 +57,11 @@
   "profile": {
     "title": "โปรไฟล์",
     "myDiscussions": "การสนทนาของฉัน",
+    "myPosts": "โพสต์ของฉัน",
+    "posts": "โพสต์",
+    "discussions": "การสนทนา",
+    "noPosts": "ยังไม่มีโพสต์",
+    "noSavedPosts": "ไม่มีโพสต์ที่บันทึกไว้",
     "saved": "บันทึกแล้ว",
     "noDiscussions": "ยังไม่มีการสนทนา",
     "noSaved": "ไม่มีการสนทนาที่บันทึก",

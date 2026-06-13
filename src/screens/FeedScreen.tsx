@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { DocumentSnapshot } from 'firebase/firestore';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore, FeedFilter } from '../store/usePostStore';
-import { fetchPosts, deletePost, votePost, PAGE_SIZE } from '../services/postService';
+import { fetchPosts, deletePost, votePost, savePost, unsavePost, PAGE_SIZE } from '../services/postService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
 import { Post, PostCategory, POST_CATEGORIES } from '../types';
@@ -34,7 +34,7 @@ export default function FeedScreen() {
   const insets = useSafeAreaInsets();
   const styles = makeStyles(colors, insets.top);
   const { profile } = useAuthStore();
-  const { posts, filter, setFilter, setPosts, appendPosts, setLoading, isLoading, setHasMore, hasMore, removePost, setPostVote } = usePostStore();
+  const { posts, filter, setFilter, setPosts, appendPosts, setLoading, isLoading, setHasMore, hasMore, removePost, setPostVote, togglePostSaved } = usePostStore();
   const [refreshing, setRefreshing] = useState(false);
   const [lastDoc, setLastDoc] = useState<DocumentSnapshot | null>(null);
   const [error, setError] = useState('');
@@ -65,6 +65,19 @@ export default function FeedScreen() {
       await votePost(item.id, uid, vote, { liked, disliked });
     } catch {
       setPostVote(item.id, prevLikes, prevDislikes);
+    }
+  }
+
+  async function handleSave(item: Post) {
+    if (!profile?.uid) return;
+    const uid = profile.uid;
+    const isSaved = item.savedBy?.includes(uid) ?? false;
+    togglePostSaved(item.id, uid);
+    try {
+      if (isSaved) await unsavePost(uid, item.id);
+      else await savePost(uid, item.id);
+    } catch {
+      togglePostSaved(item.id, uid); // revert
     }
   }
 
@@ -149,6 +162,7 @@ export default function FeedScreen() {
     const likeCount = item.likes?.length ?? 0;
     const dislikeCount = item.dislikes?.length ?? 0;
     const commentCount = item.commentCount ?? 0;
+    const isSaved = item.savedBy?.includes(profile?.uid ?? '') ?? false;
     return (
       <TouchableOpacity
         style={styles.card}
@@ -198,6 +212,9 @@ export default function FeedScreen() {
             <TouchableOpacity style={styles.actionBtn} onPress={() => openDetail(item.id, true)} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
               <Ionicons name="chatbubble-outline" size={18} color={colors.textSecondary} />
               {commentCount > 0 && <Text style={styles.actionCount}>{commentCount}</Text>}
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionBtn} onPress={() => handleSave(item)} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
+              <Ionicons name={isSaved ? 'bookmark' : 'bookmark-outline'} size={18} color={isSaved ? colors.primary : colors.textSecondary} />
             </TouchableOpacity>
           </View>
           <Text style={styles.time}>{formatTime(item.createdAt, t)}</Text>

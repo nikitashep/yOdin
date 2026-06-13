@@ -21,6 +21,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import { logoutUser, updateUserProfile } from '../services/authService';
 import { uploadAvatar } from '../services/storageService';
 import { deleteDiscussion, unsaveDiscussion, fetchUserDiscussions, fetchSavedDiscussions } from '../services/discussionService';
+import { deletePost, unsavePost, fetchUserPosts, fetchSavedPosts } from '../services/postService';
+import { formatTime } from '../utils/formatTime';
+import PostDetailModal from './PostDetailModal';
 import { setAppLanguage } from '../services/i18n';
 import type { AppLang } from '../services/i18n';
 import { useThemeStore, ThemePreference } from '../store/useThemeStore';
@@ -29,7 +32,7 @@ import { useTheme } from '../hooks/useTheme';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
 import { useNotificationStore } from '../store/useNotificationStore';
-import { Discussion } from '../types';
+import { Discussion, Post } from '../types';
 import { COUNTRIES, Country } from '../data/countries';
 import { getRank } from '../utils/rank';
 import { getFlagEmoji } from '../utils/flagEmoji';
@@ -78,9 +81,16 @@ export default function ProfileScreen({ navigation }: any) {
   const setPreference = useThemeStore((s) => s.setPreference);
   const { profile, setProfile, reset } = useAuthStore();
   const { removeDiscussion, toggleSaved } = useFeedStore();
-  const [tab, setTab] = useState<'mine' | 'saved'>('mine');
+  const { removePost, togglePostSaved } = usePostStore();
+  const [tab, setTab] = useState<'posts' | 'discussions'>('posts');
+  const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [myDiscussions, setMyDiscussions] = useState<Discussion[]>([]);
+  const [savedPosts, setSavedPosts] = useState<Post[]>([]);
   const [savedDiscussions, setSavedDiscussions] = useState<Discussion[]>([]);
+  const [savedVisible, setSavedVisible] = useState(false);
+  const [savedTab, setSavedTab] = useState<'posts' | 'discussions'>('posts');
+  const [detailPost, setDetailPost] = useState<Post | null>(null);
+  const [detailVisible, setDetailVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [menuVisible, setMenuVisible] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -101,7 +111,7 @@ export default function ProfileScreen({ navigation }: any) {
 
   useFocusEffect(
     useCallback(() => {
-      if (profile?.uid) loadDiscussions();
+      if (profile?.uid) loadContent();
     }, [profile?.uid]),
   );
 
@@ -113,16 +123,20 @@ export default function ProfileScreen({ navigation }: any) {
     }).start();
   }, [menuVisible]);
 
-  async function loadDiscussions() {
+  async function loadContent() {
     if (!profile?.uid) return;
     setLoading(true);
     try {
-      const [mine, saved] = await Promise.all([
+      const [mineD, savedD, mineP, savedP] = await Promise.all([
         fetchUserDiscussions(profile.uid),
         fetchSavedDiscussions(profile.uid),
+        fetchUserPosts(profile.uid),
+        fetchSavedPosts(profile.uid),
       ]);
-      setMyDiscussions(mine);
-      setSavedDiscussions(saved);
+      setMyDiscussions(mineD);
+      setSavedDiscussions(savedD);
+      setMyPosts(mineP);
+      setSavedPosts(savedP);
     } catch {
       Alert.alert(t('errors.generic'));
     } finally {
@@ -223,6 +237,52 @@ export default function ProfileScreen({ navigation }: any) {
     }
   }
 
+  function handleDeletePost(id: string) {
+    Alert.alert(
+      t('deletePost.title'),
+      t('deletePost.message'),
+      [
+        { text: t('deletePost.cancel'), style: 'cancel' },
+        {
+          text: t('deletePost.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deletePost(id);
+              removePost(id);
+              setMyPosts((prev) => prev.filter((p) => p.id !== id));
+              setSavedPosts((prev) => prev.filter((p) => p.id !== id));
+            } catch {
+              Alert.alert(t('errors.generic'));
+            }
+          },
+        },
+      ],
+    );
+  }
+
+  async function handleUnsavePost(id: string) {
+    if (!profile?.uid) return;
+    try {
+      await unsavePost(profile.uid, id);
+      setSavedPosts((prev) => prev.filter((p) => p.id !== id));
+      togglePostSaved(id, profile.uid);
+    } catch {
+      Alert.alert(t('errors.generic'));
+    }
+  }
+
+  function openPostDetail(post: Post) {
+    setDetailPost(post);
+    if (savedVisible) {
+      // Dismiss the saved sheet first — iOS won't present a second modal over it.
+      setSavedVisible(false);
+      setTimeout(() => setDetailVisible(true), 350);
+    } else {
+      setDetailVisible(true);
+    }
+  }
+
   async function handleLogout() {
     setMenuVisible(false);
     await logoutUser();
@@ -241,7 +301,7 @@ export default function ProfileScreen({ navigation }: any) {
   const points = profile?.points ?? 0;
   const rankKey = getRank(points);
 
-  const data = tab === 'mine' ? myDiscussions : savedDiscussions;
+  const mainData: (Post | Discussion)[] = tab === 'posts' ? myPosts : myDiscussions;
 
   const themeOptions: { value: ThemePreference; label: string; icon: React.ComponentProps<typeof Ionicons>['name'] }[] = [
     { value: 'system', label: t('settings.themeSystem'), icon: 'phone-portrait-outline' },
@@ -249,29 +309,67 @@ export default function ProfileScreen({ navigation }: any) {
     { value: 'dark', label: t('settings.themeDark'), icon: 'moon-outline' },
   ];
 
-  function renderDiscussion({ item }: { item: Discussion }) {
+  function renderDiscussionCard(item: Discussion, variant: 'mine' | 'saved') {
     return (
       <TouchableOpacity
         style={styles.card}
         activeOpacity={0.85}
-        onPress={() => navigation.navigate('DiscussionDetail', { discussionId: item.id, question: item.question })}
+        onPress={() => {
+          if (variant === 'saved') setSavedVisible(false);
+          navigation.navigate('DiscussionDetail', { discussionId: item.id, question: item.question });
+        }}
       >
         <Text style={styles.cardQuestion}>{item.question}</Text>
         <View style={styles.cardFooter}>
           <Text style={styles.cardMeta}>
             {t('feed.replies', { count: item.replyCount })}
           </Text>
-          {tab === 'mine' && (
+          {variant === 'mine' ? (
             <TouchableOpacity
               onPress={(e) => { e.stopPropagation(); handleDelete(item.id); }}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
               <Ionicons name="trash-outline" size={18} color={colors.notification} />
             </TouchableOpacity>
-          )}
-          {tab === 'saved' && (
+          ) : (
             <TouchableOpacity
               onPress={(e) => { e.stopPropagation(); handleUnsave(item.id); }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Ionicons name="bookmark" size={18} color={colors.primary} />
+            </TouchableOpacity>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
+  function renderPostCard(item: Post, variant: 'mine' | 'saved') {
+    return (
+      <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={() => openPostDetail(item)}>
+        {item.imageURL ? (
+          <Image source={{ uri: item.imageURL }} style={styles.postCardImage} resizeMode="cover" />
+        ) : null}
+        <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
+        <Text style={styles.cardDesc} numberOfLines={2}>{item.description}</Text>
+        <View style={styles.cardFooter}>
+          <View style={styles.postMetaRow}>
+            <Ionicons name="heart-outline" size={14} color={colors.textSecondary} />
+            <Text style={styles.cardMetaMuted}>{item.likes?.length ?? 0}</Text>
+            <Ionicons name="chatbubble-outline" size={13} color={colors.textSecondary} style={{ marginLeft: 12 }} />
+            <Text style={styles.cardMetaMuted}>{item.commentCount ?? 0}</Text>
+            <Text style={styles.cardTime}>{formatTime(item.createdAt, t)}</Text>
+          </View>
+          {variant === 'mine' ? (
+            <TouchableOpacity
+              onPress={(e) => { e.stopPropagation(); handleDeletePost(item.id); }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Ionicons name="trash-outline" size={18} color={colors.notification} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={(e) => { e.stopPropagation(); handleUnsavePost(item.id); }}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
               <Ionicons name="bookmark" size={18} color={colors.primary} />
@@ -327,19 +425,19 @@ export default function ProfileScreen({ navigation }: any) {
 
       <View style={styles.tabs}>
         <TouchableOpacity
-          style={[styles.tab, tab === 'mine' && styles.tabActive]}
-          onPress={() => setTab('mine')}
+          style={[styles.tab, tab === 'posts' && styles.tabActive]}
+          onPress={() => setTab('posts')}
         >
-          <Text style={[styles.tabText, tab === 'mine' && styles.tabTextActive]}>
-            {t('profile.myDiscussions')}
+          <Text style={[styles.tabText, tab === 'posts' && styles.tabTextActive]}>
+            {t('profile.myPosts')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tab, tab === 'saved' && styles.tabActive]}
-          onPress={() => setTab('saved')}
+          style={[styles.tab, tab === 'discussions' && styles.tabActive]}
+          onPress={() => setTab('discussions')}
         >
-          <Text style={[styles.tabText, tab === 'saved' && styles.tabTextActive]}>
-            {t('profile.saved')}
+          <Text style={[styles.tabText, tab === 'discussions' && styles.tabTextActive]}>
+            {t('profile.myDiscussions')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -350,15 +448,19 @@ export default function ProfileScreen({ navigation }: any) {
         </View>
       ) : (
         <FlatList
-          data={data}
+          data={mainData}
           keyExtractor={(item) => item.id}
-          renderItem={renderDiscussion}
-          contentContainerStyle={data.length === 0 ? styles.center : { padding: 16, gap: 12 }}
+          renderItem={({ item }) =>
+            tab === 'posts'
+              ? renderPostCard(item as Post, 'mine')
+              : renderDiscussionCard(item as Discussion, 'mine')
+          }
+          contentContainerStyle={mainData.length === 0 ? styles.center : { padding: 16, gap: 12 }}
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>{tab === 'mine' ? '💬' : '🔖'}</Text>
+              <Text style={styles.emptyEmoji}>{tab === 'posts' ? '📝' : '💬'}</Text>
               <Text style={styles.emptyText}>
-                {tab === 'mine' ? t('profile.noDiscussions') : t('profile.noSaved')}
+                {tab === 'posts' ? t('profile.noPosts') : t('profile.noDiscussions')}
               </Text>
             </View>
           }
@@ -377,6 +479,12 @@ export default function ProfileScreen({ navigation }: any) {
         <Text style={styles.menuTitle}>{t('settings.title')}</Text>
 
         <View style={styles.menuGroup}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuVisible(false); setSavedTab('posts'); setSavedVisible(true); }}>
+            <Ionicons name="bookmark-outline" size={20} color={colors.primary} />
+            <Text style={styles.menuItemText}>{t('profile.saved')}</Text>
+            <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.menuItem} onPress={openEditProfile}>
             <Ionicons name="person-outline" size={20} color={colors.primary} />
             <Text style={styles.menuItemText}>{t('settings.editProfile')}</Text>
@@ -608,6 +716,68 @@ export default function ProfileScreen({ navigation }: any) {
           </ScrollView>
         </View>
       </Modal>
+
+      {/* Saved (posts + discussions) */}
+      <Modal visible={savedVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSavedVisible(false)}>
+        <View style={styles.editSheet}>
+          <View style={styles.editHeader}>
+            <TouchableOpacity onPress={() => setSavedVisible(false)}>
+              <Ionicons name="close" size={24} color={colors.textSecondary} />
+            </TouchableOpacity>
+            <Text style={styles.editTitle}>{t('profile.saved')}</Text>
+            <View style={{ width: 24 }} />
+          </View>
+
+          <View style={styles.tabs}>
+            <TouchableOpacity
+              style={[styles.tab, savedTab === 'posts' && styles.tabActive]}
+              onPress={() => setSavedTab('posts')}
+            >
+              <Text style={[styles.tabText, savedTab === 'posts' && styles.tabTextActive]}>
+                {t('profile.posts')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tab, savedTab === 'discussions' && styles.tabActive]}
+              onPress={() => setSavedTab('discussions')}
+            >
+              <Text style={[styles.tabText, savedTab === 'discussions' && styles.tabTextActive]}>
+                {t('profile.discussions')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <FlatList
+            data={(savedTab === 'posts' ? savedPosts : savedDiscussions) as (Post | Discussion)[]}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) =>
+              savedTab === 'posts'
+                ? renderPostCard(item as Post, 'saved')
+                : renderDiscussionCard(item as Discussion, 'saved')
+            }
+            contentContainerStyle={
+              (savedTab === 'posts' ? savedPosts : savedDiscussions).length === 0
+                ? styles.center
+                : { padding: 16, gap: 12 }
+            }
+            ListEmptyComponent={
+              <View style={styles.empty}>
+                <Text style={styles.emptyEmoji}>🔖</Text>
+                <Text style={styles.emptyText}>
+                  {savedTab === 'posts' ? t('profile.noSavedPosts') : t('profile.noSaved')}
+                </Text>
+              </View>
+            }
+          />
+        </View>
+      </Modal>
+
+      <PostDetailModal
+        visible={detailVisible}
+        postId={detailPost?.id ?? null}
+        fallbackPost={detailPost}
+        onClose={() => setDetailVisible(false)}
+      />
     </View>
   );
 }
@@ -743,6 +913,27 @@ function makeStyles(c: ColorPalette, topInset: number) {
       marginTop: 8,
     },
     cardMeta: { fontSize: Typography.fontSizeSM, color: c.primary },
+    cardTitle: {
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightSemiBold,
+      color: c.textPrimary,
+      marginBottom: 4,
+    },
+    cardDesc: {
+      fontSize: Typography.fontSizeSM,
+      color: c.textSecondary,
+      lineHeight: 20,
+    },
+    postCardImage: {
+      width: '100%',
+      height: 140,
+      borderRadius: 10,
+      marginBottom: 10,
+      backgroundColor: c.background,
+    },
+    postMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+    cardMetaMuted: { fontSize: Typography.fontSizeXS, color: c.textSecondary },
+    cardTime: { fontSize: Typography.fontSizeXS, color: c.textSecondary, marginLeft: 12 },
     backdrop: {
       ...StyleSheet.absoluteFillObject,
       backgroundColor: 'rgba(0,0,0,0.3)',

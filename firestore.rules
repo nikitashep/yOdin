@@ -34,6 +34,7 @@ service cloud.firestore {
         && (
           postVoteUpdate()
           || commentCountUpdate()
+          || postSavedByUpdate()
         );
       allow delete: if request.auth != null
         && resource.data.authorId == request.auth.uid;
@@ -138,6 +139,12 @@ service cloud.firestore {
     function commentCountUpdate() {
       return onlyUpdatingField(request, 'commentCount')
         && request.resource.data.commentCount == resource.data.get('commentCount', 0) + 1;
+    }
+
+    // Post save: a user may only add/remove their own UID in savedBy.
+    function postSavedByUpdate() {
+      return onlyUpdatingField(request, 'savedBy')
+        && ownUidArrayChange(resource.data.get('savedBy', []), request.resource.data.get('savedBy', []));
     }
 
     // Post vote: a user may only add/remove their own UID in likes/dislikes

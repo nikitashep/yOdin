@@ -57,6 +57,11 @@
   "profile": {
     "title": "Profil",
     "myDiscussions": "Diskusi Saya",
+    "myPosts": "Postingan Saya",
+    "posts": "Postingan",
+    "discussions": "Diskusi",
+    "noPosts": "Belum ada postingan",
+    "noSavedPosts": "Tidak ada postingan tersimpan",
     "saved": "Disimpan",
     "noDiscussions": "Belum ada diskusi",
     "noSaved": "Tidak ada diskusi tersimpan",

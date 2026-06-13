@@ -61,6 +61,11 @@
   "profile": {
     "title": "الملف الشخصي",
     "myDiscussions": "نقاشاتي",
+    "myPosts": "منشوراتي",
+    "posts": "المنشورات",
+    "discussions": "النقاشات",
+    "noPosts": "لا توجد منشورات بعد",
+    "noSavedPosts": "لا توجد منشورات محفوظة",
     "saved": "المحفوظات",
     "noDiscussions": "لا توجد نقاشات بعد",
     "noSaved": "لا توجد نقاشات محفوظة",

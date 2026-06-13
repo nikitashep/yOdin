@@ -57,6 +57,11 @@
   "profile": {
     "title": "Profil",
     "myDiscussions": "Mina diskussioner",
+    "myPosts": "Mina inlägg",
+    "posts": "Inlägg",
+    "discussions": "Diskussioner",
+    "noPosts": "Inga inlägg ännu",
+    "noSavedPosts": "Inga sparade inlägg",
     "saved": "Sparade",
     "noDiscussions": "Inga diskussioner än",
     "noSaved": "Inga sparade diskussioner",

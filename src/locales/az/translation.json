@@ -57,6 +57,11 @@
   "profile": {
     "title": "Profil",
     "myDiscussions": "Müzakirələrim",
+    "myPosts": "Postlarım",
+    "posts": "Postlar",
+    "discussions": "Müzakirələr",
+    "noPosts": "Hələ post yoxdur",
+    "noSavedPosts": "Saxlanılan post yoxdur",
     "saved": "Saxlanılanlar",
     "noDiscussions": "Hələ müzakirə yoxdur",
     "noSaved": "Saxlanılan müzakirə yoxdur",

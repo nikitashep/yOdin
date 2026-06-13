@@ -57,6 +57,11 @@
   "profile": {
     "title": "پروفایل",
     "myDiscussions": "بحث‌های من",
+    "myPosts": "پست‌های من",
+    "posts": "پست‌ها",
+    "discussions": "گفتگوها",
+    "noPosts": "هنوز پستی نیست",
+    "noSavedPosts": "هیچ پست ذخیره‌شده‌ای نیست",
     "saved": "ذخیره‌شده",
     "noDiscussions": "هنوز بحثی نیست",
     "noSaved": "بحثی ذخیره نشده",

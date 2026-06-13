@@ -32,6 +32,7 @@ export interface Post {
   likes?: string[];
   dislikes?: string[];
   commentCount?: number;
+  savedBy?: string[];
 }
 
 export interface PostComment {

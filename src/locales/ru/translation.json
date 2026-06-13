@@ -58,6 +58,11 @@
   "profile": {
     "title": "Профиль",
     "myDiscussions": "Мои дискуссии",
+    "myPosts": "Мои посты",
+    "posts": "Посты",
+    "discussions": "Дискуссии",
+    "noPosts": "Постов пока нет",
+    "noSavedPosts": "Нет сохранённых постов",
     "saved": "Сохранённые",
     "noDiscussions": "Дискуссий пока нет",
     "noSaved": "Нет сохранённых дискуссий",

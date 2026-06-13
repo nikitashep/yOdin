@@ -57,6 +57,11 @@
   "profile": {
     "title": "प्रोफ़ाइल",
     "myDiscussions": "मेरी चर्चाएं",
+    "myPosts": "मेरी पोस्ट",
+    "posts": "पोस्ट",
+    "discussions": "चर्चाएँ",
+    "noPosts": "अभी तक कोई पोस्ट नहीं",
+    "noSavedPosts": "कोई सहेजी गई पोस्ट नहीं",
     "saved": "सहेजा गया",
     "noDiscussions": "अभी कोई चर्चा नहीं",
     "noSaved": "कोई सहेजी गई चर्चा नहीं",

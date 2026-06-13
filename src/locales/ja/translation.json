@@ -57,6 +57,11 @@
   "profile": {
     "title": "プロフィール",
     "myDiscussions": "マイディスカッション",
+    "myPosts": "自分の投稿",
+    "posts": "投稿",
+    "discussions": "ディスカッション",
+    "noPosts": "まだ投稿がありません",
+    "noSavedPosts": "保存した投稿はありません",
     "saved": "保存済み",
     "noDiscussions": "まだディスカッションはありません",
     "noSaved": "保存されたディスカッションはありません",

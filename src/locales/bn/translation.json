@@ -57,6 +57,11 @@
   "profile": {
     "title": "প্রোফাইল",
     "myDiscussions": "আমার আলোচনা",
+    "myPosts": "আমার পোস্ট",
+    "posts": "পোস্ট",
+    "discussions": "আলোচনা",
+    "noPosts": "এখনও কোনো পোস্ট নেই",
+    "noSavedPosts": "কোনো সংরক্ষিত পোস্ট নেই",
     "saved": "সংরক্ষিত",
     "noDiscussions": "এখনও কোনো আলোচনা নেই",
     "noSaved": "কোনো সংরক্ষিত আলোচনা নেই",

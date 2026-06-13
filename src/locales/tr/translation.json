@@ -57,6 +57,11 @@
   "profile": {
     "title": "Profil",
     "myDiscussions": "Tartışmalarım",
+    "myPosts": "Gönderilerim",
+    "posts": "Gönderiler",
+    "discussions": "Tartışmalar",
+    "noPosts": "Henüz gönderi yok",
+    "noSavedPosts": "Kayıtlı gönderi yok",
     "saved": "Kaydedilenler",
     "noDiscussions": "Henüz tartışma yok",
     "noSaved": "Kaydedilen tartışma yok",

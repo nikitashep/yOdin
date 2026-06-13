@@ -89,6 +89,32 @@ export async function fetchPosts(
   return { posts, lastDoc };
 }
 
+export async function savePost(userId: string, postId: string): Promise<void> {
+  await updateDoc(doc(db, 'posts', postId), { savedBy: arrayUnion(userId) });
+}
+
+export async function unsavePost(userId: string, postId: string): Promise<void> {
+  await updateDoc(doc(db, 'posts', postId), { savedBy: arrayRemove(userId) });
+}
+
+export async function fetchUserPosts(uid: string): Promise<Post[]> {
+  const snap = await getDocs(
+    query(collection(db, 'posts'), where('authorId', '==', uid), orderBy('createdAt', 'desc')),
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Post));
+}
+
+export async function fetchSavedPosts(uid: string): Promise<Post[]> {
+  const snap = await getDocs(
+    query(
+      collection(db, 'posts'),
+      where('savedBy', 'array-contains', uid),
+      orderBy('createdAt', 'desc'),
+    ),
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Post));
+}
+
 export async function updatePostImage(postId: string, imageURL: string): Promise<void> {
   await updateDoc(doc(db, 'posts', postId), { imageURL });
 }

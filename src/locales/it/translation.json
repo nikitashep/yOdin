@@ -57,6 +57,11 @@
   "profile": {
     "title": "Profilo",
     "myDiscussions": "Le mie discussioni",
+    "myPosts": "I miei post",
+    "posts": "Post",
+    "discussions": "Discussioni",
+    "noPosts": "Ancora nessun post",
+    "noSavedPosts": "Nessun post salvato",
     "saved": "Salvati",
     "noDiscussions": "Nessuna discussione ancora",
     "noSaved": "Nessuna discussione salvata",

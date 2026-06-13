@@ -57,6 +57,11 @@
   "profile": {
     "title": "Profile",
     "myDiscussions": "My Discussions",
+    "myPosts": "My Posts",
+    "posts": "Posts",
+    "discussions": "Discussions",
+    "noPosts": "No posts yet",
+    "noSavedPosts": "No saved posts",
     "saved": "Saved",
     "noDiscussions": "No discussions yet",
     "noSaved": "No saved discussions",

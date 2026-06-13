@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore } from '../store/usePostStore';
 import { votePost, addComment, fetchComments } from '../services/postService';
-import { PostComment } from '../types';
+import { Post, PostComment } from '../types';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -37,15 +37,18 @@ interface Props {
   postId: string | null;
   startWithComments?: boolean;
   onClose: () => void;
+  // Used when the post isn't in the feed store (e.g. opened from the profile).
+  fallbackPost?: Post | null;
 }
 
-export default function PostDetailModal({ visible, postId, startWithComments, onClose }: Props) {
+export default function PostDetailModal({ visible, postId, startWithComments, onClose, fallbackPost }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const styles = makeStyles(colors, insets.bottom);
   const { profile } = useAuthStore();
-  const post = usePostStore((s) => (postId ? s.posts.find((p) => p.id === postId) : undefined));
+  const storePost = usePostStore((s) => (postId ? s.posts.find((p) => p.id === postId) : undefined));
+  const post = storePost ?? (fallbackPost && fallbackPost.id === postId ? fallbackPost : undefined);
   const setPostVote = usePostStore((s) => s.setPostVote);
   const incrementCommentCount = usePostStore((s) => s.incrementCommentCount);
 
@@ -56,14 +59,15 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
   const [sending, setSending] = useState(false);
 
   const cardAnim = useRef(new Animated.Value(0)).current; // 0 hidden → 1 shown
-  // Shared post+comments column offset: SHEET_H = comments hidden (post sits low),
-  // 0 = comments slid up (and the post pushed up above them).
-  const stackAnim = useRef(new Animated.Value(SHEET_H)).current;
+  // 0 = comments closed (card centered, sheet hidden below); 1 = comments open
+  // (sheet slid up from the bottom, card lifted above it).
+  const commentsAnim = useRef(new Animated.Value(0)).current;
   const listRef = useRef<FlatList>(null);
 
   useEffect(() => {
     if (visible && postId) {
       cardAnim.setValue(0);
+      commentsAnim.setValue(startWithComments ? 1 : 0);
       Animated.spring(cardAnim, { toValue: 1, useNativeDriver: true, tension: 60, friction: 10 }).start();
       setText('');
       setComments([]);
@@ -72,10 +76,10 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
     }
   }, [visible, postId]);
 
-  // Slide the comments up, which pushes the post up so they never overlap it.
+  // Slide the comments up, which lifts the centered post above them.
   useEffect(() => {
-    Animated.timing(stackAnim, {
-      toValue: commentsOpen ? 0 : SHEET_H,
+    Animated.timing(commentsAnim, {
+      toValue: commentsOpen ? 1 : 0,
       duration: 280,
       useNativeDriver: true,
     }).start();
@@ -168,12 +172,22 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
     );
   }
 
+  // Lift the centered card into the upper half when the comments sheet is open.
+  const cardShift = commentsAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -Math.round(SHEET_H / 2)],
+  });
+  const sheetTranslate = commentsAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [SHEET_H, 0],
+  });
+
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose} />
 
-        <Animated.View style={[styles.stack, { transform: [{ translateY: stackAnim }] }]}>
+        <View style={styles.centerWrap} pointerEvents="box-none">
         {post && (
           <Animated.View
             style={[
@@ -182,6 +196,7 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
                 opacity: cardAnim,
                 transform: [
                   { scale: cardAnim.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1] }) },
+                  { translateY: cardShift },
                 ],
               },
             ]}
@@ -239,9 +254,10 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
             </View>
           </Animated.View>
         )}
+        </View>
 
-          {/* Comments share the bottom column with the post, pushing it up */}
-          <View style={styles.sheet}>
+          {/* Comments slide up from the bottom; the centered card lifts above them */}
+          <Animated.View style={[styles.sheet, { transform: [{ translateY: sheetTranslate }] }]}>
           <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -293,8 +309,7 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
               </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
-          </View>
-        </Animated.View>
+          </Animated.View>
       </View>
     </Modal>
   );
@@ -304,10 +319,9 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
   return StyleSheet.create({
     overlay: { flex: 1 },
     backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.55)' },
-    stack: { position: 'absolute', left: 0, right: 0, bottom: 0 },
+    centerWrap: { ...StyleSheet.absoluteFillObject, justifyContent: 'center' },
     card: {
       marginHorizontal: 16,
-      marginBottom: 12,
       maxHeight: CARD_MAX,
       backgroundColor: c.surface,
       borderRadius: 20,
@@ -342,6 +356,10 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
     actionBtn: { flexDirection: 'row', alignItems: 'center', gap: 6 },
     actionCount: { fontSize: Typography.fontSizeSM, color: c.textSecondary, fontWeight: Typography.fontWeightMedium },
     sheet: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
       height: SHEET_H,
       backgroundColor: c.surface,
       borderTopLeftRadius: 24,

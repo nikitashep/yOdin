@@ -57,6 +57,11 @@
   "profile": {
     "title": "Hồ sơ",
     "myDiscussions": "Thảo luận của tôi",
+    "myPosts": "Bài viết của tôi",
+    "posts": "Bài viết",
+    "discussions": "Thảo luận",
+    "noPosts": "Chưa có bài viết",
+    "noSavedPosts": "Không có bài viết đã lưu",
     "saved": "Đã lưu",
     "noDiscussions": "Chưa có cuộc thảo luận nào",
     "noSaved": "Không có cuộc thảo luận đã lưu",

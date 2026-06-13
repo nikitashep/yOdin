@@ -57,6 +57,11 @@
   "profile": {
     "title": "Profil",
     "myDiscussions": "Perbincangan Saya",
+    "myPosts": "Pos Saya",
+    "posts": "Pos",
+    "discussions": "Perbincangan",
+    "noPosts": "Belum ada pos",
+    "noSavedPosts": "Tiada pos disimpan",
     "saved": "Disimpan",
     "noDiscussions": "Tiada perbincangan lagi",
     "noSaved": "Tiada perbincangan tersimpan",

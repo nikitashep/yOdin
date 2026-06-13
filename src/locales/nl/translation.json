@@ -57,6 +57,11 @@
   "profile": {
     "title": "Profiel",
     "myDiscussions": "Mijn Discussies",
+    "myPosts": "Mijn berichten",
+    "posts": "Berichten",
+    "discussions": "Discussies",
+    "noPosts": "Nog geen berichten",
+    "noSavedPosts": "Geen opgeslagen berichten",
     "saved": "Opgeslagen",
     "noDiscussions": "Nog geen discussies",
     "noSaved": "Geen opgeslagen discussies",
