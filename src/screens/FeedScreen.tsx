@@ -252,14 +252,7 @@ export default function FeedScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.headerTitle}>{t('feed.title')}</Text>
-          {profile && (
-            <Text style={styles.headerSub}>
-              {getFlagEmoji(profile.countryCode)}{'  '}{profile.location}
-            </Text>
-          )}
-        </View>
+        <Text style={styles.headerTitle}>{t('feed.title')}</Text>
       </View>
 
       <View style={styles.filterBar}>
@@ -360,11 +353,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
       fontSize: Typography.fontSizeXL,
       fontWeight: Typography.fontWeightBold,
       color: c.textPrimary,
-    },
-    headerSub: {
-      fontSize: Typography.fontSizeSM,
-      color: c.textSecondary,
-      marginTop: 2,
     },
     filterBar: {
       backgroundColor: c.surface,

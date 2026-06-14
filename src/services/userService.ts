@@ -14,7 +14,7 @@ import { User } from '../types';
 
 export async function fetchUser(uid: string): Promise<User | null> {
   const snap = await getDoc(doc(db, 'users', uid));
-  return snap.exists() ? (snap.data() as User) : null;
+  return snap.exists() ? ({ uid, ...snap.data() } as User) : null;
 }
 
 // Following is stored as an array on the follower's own user document, so a

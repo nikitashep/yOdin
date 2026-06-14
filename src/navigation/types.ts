@@ -18,6 +18,7 @@ export type ProfileStackParamList = {
 export type ForumStackParamList = {
   ForumHome: undefined;
   DiscussionDetail: { discussionId: string; question: string };
+  UserProfile: { userId: string };
 };
 
 export type NotificationsStackParamList = {
