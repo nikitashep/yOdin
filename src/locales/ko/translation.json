@@ -67,6 +67,8 @@
     "following": "팔로잉",
     "followers": "팔로워",
     "followingCount": "팔로잉",
+    "noFollowers": "아직 팔로워가 없습니다",
+    "noFollowing": "아직 아무도 팔로우하지 않습니다",
     "saved": "저장됨",
     "noDiscussions": "아직 토론이 없습니다",
     "noSaved": "저장된 토론이 없습니다",

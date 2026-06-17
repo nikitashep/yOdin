@@ -68,6 +68,8 @@
     "following": "Urmărit",
     "followers": "Urmăritori",
     "followingCount": "Urmăriți",
+    "noFollowers": "Încă niciun urmăritor",
+    "noFollowing": "Nu urmărește încă pe nimeni",
     "saved": "Salvate",
     "noDiscussions": "Nicio discuție încă",
     "noSaved": "Nicio discuție salvată",

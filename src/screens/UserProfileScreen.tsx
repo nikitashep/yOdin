@@ -165,14 +165,22 @@ export default function UserProfileScreen({ route, navigation }: any) {
                   <Text style={styles.statNum}>{posts.length}</Text>
                   <Text style={styles.statLabel}>{t('profile.posts')}</Text>
                 </View>
-                <View style={styles.statItem}>
+                <TouchableOpacity
+                  style={styles.statItem}
+                  activeOpacity={0.7}
+                  onPress={() => navigation.push('FollowList', { userId, initialTab: 'followers' })}
+                >
                   <Text style={styles.statNum}>{Math.max(0, displayedFollowers)}</Text>
                   <Text style={styles.statLabel}>{t('profile.followers')}</Text>
-                </View>
-                <View style={styles.statItem}>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.statItem}
+                  activeOpacity={0.7}
+                  onPress={() => navigation.push('FollowList', { userId, initialTab: 'following' })}
+                >
                   <Text style={styles.statNum}>{followingCount}</Text>
                   <Text style={styles.statLabel}>{t('profile.followingCount')}</Text>
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
 

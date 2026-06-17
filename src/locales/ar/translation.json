@@ -71,6 +71,8 @@
     "following": "تتابعه",
     "followers": "المتابِعون",
     "followingCount": "يتابع",
+    "noFollowers": "لا يوجد متابعون بعد",
+    "noFollowing": "لا يتابع أحدًا بعد",
     "saved": "المحفوظات",
     "noDiscussions": "لا توجد نقاشات بعد",
     "noSaved": "لا توجد نقاشات محفوظة",

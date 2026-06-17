@@ -68,6 +68,8 @@
     "following": "Sledujete",
     "followers": "Sledující",
     "followingCount": "Sleduje",
+    "noFollowers": "Zatím žádní sledující",
+    "noFollowing": "Zatím nikoho nesleduje",
     "saved": "Uložené",
     "noDiscussions": "Zatím žádné diskuse",
     "noSaved": "Žádné uložené diskuse",

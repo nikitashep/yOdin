@@ -67,6 +67,8 @@
     "following": "Mengikuti",
     "followers": "Pengikut",
     "followingCount": "Mengikuti",
+    "noFollowers": "Belum ada pengikut",
+    "noFollowing": "Belum mengikuti siapa pun",
     "saved": "Disimpan",
     "noDiscussions": "Belum ada diskusi",
     "noSaved": "Tidak ada diskusi tersimpan",

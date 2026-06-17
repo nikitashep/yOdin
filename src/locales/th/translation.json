@@ -67,6 +67,8 @@
     "following": "กำลังติดตาม",
     "followers": "ผู้ติดตาม",
     "followingCount": "กำลังติดตาม",
+    "noFollowers": "ยังไม่มีผู้ติดตาม",
+    "noFollowing": "ยังไม่ได้ติดตามใคร",
     "saved": "บันทึกแล้ว",
     "noDiscussions": "ยังไม่มีการสนทนา",
     "noSaved": "ไม่มีการสนทนาที่บันทึก",

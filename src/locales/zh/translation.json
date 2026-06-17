@@ -67,6 +67,8 @@
     "following": "已关注",
     "followers": "粉丝",
     "followingCount": "关注",
+    "noFollowers": "还没有粉丝",
+    "noFollowing": "还没有关注任何人",
     "saved": "已保存",
     "noDiscussions": "暂无讨论",
     "noSaved": "没有已保存的讨论",

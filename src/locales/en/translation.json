@@ -67,6 +67,8 @@
     "following": "Following",
     "followers": "Followers",
     "followingCount": "Following",
+    "noFollowers": "No followers yet",
+    "noFollowing": "Not following anyone yet",
     "saved": "Saved",
     "noDiscussions": "No discussions yet",
     "noSaved": "No saved discussions",

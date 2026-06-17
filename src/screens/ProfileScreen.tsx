@@ -411,14 +411,22 @@ export default function ProfileScreen({ navigation }: any) {
                 <Text style={styles.statNum}>{myPosts.length}</Text>
                 <Text style={styles.statLabel}>{t('profile.posts')}</Text>
               </View>
-              <View style={styles.statItem}>
+              <TouchableOpacity
+                style={styles.statItem}
+                activeOpacity={0.7}
+                onPress={() => profile?.uid && navigation.navigate('FollowList', { userId: profile.uid, initialTab: 'followers' })}
+              >
                 <Text style={styles.statNum}>{followersCount}</Text>
                 <Text style={styles.statLabel}>{t('profile.followers')}</Text>
-              </View>
-              <View style={styles.statItem}>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.statItem}
+                activeOpacity={0.7}
+                onPress={() => profile?.uid && navigation.navigate('FollowList', { userId: profile.uid, initialTab: 'following' })}
+              >
                 <Text style={styles.statNum}>{profile?.following?.length ?? 0}</Text>
                 <Text style={styles.statLabel}>{t('profile.followingCount')}</Text>
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
           <TouchableOpacity style={styles.menuBtn} onPress={() => setMenuVisible(true)}>

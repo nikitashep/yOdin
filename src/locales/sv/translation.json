@@ -67,6 +67,8 @@
     "following": "Följer",
     "followers": "Följare",
     "followingCount": "Följer",
+    "noFollowers": "Inga följare än",
+    "noFollowing": "Följer ingen än",
     "saved": "Sparade",
     "noDiscussions": "Inga diskussioner än",
     "noSaved": "Inga sparade diskussioner",

@@ -67,6 +67,8 @@
     "following": "Abonné",
     "followers": "Abonnés",
     "followingCount": "Abonnements",
+    "noFollowers": "Pas encore d'abonnés",
+    "noFollowing": "Ne suit encore personne",
     "saved": "Enregistré",
     "noDiscussions": "Pas encore de discussions",
     "noSaved": "Aucune discussion enregistrée",

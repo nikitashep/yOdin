@@ -3,11 +3,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ForumScreen from '../screens/ForumScreen';
 import DiscussionDetailScreen from '../screens/DiscussionDetailScreen';
 import UserProfileScreen from '../screens/UserProfileScreen';
+import FollowListScreen from '../screens/FollowListScreen';
 
 export type ForumStackParamList = {
   ForumHome: undefined;
   DiscussionDetail: { discussionId: string; question: string };
   UserProfile: { userId: string };
+  FollowList: { userId: string; initialTab: 'followers' | 'following' };
 };
 
 const Stack = createNativeStackNavigator<ForumStackParamList>();
@@ -18,6 +20,7 @@ export default function ForumStack() {
       <Stack.Screen name="ForumHome" component={ForumScreen} />
       <Stack.Screen name="DiscussionDetail" component={DiscussionDetailScreen} />
       <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+      <Stack.Screen name="FollowList" component={FollowListScreen} />
     </Stack.Navigator>
   );
 }
