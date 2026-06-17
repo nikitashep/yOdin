@@ -67,6 +67,8 @@
     "following": "Takip ediliyor",
     "followers": "Takipçiler",
     "followingCount": "Takip",
+    "noFollowers": "Henüz takipçi yok",
+    "noFollowing": "Henüz kimseyi takip etmiyor",
     "saved": "Kaydedilenler",
     "noDiscussions": "Henüz tartışma yok",
     "noSaved": "Kaydedilen tartışma yok",

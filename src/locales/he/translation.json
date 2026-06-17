@@ -67,6 +67,8 @@
     "following": "עוקב",
     "followers": "עוקבים",
     "followingCount": "נעקבים",
+    "noFollowers": "אין עדיין עוקבים",
+    "noFollowing": "עדיין לא עוקב אחרי אף אחד",
     "saved": "שמורים",
     "noDiscussions": "עדיין אין דיונים",
     "noSaved": "אין דיונים שמורים",

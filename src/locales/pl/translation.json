@@ -69,6 +69,8 @@
     "following": "Obserwujesz",
     "followers": "Obserwujący",
     "followingCount": "Obserwowani",
+    "noFollowers": "Brak obserwujących",
+    "noFollowing": "Nie obserwuje nikogo",
     "saved": "Zapisane",
     "noDiscussions": "Brak dyskusji",
     "noSaved": "Brak zapisanych dyskusji",

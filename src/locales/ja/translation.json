@@ -67,6 +67,8 @@
     "following": "フォロー中",
     "followers": "フォロワー",
     "followingCount": "フォロー中",
+    "noFollowers": "フォロワーはまだいません",
+    "noFollowing": "まだ誰もフォローしていません",
     "saved": "保存済み",
     "noDiscussions": "まだディスカッションはありません",
     "noSaved": "保存されたディスカッションはありません",

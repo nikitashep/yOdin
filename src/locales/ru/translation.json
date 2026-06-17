@@ -68,6 +68,8 @@
     "following": "Вы подписаны",
     "followers": "Подписчики",
     "followingCount": "Подписки",
+    "noFollowers": "Пока нет подписчиков",
+    "noFollowing": "Пока ни на кого не подписан",
     "saved": "Сохранённые",
     "noDiscussions": "Дискуссий пока нет",
     "noSaved": "Нет сохранённых дискуссий",
