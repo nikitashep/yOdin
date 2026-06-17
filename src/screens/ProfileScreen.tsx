@@ -1073,6 +1073,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     menuBrand: {
       flexDirection: 'row',
       alignItems: 'center',
+      gap: 12,
       paddingHorizontal: 20,
       paddingTop: topInset + 16,
       paddingBottom: 16,
@@ -1080,17 +1081,15 @@ function makeStyles(c: ColorPalette, topInset: number) {
       borderBottomColor: c.border,
     },
     menuLogoImg: {
-      width: 34,
-      height: 34,
-      borderRadius: 8,
-      marginRight: 10,
+      width: 36,
+      height: 36,
+      borderRadius: 9,
     },
     menuAppName: {
       flex: 1,
-      fontSize: 20,
-      fontWeight: '700',
-      color: c.primary,
-      letterSpacing: 0.3,
+      fontSize: Typography.fontSizeXL,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
     },
     menuCloseBtn: {
       padding: 4,
