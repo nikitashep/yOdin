@@ -387,39 +387,30 @@ export default function ProfileScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.profileRow}>
-          <TouchableOpacity onPress={handlePickPhoto} disabled={uploadingPhoto}>
-            <View style={styles.avatar}>
-              {profile?.photoURL ? (
-                <Image source={{ uri: profile.photoURL }} style={styles.avatarImage} />
-              ) : (
-                <Text style={styles.avatarText}>{initials}</Text>
-              )}
-              {uploadingPhoto && (
-                <View style={styles.avatarOverlay}>
-                  <ActivityIndicator color="#fff" size="small" />
+        <View style={styles.headerTopRow}>
+          <View style={styles.profileRow}>
+            <TouchableOpacity onPress={handlePickPhoto} disabled={uploadingPhoto}>
+              <View style={styles.avatar}>
+                {profile?.photoURL ? (
+                  <Image source={{ uri: profile.photoURL }} style={styles.avatarImage} />
+                ) : (
+                  <Text style={styles.avatarText}>{initials}</Text>
+                )}
+                {uploadingPhoto && (
+                  <View style={styles.avatarOverlay}>
+                    <ActivityIndicator color="#fff" size="small" />
+                  </View>
+                )}
+                <View style={styles.avatarEditBadge}>
+                  <Ionicons name="camera" size={11} color="#fff" />
                 </View>
-              )}
-              <View style={styles.avatarEditBadge}>
-                <Ionicons name="camera" size={11} color="#fff" />
               </View>
-            </View>
-          </TouchableOpacity>
-          <View style={styles.info}>
-            <Text style={styles.name}>{profile?.firstName} {profile?.lastName}</Text>
-            <Text style={styles.nationality}>{flag}  {profile?.nationality}</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Ionicons name="location-sharp" size={13} color={colors.textSecondary} style={{ marginRight: 4 }} />
-              <Text style={styles.location}>{profile?.location}</Text>
-            </View>
-            <View style={styles.rankRow}>
-              <View style={styles.rankBadge}>
-                <Ionicons name="ribbon" size={12} color={colors.primary} />
-                <Text style={styles.rankBadgeText}>{t(`rank.${rankKey}`)}</Text>
+            </TouchableOpacity>
+            <View style={styles.stats}>
+              <View style={styles.statItem}>
+                <Text style={styles.statNum}>{myPosts.length}</Text>
+                <Text style={styles.statLabel}>{t('profile.posts')}</Text>
               </View>
-              <Text style={styles.rankPoints}>{t('rank.points', { count: points })}</Text>
-            </View>
-            <View style={styles.statsRow}>
               <View style={styles.statItem}>
                 <Text style={styles.statNum}>{followersCount}</Text>
                 <Text style={styles.statLabel}>{t('profile.followers')}</Text>
@@ -429,12 +420,26 @@ export default function ProfileScreen({ navigation }: any) {
                 <Text style={styles.statLabel}>{t('profile.followingCount')}</Text>
               </View>
             </View>
-            {photoError ? <Text style={styles.photoError}>{photoError}</Text> : null}
           </View>
+          <TouchableOpacity style={styles.menuBtn} onPress={() => setMenuVisible(true)}>
+            <Ionicons name="ellipsis-horizontal" size={22} color={colors.textPrimary} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.menuBtn} onPress={() => setMenuVisible(true)}>
-          <Ionicons name="ellipsis-horizontal" size={22} color={colors.textPrimary} />
-        </TouchableOpacity>
+
+        <Text style={styles.name}>{profile?.firstName} {profile?.lastName}</Text>
+        <Text style={styles.nationality}>{flag}  {profile?.nationality}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+          <Ionicons name="location-sharp" size={13} color={colors.textSecondary} style={{ marginRight: 4 }} />
+          <Text style={styles.location}>{profile?.location}</Text>
+        </View>
+        <View style={styles.rankRow}>
+          <View style={styles.rankBadge}>
+            <Ionicons name="ribbon" size={12} color={colors.primary} />
+            <Text style={styles.rankBadgeText}>{t(`rank.${rankKey}`)}</Text>
+          </View>
+          <Text style={styles.rankPoints}>{t('rank.points', { count: points })}</Text>
+        </View>
+        {photoError ? <Text style={styles.photoError}>{photoError}</Text> : null}
       </View>
 
       <View style={styles.tabs}>
@@ -469,7 +474,7 @@ export default function ProfileScreen({ navigation }: any) {
               ? renderPostCard(item as Post, 'mine')
               : renderDiscussionCard(item as Discussion, 'mine')
           }
-          contentContainerStyle={mainData.length === 0 ? styles.center : { padding: 16, gap: 12 }}
+          contentContainerStyle={mainData.length === 0 ? styles.center : { padding: 16, gap: 12, paddingBottom: 96 }}
           ListEmptyComponent={
             <View style={styles.empty}>
               <Text style={styles.emptyEmoji}>{tab === 'posts' ? '📝' : '💬'}</Text>
@@ -806,31 +811,37 @@ function makeStyles(c: ColorPalette, topInset: number) {
       backgroundColor: c.surface,
       borderBottomWidth: 1,
       borderBottomColor: c.border,
+    },
+    headerTopRow: {
       flexDirection: 'row',
       alignItems: 'flex-start',
       justifyContent: 'space-between',
+      marginBottom: 14,
     },
-    profileRow: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+    profileRow: { flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 12 },
     avatar: {
-      width: 64,
-      height: 64,
-      borderRadius: 32,
+      width: 80,
+      height: 80,
+      borderRadius: 40,
       backgroundColor: c.primaryLight,
       alignItems: 'center',
       justifyContent: 'center',
-      marginRight: 16,
+      marginRight: 20,
     },
     avatarText: {
-      fontSize: Typography.fontSizeXL,
+      fontSize: Typography.fontSizeXXL,
       fontWeight: Typography.fontWeightBold,
       color: c.primary,
     },
-    info: { flex: 1 },
+    stats: { flex: 1, flexDirection: 'row', justifyContent: 'space-around' },
+    statItem: { alignItems: 'center' },
+    statNum: { fontSize: Typography.fontSizeLG, fontWeight: Typography.fontWeightBold, color: c.textPrimary },
+    statLabel: { fontSize: Typography.fontSizeXS, color: c.textSecondary, marginTop: 2 },
     name: {
       fontSize: Typography.fontSizeLG,
       fontWeight: Typography.fontWeightBold,
       color: c.textPrimary,
-      marginBottom: 4,
+      marginBottom: 2,
     },
     nationality: {
       fontSize: Typography.fontSizeSM,
@@ -838,7 +849,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
       marginBottom: 2,
     },
     location: { fontSize: Typography.fontSizeSM, color: c.textSecondary },
-    rankRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
+    rankRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
     rankBadge: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -854,16 +865,12 @@ function makeStyles(c: ColorPalette, topInset: number) {
       color: c.primary,
     },
     rankPoints: { fontSize: Typography.fontSizeXS, color: c.textSecondary },
-    statsRow: { flexDirection: 'row', gap: 24, marginTop: 10 },
-    statItem: { alignItems: 'center' },
-    statNum: { fontSize: Typography.fontSizeMD, fontWeight: Typography.fontWeightBold, color: c.textPrimary },
-    statLabel: { fontSize: Typography.fontSizeXS, color: c.textSecondary, marginTop: 2 },
     photoError: {
       fontSize: Typography.fontSizeXS,
       color: c.notification,
       marginTop: 4,
     },
-    menuBtn: { padding: 8 },
+    menuBtn: { padding: 8, marginTop: 2 },
     tabs: {
       flexDirection: 'row',
       backgroundColor: c.surface,
@@ -889,14 +896,14 @@ function makeStyles(c: ColorPalette, topInset: number) {
     emptyEmoji: { fontSize: 40, marginBottom: 12 },
     emptyText: { fontSize: Typography.fontSizeMD, color: c.textSecondary },
     avatarImage: {
-      width: 64,
-      height: 64,
-      borderRadius: 32,
+      width: 80,
+      height: 80,
+      borderRadius: 40,
     },
     avatarOverlay: {
       ...StyleSheet.absoluteFillObject,
       backgroundColor: 'rgba(0,0,0,0.45)',
-      borderRadius: 32,
+      borderRadius: 40,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -905,9 +912,9 @@ function makeStyles(c: ColorPalette, topInset: number) {
       bottom: 0,
       right: 0,
       backgroundColor: c.primary,
-      width: 22,
-      height: 22,
-      borderRadius: 11,
+      width: 24,
+      height: 24,
+      borderRadius: 12,
       alignItems: 'center',
       justifyContent: 'center',
     },

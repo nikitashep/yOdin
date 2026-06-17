@@ -200,14 +200,12 @@ export default function FeedScreen({ navigation }: any) {
               </Text>
             </View>
           </TouchableOpacity>
-          <View style={styles.headerRight}>
-            <View style={[styles.categoryBadge, { backgroundColor: badgeColor + '22' }]}>
-              <Text style={[styles.categoryBadgeText, { color: badgeColor }]}>
-                {t(`categories.${item.category}`)}
-              </Text>
-            </View>
-            {!isOwner && <FollowButton targetUid={item.authorId} />}
-          </View>
+          {!isOwner && <FollowButton targetUid={item.authorId} />}
+        </View>
+        <View style={[styles.categoryBadge, { backgroundColor: badgeColor + '22' }]}>
+          <Text style={[styles.categoryBadgeText, { color: badgeColor }]}>
+            {t(`categories.${item.category}`)}
+          </Text>
         </View>
 
         {item.imageURL ? (
@@ -392,7 +390,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
       fontWeight: Typography.fontWeightMedium,
     },
     chipTextActive: { color: '#fff', fontWeight: Typography.fontWeightSemiBold },
-    list: { padding: 16, gap: 12 },
+    list: { padding: 16, gap: 12, paddingBottom: 96 },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     empty: { alignItems: 'center', paddingTop: 80 },
     emptyEmoji: { fontSize: 48, marginBottom: 12 },
@@ -410,7 +408,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
     authorTap: { flexDirection: 'row', alignItems: 'center', flex: 1 },
-    headerRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     avatar: {
       width: 44,
       height: 44,
@@ -441,7 +438,8 @@ function makeStyles(c: ColorPalette, topInset: number) {
       paddingHorizontal: 10,
       paddingVertical: 5,
       borderRadius: 12,
-      marginLeft: 8,
+      alignSelf: 'flex-start',
+      marginBottom: 10,
     },
     categoryBadgeText: {
       fontSize: Typography.fontSizeXS,

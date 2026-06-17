@@ -100,14 +100,24 @@ export default function UserProfileScreen({ route, navigation }: any) {
   }
 
   function renderDiscussion({ item }: { item: Discussion }) {
+    const isAnswered = !!item.acceptedReplyId;
     return (
       <TouchableOpacity
-        style={styles.card}
+        style={[styles.card, isAnswered && styles.cardAnswered]}
         activeOpacity={0.85}
         onPress={() => navigation.navigate('DiscussionDetail', { discussionId: item.id, question: item.question })}
       >
+        {isAnswered && (
+          <View style={styles.answeredRow}>
+            <Ionicons name="checkmark-circle" size={13} color={colors.success} />
+            <Text style={styles.answeredText}>{t('discussion.acceptedAnswer')}</Text>
+          </View>
+        )}
         <Text style={styles.cardQuestion}>{item.question}</Text>
-        <Text style={styles.cardMeta}>{t('feed.replies', { count: item.replyCount })}</Text>
+        <View style={styles.cardMetaRow}>
+          <Text style={styles.cardMeta}>{t('feed.replies', { count: item.replyCount })}</Text>
+          <Text style={styles.metaTime}>{formatTime(item.createdAt, t)}</Text>
+        </View>
       </TouchableOpacity>
     );
   }
@@ -202,7 +212,7 @@ export default function UserProfileScreen({ route, navigation }: any) {
             renderItem={({ item }) =>
               tab === 'posts' ? renderPost({ item: item as Post }) : renderDiscussion({ item: item as Discussion })
             }
-            contentContainerStyle={data.length === 0 ? styles.center : { padding: 16, gap: 12 }}
+            contentContainerStyle={data.length === 0 ? styles.center : { padding: 16, gap: 12, paddingBottom: 96 }}
             ListEmptyComponent={
               <View style={styles.empty}>
                 <Text style={styles.emptyEmoji}>{tab === 'posts' ? '📝' : '💬'}</Text>
@@ -284,7 +294,11 @@ function makeStyles(c: ColorPalette, topInset: number) {
     metaRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 10 },
     metaMuted: { fontSize: Typography.fontSizeXS, color: c.textSecondary },
     metaTime: { fontSize: Typography.fontSizeXS, color: c.textSecondary, marginLeft: 'auto' },
-    cardQuestion: { fontSize: Typography.fontSizeMD, color: c.textPrimary, lineHeight: 22, marginBottom: 8 },
+    cardAnswered: { borderColor: c.success, borderWidth: 1.5, backgroundColor: c.success + '0a' },
+    answeredRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 6 },
+    answeredText: { fontSize: Typography.fontSizeXS, color: c.success, fontWeight: Typography.fontWeightSemiBold },
+    cardQuestion: { fontSize: Typography.fontSizeMD, color: c.textPrimary, lineHeight: 22, marginBottom: 6 },
+    cardMetaRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     cardMeta: { fontSize: Typography.fontSizeSM, color: c.primary },
     empty: { alignItems: 'center', paddingTop: 60 },
     emptyEmoji: { fontSize: 40, marginBottom: 12 },

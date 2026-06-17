@@ -129,7 +129,7 @@ export default function NotificationsScreen({ navigation }: any) {
           data={notifications}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
-          contentContainerStyle={notifications.length === 0 ? styles.center : undefined}
+          contentContainerStyle={notifications.length === 0 ? styles.center : { paddingBottom: 96 }}
           ListEmptyComponent={
             <View style={styles.empty}>
               <Text style={styles.emptyEmoji}>🔔</Text>

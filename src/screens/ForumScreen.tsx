@@ -429,7 +429,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
     authorTap: { flexDirection: 'row', alignItems: 'center', flex: 1 },
-    headerRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    headerRight: { flexDirection: 'column', alignItems: 'flex-end', gap: 6 },
     avatar: {
       width: 44,
       height: 44,
@@ -464,7 +464,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
       paddingHorizontal: 8,
       paddingVertical: 4,
       borderRadius: 10,
-      marginLeft: 8,
     },
     answeredBadgeText: {
       color: '#fff',
