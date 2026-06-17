@@ -42,6 +42,7 @@ import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const MENU_W = Math.min(SCREEN_WIDTH * 0.78, 310);
 
 const LANGUAGES = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -109,7 +110,7 @@ export default function ProfileScreen({ navigation }: any) {
   const [editPickerFor, setEditPickerFor] = useState<'nationality' | 'location' | null>(null);
   const [editSearch, setEditSearch] = useState('');
   const [editSaving, setEditSaving] = useState(false);
-  const menuAnim = useState(new Animated.Value(-SCREEN_WIDTH * 0.7))[0];
+  const menuAnim = useState(new Animated.Value(-MENU_W))[0];
 
   useFocusEffect(
     useCallback(() => {
@@ -119,7 +120,7 @@ export default function ProfileScreen({ navigation }: any) {
 
   useEffect(() => {
     Animated.timing(menuAnim, {
-      toValue: menuVisible ? 0 : -SCREEN_WIDTH * 0.7,
+      toValue: menuVisible ? 0 : -MENU_W,
       duration: 280,
       useNativeDriver: true,
     }).start();
@@ -279,7 +280,6 @@ export default function ProfileScreen({ navigation }: any) {
   function openPostDetail(post: Post) {
     setDetailPost(post);
     if (savedVisible) {
-      // Dismiss the saved sheet first — iOS won't present a second modal over it.
       setSavedVisible(false);
       setTimeout(() => setDetailVisible(true), 350);
     } else {
@@ -430,7 +430,7 @@ export default function ProfileScreen({ navigation }: any) {
             </View>
           </View>
           <TouchableOpacity style={styles.menuBtn} onPress={() => setMenuVisible(true)}>
-            <Ionicons name="ellipsis-horizontal" size={22} color={colors.textPrimary} />
+            <Ionicons name="menu-outline" size={26} color={colors.textPrimary} />
           </TouchableOpacity>
         </View>
 
@@ -502,44 +502,94 @@ export default function ProfileScreen({ navigation }: any) {
         />
       )}
 
+      {/* ─── Side Menu ─── */}
       <Animated.View style={[styles.menu, { transform: [{ translateX: menuAnim }] }]}>
-        <Text style={styles.menuTitle}>{t('settings.title')}</Text>
-
-        <View style={styles.menuGroup}>
-          <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuVisible(false); setSavedTab('posts'); setSavedVisible(true); }}>
-            <Ionicons name="bookmark-outline" size={20} color={colors.primary} />
-            <Text style={styles.menuItemText}>{t('profile.saved')}</Text>
-            <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem} onPress={openEditProfile}>
-            <Ionicons name="person-outline" size={20} color={colors.primary} />
-            <Text style={styles.menuItemText}>{t('settings.editProfile')}</Text>
-            <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuVisible(false); setLangModal(true); }}>
-            <Ionicons name="globe-outline" size={20} color={colors.primary} />
-            <Text style={styles.menuItemText}>{t('settings.language')}</Text>
-            <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuVisible(false); setThemeModal(true); }}>
-            <Ionicons name="contrast-outline" size={20} color={colors.primary} />
-            <Text style={styles.menuItemText}>{t('settings.theme')}</Text>
-            <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]} onPress={() => { setMenuVisible(false); setPrivacyModal(true); }}>
-            <Ionicons name="shield-checkmark-outline" size={20} color={colors.primary} />
-            <Text style={styles.menuItemText}>{t('settings.privacy')}</Text>
-            <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
+        {/* Brand header */}
+        <View style={styles.menuBrand}>
+          <Image
+            source={require('../../assets/icon.png')}
+            style={styles.menuLogoImg}
+            resizeMode="contain"
+          />
+          <Text style={styles.menuAppName}>yOdin</Text>
+          <TouchableOpacity style={styles.menuCloseBtn} onPress={() => setMenuVisible(false)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <Ionicons name="close" size={22} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
 
+        {/* User card — tap to open Edit Profile */}
+        <TouchableOpacity style={styles.menuUserCard} onPress={openEditProfile} activeOpacity={0.82}>
+          <View style={styles.menuAvatarWrap}>
+            {profile?.photoURL
+              ? <Image source={{ uri: profile.photoURL }} style={styles.menuAvatarImg} />
+              : <Text style={styles.menuAvatarText}>{initials}</Text>
+            }
+          </View>
+          <View style={styles.menuUserInfo}>
+            <Text style={styles.menuUserName} numberOfLines={1}>
+              {profile?.firstName} {profile?.lastName}
+            </Text>
+            <Text style={styles.menuUserNation} numberOfLines={1}>{flag} {profile?.nationality}</Text>
+            <View style={styles.menuUserRankRow}>
+              <Ionicons name="ribbon" size={11} color={colors.primary} />
+              <Text style={styles.menuUserRankText}> {t(`rank.${rankKey}`)}</Text>
+              <Text style={styles.menuUserPts}> · {t('rank.points', { count: points })}</Text>
+            </View>
+          </View>
+          <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
+        </TouchableOpacity>
+
+        {/* Account group */}
         <View style={styles.menuGroup}>
+          <TouchableOpacity style={styles.menuItem} onPress={openEditProfile}>
+            <View style={[styles.menuIconWrap, { backgroundColor: colors.primaryLight }]}>
+              <Ionicons name="person-outline" size={18} color={colors.primary} />
+            </View>
+            <Text style={styles.menuItemText}>{t('settings.editProfile')}</Text>
+            <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]} onPress={() => { setMenuVisible(false); setSavedTab('posts'); setSavedVisible(true); }}>
+            <View style={[styles.menuIconWrap, { backgroundColor: colors.primaryLight }]}>
+              <Ionicons name="bookmark-outline" size={18} color={colors.primary} />
+            </View>
+            <Text style={styles.menuItemText}>{t('profile.saved')}</Text>
+            <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Preferences group */}
+        <View style={styles.menuGroup}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuVisible(false); setLangModal(true); }}>
+            <View style={[styles.menuIconWrap, { backgroundColor: '#34C75918' }]}>
+              <Ionicons name="globe-outline" size={18} color="#34C759" />
+            </View>
+            <Text style={styles.menuItemText}>{t('settings.language')}</Text>
+            <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuVisible(false); setThemeModal(true); }}>
+            <View style={[styles.menuIconWrap, { backgroundColor: '#FF9F0A18' }]}>
+              <Ionicons name="contrast-outline" size={18} color="#FF9F0A" />
+            </View>
+            <Text style={styles.menuItemText}>{t('settings.theme')}</Text>
+            <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]} onPress={() => { setMenuVisible(false); setPrivacyModal(true); }}>
+            <View style={[styles.menuIconWrap, { backgroundColor: '#30D15818' }]}>
+              <Ionicons name="shield-checkmark-outline" size={18} color="#30D158" />
+            </View>
+            <Text style={styles.menuItemText}>{t('settings.privacy')}</Text>
+            <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ flex: 1 }} />
+
+        {/* Logout */}
+        <View style={[styles.menuGroup, { marginBottom: Math.max(insets.bottom, 16) + 8 }]}>
           <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]} onPress={handleLogout}>
-            <Ionicons name="log-out-outline" size={20} color={colors.notification} />
+            <View style={[styles.menuIconWrap, { backgroundColor: colors.notification + '18' }]}>
+              <Ionicons name="log-out-outline" size={18} color={colors.notification} />
+            </View>
             <Text style={[styles.menuItemText, { color: colors.notification }]}>
               {t('profile.logout')}
             </Text>
@@ -547,7 +597,7 @@ export default function ProfileScreen({ navigation }: any) {
         </View>
       </Animated.View>
 
-      {/* Edit Profile */}
+      {/* ─── Edit Profile ─── */}
       <Modal visible={editVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setEditVisible(false)}>
         <View style={styles.editSheet}>
           {editPickerFor === null ? (
@@ -560,7 +610,34 @@ export default function ProfileScreen({ navigation }: any) {
                 <View style={{ width: 24 }} />
               </View>
 
-              <View style={styles.editBody}>
+              {/* Avatar */}
+              <View style={styles.editAvatarSection}>
+                <TouchableOpacity onPress={handlePickPhoto} disabled={uploadingPhoto} activeOpacity={0.8}>
+                  <View style={styles.editAvatarWrap}>
+                    {profile?.photoURL
+                      ? <Image source={{ uri: profile.photoURL }} style={styles.editAvatarImg} />
+                      : <Text style={styles.editAvatarInitials}>{initials}</Text>
+                    }
+                    {uploadingPhoto && (
+                      <View style={styles.avatarOverlay}>
+                        <ActivityIndicator color="#fff" size="small" />
+                      </View>
+                    )}
+                    <View style={styles.editAvatarCamera}>
+                      <Ionicons name="camera" size={15} color="#fff" />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                <Text style={styles.editAvatarHint}>{t('settings.editProfile')}</Text>
+                {photoError ? <Text style={[styles.photoError, { marginTop: 4 }]}>{photoError}</Text> : null}
+              </View>
+
+              <ScrollView
+                style={{ flex: 1 }}
+                contentContainerStyle={styles.editBody}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+              >
                 <Text style={styles.editLabel}>{t('auth.firstName')}</Text>
                 <TextInput
                   style={styles.editInput}
@@ -598,7 +675,7 @@ export default function ProfileScreen({ navigation }: any) {
                   }
                   <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
                 </TouchableOpacity>
-              </View>
+              </ScrollView>
 
               <TouchableOpacity
                 style={[styles.saveBtn, (editSaving || !editFirstName.trim() || !editLastName.trim() || !editNationality || !editLocation) && styles.saveBtnDisabled]}
@@ -744,7 +821,7 @@ export default function ProfileScreen({ navigation }: any) {
         </View>
       </Modal>
 
-      {/* Saved (posts + discussions) */}
+      {/* Saved */}
       <Modal visible={savedVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSavedVisible(false)}>
         <View style={styles.editSheet}>
           <View style={styles.editHeader}>
@@ -882,7 +959,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
       color: c.notification,
       marginTop: 4,
     },
-    menuBtn: { padding: 8, marginTop: 2 },
+    menuBtn: { padding: 6, marginTop: 0 },
     tabs: {
       flexDirection: 'row',
       backgroundColor: c.surface,
@@ -973,45 +1050,126 @@ function makeStyles(c: ColorPalette, topInset: number) {
     cardTime: { fontSize: Typography.fontSizeXS, color: c.textSecondary, marginLeft: 12 },
     backdrop: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0,0,0,0.3)',
+      backgroundColor: 'rgba(0,0,0,0.35)',
       zIndex: 10,
     },
+
+    // ─── Side Menu ───
     menu: {
       position: 'absolute',
       left: 0,
       top: 0,
       bottom: 0,
-      width: SCREEN_WIDTH * 0.7,
+      width: MENU_W,
       backgroundColor: c.surface,
-      paddingTop: topInset + 24,
-      paddingHorizontal: 24,
       zIndex: 11,
       shadowColor: '#000',
-      shadowOffset: { width: 4, height: 0 },
-      shadowOpacity: 0.15,
-      shadowRadius: 12,
-      elevation: 8,
+      shadowOffset: { width: 6, height: 0 },
+      shadowOpacity: 0.18,
+      shadowRadius: 16,
+      elevation: 10,
+      flexDirection: 'column',
     },
-    menuTitle: {
-      fontSize: Typography.fontSizeLG,
-      fontWeight: Typography.fontWeightBold,
-      color: c.textPrimary,
-      marginBottom: 20,
+    menuBrand: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingTop: topInset + 16,
+      paddingBottom: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
     },
-    menuGroup: {
+    menuLogoImg: {
+      width: 34,
+      height: 34,
+      borderRadius: 8,
+      marginRight: 10,
+    },
+    menuAppName: {
+      flex: 1,
+      fontSize: 20,
+      fontWeight: '700',
+      color: c.primary,
+      letterSpacing: 0.3,
+    },
+    menuCloseBtn: {
+      padding: 4,
+    },
+    menuUserCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginHorizontal: 16,
+      marginTop: 16,
+      marginBottom: 4,
+      padding: 14,
       backgroundColor: c.background,
-      borderRadius: 12,
+      borderRadius: 14,
       borderWidth: 1,
       borderColor: c.border,
-      marginBottom: 12,
+    },
+    menuAvatarWrap: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: c.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 0,
+    },
+    menuAvatarImg: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+    },
+    menuAvatarText: {
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightBold,
+      color: c.primary,
+    },
+    menuUserInfo: {
+      flex: 1,
+      marginLeft: 12,
+      marginRight: 6,
+    },
+    menuUserName: {
+      fontSize: Typography.fontSizeSM,
+      fontWeight: Typography.fontWeightBold,
+      color: c.textPrimary,
+      marginBottom: 2,
+    },
+    menuUserNation: {
+      fontSize: Typography.fontSizeXS,
+      color: c.textSecondary,
+      marginBottom: 3,
+    },
+    menuUserRankRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    menuUserRankText: {
+      fontSize: Typography.fontSizeXS,
+      color: c.primary,
+      fontWeight: Typography.fontWeightSemiBold,
+    },
+    menuUserPts: {
+      fontSize: Typography.fontSizeXS,
+      color: c.textSecondary,
+    },
+    menuGroup: {
+      marginHorizontal: 16,
+      marginTop: 12,
+      backgroundColor: c.background,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: c.border,
       overflow: 'hidden',
     },
     menuItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: 14,
-      paddingHorizontal: 16,
-      gap: 14,
+      paddingVertical: 13,
+      paddingHorizontal: 14,
+      gap: 12,
       backgroundColor: c.surface,
       borderBottomWidth: 1,
       borderBottomColor: c.border,
@@ -1019,12 +1177,67 @@ function makeStyles(c: ColorPalette, topInset: number) {
     menuItemLast: {
       borderBottomWidth: 0,
     },
+    menuIconWrap: {
+      width: 34,
+      height: 34,
+      borderRadius: 9,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     menuItemText: {
       flex: 1,
-      fontSize: Typography.fontSizeMD,
+      fontSize: Typography.fontSizeSM,
       color: c.textPrimary,
       fontWeight: Typography.fontWeightMedium,
     },
+
+    // ─── Edit Profile ───
+    editAvatarSection: {
+      alignItems: 'center',
+      paddingVertical: 24,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+      backgroundColor: c.surface,
+    },
+    editAvatarWrap: {
+      width: 96,
+      height: 96,
+      borderRadius: 48,
+      backgroundColor: c.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    editAvatarImg: {
+      width: 96,
+      height: 96,
+      borderRadius: 48,
+    },
+    editAvatarInitials: {
+      fontSize: 32,
+      fontWeight: Typography.fontWeightBold,
+      color: c.primary,
+    },
+    editAvatarCamera: {
+      position: 'absolute',
+      bottom: 2,
+      right: 2,
+      backgroundColor: c.primary,
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 2,
+      borderColor: c.surface,
+    },
+    editAvatarHint: {
+      marginTop: 10,
+      fontSize: Typography.fontSizeXS,
+      color: c.primary,
+      fontWeight: Typography.fontWeightMedium,
+    },
+
+    // ─── Modals shared ───
     modalOverlay: {
       flex: 1,
       backgroundColor: 'rgba(0,0,0,0.4)',
@@ -1097,6 +1310,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
       paddingBottom: 16,
       borderBottomWidth: 1,
       borderBottomColor: c.border,
+      backgroundColor: c.surface,
     },
     editTitle: {
       fontSize: Typography.fontSizeLG,
@@ -1105,14 +1319,14 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     editBody: {
       padding: 24,
-      flex: 1,
+      paddingBottom: 32,
     },
     editLabel: {
-      fontSize: Typography.fontSizeSM,
+      fontSize: Typography.fontSizeXS,
       fontWeight: Typography.fontWeightSemiBold,
       color: c.textSecondary,
       textTransform: 'uppercase',
-      letterSpacing: 0.5,
+      letterSpacing: 0.6,
       marginBottom: 8,
     },
     editInput: {
