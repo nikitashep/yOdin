@@ -105,7 +105,9 @@ export default function FeedScreen({ navigation }: any) {
     try {
       const category = filter === 'all' ? undefined : filter;
       const { posts: data, lastDoc: last } = await fetchPosts(category, selectedNations);
-      const sorted = selectedNations.length === 0 ? weightedSort(data, profile.nationality) : data;
+      const sorted = selectedNations.length === 0
+        ? weightedSort(data, { myNationality: profile.nationality, following: profile.following ?? [] }, (p) => (p.likes?.length ?? 0) + (p.commentCount ?? 0))
+        : data;
       setPosts(sorted);
       setLastDoc(last);
       setHasMore(data.length === PAGE_SIZE);
@@ -123,7 +125,7 @@ export default function FeedScreen({ navigation }: any) {
       const category = filter === 'all' ? undefined : filter;
       const { posts: data, lastDoc: last } = await fetchPosts(category, selectedNations, lastDoc);
       const sorted = selectedNations.length === 0 && profile?.nationality
-        ? weightedSort(data, profile.nationality)
+        ? weightedSort(data, { myNationality: profile.nationality, following: profile.following ?? [] }, (p) => (p.likes?.length ?? 0) + (p.commentCount ?? 0))
         : data;
       appendPosts(sorted);
       setLastDoc(last);
