@@ -46,3 +46,7 @@ functions/lib/
 # generated native folders
 /ios
 /android
+
+# moderator provisioning (local only — never commit the service account key)
+set-moderator.js
+serviceAccountKey.json

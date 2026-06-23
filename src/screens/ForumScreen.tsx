@@ -18,6 +18,8 @@ import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
 import { fetchDiscussions, saveDiscussion, unsaveDiscussion, PAGE_SIZE } from '../services/discussionService';
 import { searchDiscussions, AlgoliaHit } from '../services/algoliaService';
+import { createReport } from '../services/reportService';
+import { Alert } from 'react-native';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
 import { Discussion } from '../types';
@@ -186,6 +188,36 @@ export default function ForumScreen({ navigation }: any) {
     }
   }
 
+  function handleReport(item: Discussion) {
+    if (!profile?.uid) return;
+    Alert.alert(
+      t('report.title'),
+      t('report.message'),
+      [
+        { text: t('report.cancel'), style: 'cancel' },
+        {
+          text: t('report.confirm'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await createReport({
+                targetType: 'discussion',
+                targetId: item.id,
+                targetTitle: item.question,
+                targetAuthorId: item.authorId,
+                reportedBy: profile.uid,
+                reason: '',
+              });
+              Alert.alert(t('report.sentTitle'), t('report.sentMessage'));
+            } catch {
+              Alert.alert(t('errors.generic'));
+            }
+          },
+        },
+      ],
+    );
+  }
+
   function renderCard({ item }: { item: Discussion }) {
     const inStore = discussions.some((d) => d.id === item.id);
     const isSaved = inStore
@@ -250,6 +282,11 @@ export default function ForumScreen({ navigation }: any) {
           </Text>
           <View style={styles.cardFooterRight}>
             <Text style={styles.time}>{formatTime(item.createdAt, t)}</Text>
+            {!isOwner && (
+              <TouchableOpacity onPress={() => handleReport(item)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                <Ionicons name="flag-outline" size={18} color={colors.textSecondary} />
+              </TouchableOpacity>
+            )}
             <TouchableOpacity onPress={() => handleSave(item)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
               <Ionicons
                 name={isSaved ? 'bookmark' : 'bookmark-outline'}

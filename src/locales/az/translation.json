@@ -160,6 +160,26 @@
     "guru": "Quru",
     "points": "Xallar: {{count}}"
   },
+    "report": {
+    "title": "Şikayət et",
+    "message": "Bu məzmun haqqında moderatorlara şikayət edilsin?",
+    "confirm": "Şikayət et",
+    "cancel": "Ləğv et",
+    "sentTitle": "Təşəkkürlər",
+    "sentMessage": "Şikayətiniz moderatorlara göndərildi."
+  },
+  "moderation": {
+    "title": "Şikayətlər",
+    "empty": "Yeni şikayət yoxdur",
+    "view": "Aç",
+    "keep": "Saxla",
+    "remove": "Sil",
+    "removeTitle": "Məzmunu silmək?",
+    "removeMessage": "Bu məzmun həmişəlik silinəcək.",
+    "typePost": "Post",
+    "typeDiscussion": "Sual",
+    "alreadyGone": "Bu məzmun artıq mövcud deyil."
+  },
   "comments": {
     "title": "Şərhlər",
     "placeholder": "Şərh yazın...",

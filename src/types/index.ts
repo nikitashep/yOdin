@@ -94,3 +94,17 @@ export interface AppNotification {
   createdAt: number;
   read: boolean;
 }
+
+export type ReportStatus = 'pending' | 'removed' | 'kept';
+
+export interface Report {
+  id: string;
+  targetType: 'post' | 'discussion';
+  targetId: string;
+  targetTitle: string;
+  targetAuthorId: string;
+  reportedBy: string;
+  reason: string;
+  status: ReportStatus;
+  createdAt: number;
+}

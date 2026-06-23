@@ -17,6 +17,7 @@ import { DocumentSnapshot } from 'firebase/firestore';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore, FeedFilter } from '../store/usePostStore';
 import { fetchPosts, deletePost, votePost, savePost, unsavePost, PAGE_SIZE } from '../services/postService';
+import { createReport } from '../services/reportService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
 import { Post, PostCategory, POST_CATEGORIES } from '../types';
@@ -141,6 +142,36 @@ export default function FeedScreen({ navigation }: any) {
     setRefreshing(false);
   }
 
+  function handleReport(item: Post) {
+    if (!profile?.uid) return;
+    Alert.alert(
+      t('report.title'),
+      t('report.message'),
+      [
+        { text: t('report.cancel'), style: 'cancel' },
+        {
+          text: t('report.confirm'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await createReport({
+                targetType: 'post',
+                targetId: item.id,
+                targetTitle: item.title,
+                targetAuthorId: item.authorId,
+                reportedBy: profile.uid,
+                reason: '',
+              });
+              Alert.alert(t('report.sentTitle'), t('report.sentMessage'));
+            } catch {
+              Alert.alert(t('errors.generic'));
+            }
+          },
+        },
+      ],
+    );
+  }
+
   function handleDelete(postId: string) {
     Alert.alert(
       t('deletePost.title'),
@@ -243,12 +274,19 @@ export default function FeedScreen({ navigation }: any) {
             </TouchableOpacity>
           </View>
           <Text style={styles.time}>{formatTime(item.createdAt, t)}</Text>
-          {isOwner && (
+          {isOwner ? (
             <TouchableOpacity
               onPress={() => handleDelete(item.id)}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
               <Ionicons name="trash-outline" size={18} color={colors.notification} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => handleReport(item)}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Ionicons name="flag-outline" size={17} color={colors.textSecondary} />
             </TouchableOpacity>
           )}
         </View>

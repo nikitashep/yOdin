@@ -20,6 +20,7 @@
     "expo-localization": "^55.0.14",
     "expo-status-bar": "~3.0.9",
     "firebase": "^12.13.0",
+    "firebase-admin": "^14.0.0",
     "i18next": "^26.2.0",
     "react": "19.1.0",
     "react-i18next": "^17.0.8",

@@ -39,7 +39,7 @@ service cloud.firestore {
           || postSavedByUpdate()
         );
       allow delete: if request.auth != null
-        && resource.data.authorId == request.auth.uid;
+        && (resource.data.authorId == request.auth.uid || isModerator());
 
       // Comments — any authenticated user can read and post a comment
       match /comments/{commentId} {
@@ -72,7 +72,7 @@ service cloud.firestore {
           || replyCountUpdate()
         );
       allow delete: if request.auth != null
-        && resource.data.authorId == request.auth.uid;
+        && (resource.data.authorId == request.auth.uid || isModerator());
 
       // Replies — any authenticated user may read and post (global forum).
       match /replies/{replyId} {
@@ -109,6 +109,21 @@ service cloud.firestore {
         && request.resource.data.discussionQuestion.size() <= 500
         && request.resource.data.fromUserName is string
         && request.resource.data.fromUserName.size() <= 100;
+    }
+
+    // Reports — any signed-in user can file one; only moderators can see and act on them.
+    match /reports/{reportId} {
+      allow create: if request.auth != null
+        && request.resource.data.reportedBy == request.auth.uid
+        && request.resource.data.targetType in ['post', 'discussion']
+        && request.resource.data.targetId is string
+        && request.resource.data.status == 'pending';
+      allow read, update, delete: if isModerator();
+    }
+
+    // Moderator status is carried by a Firebase custom claim on the ID token.
+    function isModerator() {
+      return request.auth != null && request.auth.token.moderator == true;
     }
 
     // acceptedReplyId: only the question author may set it, and only once (immutable once answered).

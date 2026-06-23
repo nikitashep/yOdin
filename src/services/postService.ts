@@ -1,6 +1,7 @@
 import {
   collection,
   addDoc,
+  getDoc,
   getDocs,
   query,
   where,
@@ -105,6 +106,11 @@ export async function fetchPosts(
   const posts = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Post));
   const lastDoc = snap.docs[snap.docs.length - 1] ?? null;
   return { posts, lastDoc };
+}
+
+export async function fetchPostById(postId: string): Promise<Post | null> {
+  const snap = await getDoc(doc(db, 'posts', postId));
+  return snap.exists() ? ({ id: snap.id, ...snap.data() } as Post) : null;
 }
 
 export async function savePost(userId: string, postId: string): Promise<void> {
