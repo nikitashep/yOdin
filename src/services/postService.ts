@@ -10,6 +10,7 @@ import {
   DocumentSnapshot,
   serverTimestamp,
   doc,
+  setDoc,
   deleteDoc,
   updateDoc,
   arrayUnion,
@@ -23,17 +24,29 @@ import { Post, PostCategory, PostComment } from '../types';
 
 const PAGE_SIZE = 15;
 
+// Generate a post id up front so an image can be uploaded to its storage path
+// and the resulting URL written into the document at creation time.
+export function newPostId(): string {
+  return doc(collection(db, 'posts')).id;
+}
+
 export async function createPost(
   data: Omit<Post, 'id' | 'createdAt'>,
+  id?: string,
 ): Promise<string> {
-  const ref = await addDoc(collection(db, 'posts'), {
+  const payload = {
     ...data,
     likes: [],
     dislikes: [],
     commentCount: 0,
     createdAt: serverTimestamp(),
-  });
-  return ref.id;
+  };
+  if (id) {
+    await setDoc(doc(db, 'posts', id), payload);
+    return id;
+  }
+  const created = await addDoc(collection(db, 'posts'), payload);
+  return created.id;
 }
 
 export async function votePost(
@@ -118,10 +131,6 @@ export async function fetchSavedPosts(uid: string): Promise<Post[]> {
     ),
   );
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Post));
-}
-
-export async function updatePostImage(postId: string, imageURL: string): Promise<void> {
-  await updateDoc(doc(db, 'posts', postId), { imageURL });
 }
 
 export async function deletePost(postId: string): Promise<void> {

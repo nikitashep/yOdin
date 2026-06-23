@@ -20,7 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore } from '../store/usePostStore';
-import { createPost, updatePostImage } from '../services/postService';
+import { createPost, newPostId } from '../services/postService';
 import { uploadPostImage } from '../services/storageService';
 import { getErrorMessage } from '../services/errorHandler';
 import { PostCategory, POST_CATEGORIES } from '../types';
@@ -95,6 +95,18 @@ export default function NewPostModal({ visible, onClose }: Props) {
     setLoading(true);
     setError('');
     try {
+      // Upload the image first so its URL can be saved with the post document.
+      // (The posts security rules don't allow updating imageURL after creation,
+      // so it must be present at create time or it would be lost on refresh.)
+      const id = newPostId();
+      let imageURL = '';
+      if (imageUri) {
+        try {
+          imageURL = await uploadPostImage(id, imageUri);
+        } catch {
+          Alert.alert(t('errors.photoUploadFailed'));
+        }
+      }
       const data = {
         authorId: profile.uid,
         authorName: `${profile.firstName} ${profile.lastName}`,
@@ -104,21 +116,12 @@ export default function NewPostModal({ visible, onClose }: Props) {
         title: title.trim(),
         description: description.trim(),
         category,
-        imageURL: '',
+        imageURL,
         location: profile.location,
       };
-      const id = await createPost(data);
-      let imageURL = '';
-      if (imageUri) {
-        try {
-          imageURL = await uploadPostImage(id, imageUri);
-          await updatePostImage(id, imageURL);
-        } catch {
-          Alert.alert(t('errors.generic'));
-        }
-      }
+      await createPost(data, id);
       if (filter === 'all' || filter === category) {
-        prependPost({ id, ...data, imageURL, createdAt: Date.now() });
+        prependPost({ id, ...data, createdAt: Date.now() });
       }
       onClose();
     } catch (e) {
