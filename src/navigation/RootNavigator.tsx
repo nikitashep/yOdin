@@ -5,6 +5,7 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '../services/firebase';
 import { getUserProfile } from '../services/authService';
 import { useAuthStore } from '../store/useAuthStore';
+import { isModerator } from '../config/moderation';
 import AuthNavigator from './AuthNavigator';
 import TabNavigator from './TabNavigator';
 import OnboardingScreen from '../screens/auth/OnboardingScreen';
@@ -16,7 +17,7 @@ type AppState = 'loading' | 'auth' | 'emailVerification' | 'onboarding' | 'main'
 
 export default function RootNavigator() {
   const [appState, setAppState] = useState<AppState>('loading');
-  const { profile, setProfile, setFirebaseUser, pendingEmailVerification } = useAuthStore();
+  const { profile, setProfile, setFirebaseUser, pendingEmailVerification, setIsModerator } = useAuthStore();
 
   useEffect(() => {
     let unsub: (() => void) | null = null;
@@ -25,8 +26,16 @@ export default function RootNavigator() {
       unsub = onAuthStateChanged(auth, async (user: User | null) => {
         setFirebaseUser(user);
         if (!user) {
+          setIsModerator(false);
           setAppState('auth');
           return;
+        }
+        // Read the moderator custom claim from the signed ID token.
+        try {
+          const token = await user.getIdTokenResult();
+          setIsModerator(isModerator(token));
+        } catch {
+          setIsModerator(false);
         }
         const p = await getUserProfile(user.uid);
         setProfile(p);

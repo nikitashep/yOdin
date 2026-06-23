@@ -23,6 +23,7 @@ import { uploadAvatar } from '../services/storageService';
 import { deleteDiscussion, unsaveDiscussion, fetchUserDiscussions, fetchSavedDiscussions } from '../services/discussionService';
 import { deletePost, unsavePost, fetchUserPosts, fetchSavedPosts } from '../services/postService';
 import { countFollowers } from '../services/userService';
+import { subscribeReports } from '../services/reportService';
 import { formatTime } from '../utils/formatTime';
 import PostDetailModal from './PostDetailModal';
 import { setAppLanguage } from '../services/i18n';
@@ -81,7 +82,7 @@ export default function ProfileScreen({ navigation }: any) {
   const styles = makeStyles(colors, insets.top);
   const preference = useThemeStore((s) => s.preference);
   const setPreference = useThemeStore((s) => s.setPreference);
-  const { profile, setProfile, reset } = useAuthStore();
+  const { profile, setProfile, reset, isModerator } = useAuthStore();
   const { removeDiscussion, toggleSaved } = useFeedStore();
   const { removePost, togglePostSaved } = usePostStore();
   const [tab, setTab] = useState<'posts' | 'discussions'>('posts');
@@ -90,6 +91,7 @@ export default function ProfileScreen({ navigation }: any) {
   const [savedPosts, setSavedPosts] = useState<Post[]>([]);
   const [savedDiscussions, setSavedDiscussions] = useState<Discussion[]>([]);
   const [followersCount, setFollowersCount] = useState(0);
+  const [pendingReports, setPendingReports] = useState(0);
   const [savedVisible, setSavedVisible] = useState(false);
   const [savedTab, setSavedTab] = useState<'posts' | 'discussions'>('posts');
   const [detailPost, setDetailPost] = useState<Post | null>(null);
@@ -125,6 +127,15 @@ export default function ProfileScreen({ navigation }: any) {
       useNativeDriver: true,
     }).start();
   }, [menuVisible]);
+
+  // Moderators get a live count of pending reports (the in-app "notification").
+  useEffect(() => {
+    if (!isModerator) return;
+    const unsub = subscribeReports((all) =>
+      setPendingReports(all.filter((r) => r.status === 'pending').length),
+    );
+    return unsub;
+  }, [isModerator]);
 
   async function loadContent() {
     if (!profile?.uid) return;
@@ -556,6 +567,27 @@ export default function ProfileScreen({ navigation }: any) {
             <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
+
+        {/* Moderation group — only for users with the moderator claim */}
+        {isModerator && (
+          <View style={styles.menuGroup}>
+            <TouchableOpacity
+              style={[styles.menuItem, styles.menuItemLast]}
+              onPress={() => { setMenuVisible(false); navigation.navigate('Reports'); }}
+            >
+              <View style={[styles.menuIconWrap, { backgroundColor: colors.notification + '18' }]}>
+                <Ionicons name="shield-half-outline" size={18} color={colors.notification} />
+              </View>
+              <Text style={styles.menuItemText}>{t('moderation.title')}</Text>
+              {pendingReports > 0 && (
+                <View style={styles.menuBadge}>
+                  <Text style={styles.menuBadgeText}>{pendingReports}</Text>
+                </View>
+              )}
+              <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* Preferences group */}
         <View style={styles.menuGroup}>
@@ -1189,6 +1221,17 @@ function makeStyles(c: ColorPalette, topInset: number) {
       color: c.textPrimary,
       fontWeight: Typography.fontWeightMedium,
     },
+    menuBadge: {
+      minWidth: 20,
+      height: 20,
+      borderRadius: 10,
+      paddingHorizontal: 6,
+      marginRight: 6,
+      backgroundColor: c.notification,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    menuBadgeText: { color: '#fff', fontSize: Typography.fontSizeXS, fontWeight: Typography.fontWeightBold },
 
     // ─── Edit Profile ───
     editAvatarSection: {

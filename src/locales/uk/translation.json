@@ -156,6 +156,7 @@
     "descriptionPlaceholder": "Опис",
     "category": "Категорія",
     "addPhoto": "Додати фото",
+    "photos": "Photos (up to {{count}})",
     "post": "Опублікувати"
   },
   "forum": {
@@ -173,6 +174,26 @@
     "master": "Майстер",
     "guru": "Гуру",
     "points": "Бали: {{count}}"
+  },
+    "report": {
+    "title": "Report",
+    "message": "Report this to the moderators?",
+    "confirm": "Report",
+    "cancel": "Cancel",
+    "sentTitle": "Thank you",
+    "sentMessage": "Your report has been sent to the moderators."
+  },
+  "moderation": {
+    "title": "Reports",
+    "empty": "No pending reports",
+    "view": "View",
+    "keep": "Keep",
+    "remove": "Remove",
+    "removeTitle": "Remove content?",
+    "removeMessage": "This will permanently delete the reported content.",
+    "typePost": "Post",
+    "typeDiscussion": "Question",
+    "alreadyGone": "This content is no longer available."
   },
   "comments": {
     "title": "Коментарі",

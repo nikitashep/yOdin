@@ -10,9 +10,20 @@ service firebase.storage {
     }
     match /posts/{postId}/{fileName} {
       allow read: if true;
-      allow write: if request.auth != null
+      // create/update validate the incoming file; delete has no request.resource,
+      // so it needs its own rule — otherwise cleaning up a removed post's image
+      // would be denied (request.resource.size on a null resource fails).
+      allow create, update: if request.auth != null
         && request.resource.size < 5 * 1024 * 1024
         && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null;
+    }
+    match /discussions/{discussionId}/{fileName} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null;
     }
   }
 }

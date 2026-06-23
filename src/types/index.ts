@@ -28,6 +28,7 @@ export interface Post {
   description: string;
   category: PostCategory;
   imageURL?: string;
+  imageURLs?: string[];
   location: string;
   createdAt: number;
   likes?: string[];
@@ -56,6 +57,7 @@ export interface Discussion {
   authorNationality: string;
   authorCountryCode: string;
   question: string;
+  imageURLs?: string[];
   location?: string;
   createdAt: number;
   replyCount: number;
@@ -93,4 +95,18 @@ export interface AppNotification {
   discussionQuestion: string;
   createdAt: number;
   read: boolean;
+}
+
+export type ReportStatus = 'pending' | 'removed' | 'kept';
+
+export interface Report {
+  id: string;
+  targetType: 'post' | 'discussion';
+  targetId: string;
+  targetTitle: string;
+  targetAuthorId: string;
+  reportedBy: string;
+  reason: string;
+  status: ReportStatus;
+  createdAt: number;
 }

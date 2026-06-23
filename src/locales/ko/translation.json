@@ -155,6 +155,7 @@
     "descriptionPlaceholder": "설명",
     "category": "카테고리",
     "addPhoto": "사진 추가",
+    "photos": "Photos (up to {{count}})",
     "post": "게시"
   },
   "forum": {
@@ -172,6 +173,26 @@
     "master": "마스터",
     "guru": "구루",
     "points": "포인트: {{count}}"
+  },
+    "report": {
+    "title": "Report",
+    "message": "Report this to the moderators?",
+    "confirm": "Report",
+    "cancel": "Cancel",
+    "sentTitle": "Thank you",
+    "sentMessage": "Your report has been sent to the moderators."
+  },
+  "moderation": {
+    "title": "Reports",
+    "empty": "No pending reports",
+    "view": "View",
+    "keep": "Keep",
+    "remove": "Remove",
+    "removeTitle": "Remove content?",
+    "removeMessage": "This will permanently delete the reported content.",
+    "typePost": "Post",
+    "typeDiscussion": "Question",
+    "alreadyGone": "This content is no longer available."
   },
   "comments": {
     "title": "댓글",

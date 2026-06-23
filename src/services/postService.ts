@@ -1,6 +1,7 @@
 import {
   collection,
   addDoc,
+  getDoc,
   getDocs,
   query,
   where,
@@ -10,6 +11,7 @@ import {
   DocumentSnapshot,
   serverTimestamp,
   doc,
+  setDoc,
   deleteDoc,
   updateDoc,
   arrayUnion,
@@ -17,24 +19,36 @@ import {
   increment,
   QueryConstraint,
 } from 'firebase/firestore';
-import { db, storage } from './firebase';
-import { ref, deleteObject as deleteStorageObject } from 'firebase/storage';
+import { db } from './firebase';
+import { deleteStorageFolder } from './storageService';
 import { Post, PostCategory, PostComment } from '../types';
 
 const PAGE_SIZE = 15;
 
+// Generate a post id up front so an image can be uploaded to its storage path
+// and the resulting URL written into the document at creation time.
+export function newPostId(): string {
+  return doc(collection(db, 'posts')).id;
+}
+
 export async function createPost(
   data: Omit<Post, 'id' | 'createdAt'>,
+  id?: string,
 ): Promise<string> {
-  const ref = await addDoc(collection(db, 'posts'), {
+  const payload = {
     ...data,
     likes: [],
     dislikes: [],
     commentCount: 0,
     feedScore: 0,
     createdAt: serverTimestamp(),
-  });
-  return ref.id;
+  };
+  if (id) {
+    await setDoc(doc(db, 'posts', id), payload);
+    return id;
+  }
+  const created = await addDoc(collection(db, 'posts'), payload);
+  return created.id;
 }
 
 export async function votePost(
@@ -95,6 +109,11 @@ export async function fetchPosts(
   return { posts, lastDoc };
 }
 
+export async function fetchPostById(postId: string): Promise<Post | null> {
+  const snap = await getDoc(doc(db, 'posts', postId));
+  return snap.exists() ? ({ id: snap.id, ...snap.data() } as Post) : null;
+}
+
 export async function savePost(userId: string, postId: string): Promise<void> {
   await updateDoc(doc(db, 'posts', postId), { savedBy: arrayUnion(userId) });
 }
@@ -121,13 +140,10 @@ export async function fetchSavedPosts(uid: string): Promise<Post[]> {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Post));
 }
 
-export async function updatePostImage(postId: string, imageURL: string): Promise<void> {
-  await updateDoc(doc(db, 'posts', postId), { imageURL });
-}
-
 export async function deletePost(postId: string): Promise<void> {
   await deleteDoc(doc(db, 'posts', postId));
-  deleteStorageObject(ref(storage, `posts/${postId}/image.jpg`)).catch(() => {});
+  // Remove all of the post's photos from storage (best-effort).
+  deleteStorageFolder(`posts/${postId}`).catch(() => {});
 }
 
 export { PAGE_SIZE };
