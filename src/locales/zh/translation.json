@@ -33,6 +33,9 @@
     "resendEmail": "重新发送",
     "emailResent": "已发送！",
     "continueToApp": "进入应用",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "打开邮件应用"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "主题",
     "descriptionPlaceholder": "描述",
     "category": "分类",
-    "addPhoto": "添加照片",
     "photos": "Photos (up to {{count}})",
     "post": "发布"
   },
@@ -164,7 +166,9 @@
     "answered": "已解答",
     "ask": "提问",
     "search": "搜索问题",
-    "nothingFound": "未找到结果"
+    "nothingFound": "未找到结果",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "新手",

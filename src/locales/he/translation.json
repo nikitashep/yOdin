@@ -33,6 +33,9 @@
     "resendEmail": "שלח שוב",
     "emailResent": "נשלח!",
     "continueToApp": "המשך לאפליקציה",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "פתח אפליקציית דואר"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "נושא",
     "descriptionPlaceholder": "תיאור",
     "category": "קטגוריה",
-    "addPhoto": "הוספת תמונה",
     "photos": "Photos (up to {{count}})",
     "post": "פרסום"
   },
@@ -164,7 +166,9 @@
     "answered": "נענתה",
     "ask": "שאלו שאלה",
     "search": "חיפוש שאלות",
-    "nothingFound": "לא נמצא דבר"
+    "nothingFound": "לא נמצא דבר",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "מתחיל",

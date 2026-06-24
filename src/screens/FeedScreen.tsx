@@ -18,9 +18,10 @@ import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore, FeedFilter } from '../store/usePostStore';
 import { fetchPosts, deletePost, votePost, savePost, unsavePost, PAGE_SIZE } from '../services/postService';
 import { createReport } from '../services/reportService';
+import { fetchTopQuestion } from '../services/discussionService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
-import { Post, PostCategory, POST_CATEGORIES } from '../types';
+import { Post, PostCategory, POST_CATEGORIES, Discussion } from '../types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
@@ -29,6 +30,7 @@ import PostDetailModal from './PostDetailModal';
 import FollowButton from '../components/FollowButton';
 import NationFilterDrawer from '../components/NationFilterDrawer';
 import PhotoGrid from '../components/PhotoGrid';
+import QuestionOfDayCard from '../components/QuestionOfDayCard';
 import { weightedSort } from '../utils/weightedSort';
 import { COUNTRIES } from '../data/countries';
 
@@ -50,6 +52,7 @@ export default function FeedScreen({ navigation }: any) {
   // Empty = all nationalities; otherwise filter to these (country names).
   const [selectedNations, setSelectedNations] = useState<string[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [topQuestion, setTopQuestion] = useState<Discussion | null>(null);
 
   function toggleNation(name: string) {
     setSelectedNations((prev) =>
@@ -113,6 +116,7 @@ export default function FeedScreen({ navigation }: any) {
       setPosts(sorted);
       setLastDoc(last);
       setHasMore(data.length === PAGE_SIZE);
+      fetchTopQuestion().then(setTopQuestion).catch(() => {});
     } catch (e: any) {
       setError(e.message ?? t('errors.generic'));
     } finally {
@@ -251,14 +255,11 @@ export default function FeedScreen({ navigation }: any) {
           </Text>
         </View>
 
-        {(() => {
-          const imgs = item.imageURLs?.length ? item.imageURLs : (item.imageURL ? [item.imageURL] : []);
-          return imgs.length ? (
-            <View style={styles.photoWrap}>
-              <PhotoGrid images={imgs} />
-            </View>
-          ) : null;
-        })()}
+        {item.imageURLs && item.imageURLs.length > 0 ? (
+          <View style={styles.photoWrap}>
+            <PhotoGrid images={item.imageURLs} />
+          </View>
+        ) : null}
 
         <Text style={styles.postTitle}>{item.title}</Text>
         <Text style={styles.postDescription}>{item.description}</Text>
@@ -387,6 +388,17 @@ export default function FeedScreen({ navigation }: any) {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
           onEndReached={loadMore}
           onEndReachedThreshold={0.3}
+          ListHeaderComponent={
+            topQuestion ? (
+              <View style={styles.qodWrap}>
+                <QuestionOfDayCard
+                  discussion={topQuestion}
+                  promoted
+                  onPress={() => navigation.navigate('DiscussionDetail', { discussionId: topQuestion.id, question: topQuestion.question })}
+                />
+              </View>
+            ) : null
+          }
           ListEmptyComponent={
             <View style={styles.empty}>
               <Text style={styles.emptyEmoji}>📰</Text>
@@ -561,14 +573,8 @@ function makeStyles(c: ColorPalette, topInset: number) {
       fontSize: Typography.fontSizeXS,
       fontWeight: Typography.fontWeightSemiBold,
     },
-    postImage: {
-      width: '100%',
-      height: 180,
-      borderRadius: 12,
-      marginBottom: 12,
-      backgroundColor: c.background,
-    },
     photoWrap: { marginBottom: 12 },
+    qodWrap: { marginBottom: 4 },
     postTitle: {
       fontSize: Typography.fontSizeLG,
       fontWeight: Typography.fontWeightBold,

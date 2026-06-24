@@ -33,6 +33,9 @@
     "resendEmail": "ส่งอีเมลอีกครั้ง",
     "emailResent": "ส่งแล้ว!",
     "continueToApp": "ดำเนินการต่อในแอป",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "เปิดแอปอีเมล"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "หัวข้อ",
     "descriptionPlaceholder": "คำอธิบาย",
     "category": "หมวดหมู่",
-    "addPhoto": "เพิ่มรูปภาพ",
     "photos": "Photos (up to {{count}})",
     "post": "เผยแพร่"
   },
@@ -164,7 +166,9 @@
     "answered": "ตอบแล้ว",
     "ask": "ถามคำถาม",
     "search": "ค้นหาคำถาม",
-    "nothingFound": "ไม่พบผลลัพธ์"
+    "nothingFound": "ไม่พบผลลัพธ์",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "มือใหม่",

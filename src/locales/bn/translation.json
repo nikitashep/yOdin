@@ -33,6 +33,9 @@
     "resendEmail": "ইমেইল পুনরায় পাঠান",
     "emailResent": "পাঠানো হয়েছে!",
     "continueToApp": "অ্যাপে চালিয়ে যান",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "ইমেইল অ্যাপ খুলুন"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "বিষয়",
     "descriptionPlaceholder": "বিবরণ",
     "category": "ক্যাটাগরি",
-    "addPhoto": "ছবি যোগ করুন",
     "photos": "Photos (up to {{count}})",
     "post": "প্রকাশ করুন"
   },
@@ -164,7 +166,9 @@
     "answered": "উত্তর দেওয়া হয়েছে",
     "ask": "প্রশ্ন করুন",
     "search": "প্রশ্ন খুঁজুন",
-    "nothingFound": "কিছু পাওয়া যায়নি"
+    "nothingFound": "কিছু পাওয়া যায়নি",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "নবাগত",

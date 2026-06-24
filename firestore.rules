@@ -24,7 +24,9 @@ service cloud.firestore {
     match /posts/{postId} {
       allow read: if request.auth != null;
       allow create: if request.auth != null
+        && isVerified()
         && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.feedScore == 0
         && request.resource.data.title is string
         && request.resource.data.title.size() > 0
         && request.resource.data.title.size() <= 100
@@ -35,7 +37,6 @@ service cloud.firestore {
       allow update: if request.auth != null
         && (
           postVoteUpdate()
-          || commentCountUpdate()
           || postSavedByUpdate()
         );
       allow delete: if request.auth != null
@@ -45,6 +46,7 @@ service cloud.firestore {
       match /comments/{commentId} {
         allow read: if request.auth != null;
         allow create: if request.auth != null
+          && isVerified()
           && request.resource.data.authorId == request.auth.uid
           && request.resource.data.text is string
           && request.resource.data.text.size() > 0
@@ -59,7 +61,10 @@ service cloud.firestore {
     match /discussions/{discussionId} {
       allow read: if request.auth != null;
       allow create: if request.auth != null
+        && isVerified()
         && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.feedScore == 0
+        && request.resource.data.engagement == 0
         && request.resource.data.location == myLocation()
         && request.resource.data.question is string
         && request.resource.data.question.size() > 0
@@ -69,7 +74,6 @@ service cloud.firestore {
         && (
           acceptedReplyUpdate()
           || savedByUpdate()
-          || replyCountUpdate()
         );
       allow delete: if request.auth != null
         && (resource.data.authorId == request.auth.uid || isModerator());
@@ -78,6 +82,7 @@ service cloud.firestore {
       match /replies/{replyId} {
         allow read: if request.auth != null;
         allow create: if request.auth != null
+          && isVerified()
           && request.resource.data.authorId == request.auth.uid
           && request.resource.data.text is string
           && request.resource.data.text.size() > 0
@@ -114,6 +119,7 @@ service cloud.firestore {
     // Reports — any signed-in user can file one; only moderators can see and act on them.
     match /reports/{reportId} {
       allow create: if request.auth != null
+        && isVerified()
         && request.resource.data.reportedBy == request.auth.uid
         && request.resource.data.targetType in ['post', 'discussion']
         && request.resource.data.targetId is string
@@ -124,6 +130,12 @@ service cloud.firestore {
     // Moderator status is carried by a Firebase custom claim on the ID token.
     function isModerator() {
       return request.auth != null && request.auth.token.moderator == true;
+    }
+
+    // Email verification is mandatory to contribute content. The flag lives on
+    // the signed ID token, so it can't be spoofed by the client.
+    function isVerified() {
+      return request.auth != null && request.auth.token.email_verified == true;
     }
 
     // acceptedReplyId: only the question author may set it, and only once (immutable once answered).
@@ -140,18 +152,6 @@ service cloud.firestore {
     function savedByUpdate() {
       return onlyUpdatingField(request, 'savedBy')
         && ownUidArrayChange(resource.data.get('savedBy', []), request.resource.data.get('savedBy', []));
-    }
-
-    // replyCount update: increment only, by exactly 1.
-    function replyCountUpdate() {
-      return onlyUpdatingField(request, 'replyCount')
-        && request.resource.data.replyCount == resource.data.replyCount + 1;
-    }
-
-    // commentCount update: can only increment by exactly 1
-    function commentCountUpdate() {
-      return onlyUpdatingField(request, 'commentCount')
-        && request.resource.data.commentCount == resource.data.get('commentCount', 0) + 1;
     }
 
     // Post save: a user may only add/remove their own UID in savedBy.

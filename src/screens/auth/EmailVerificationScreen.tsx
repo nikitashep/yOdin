@@ -13,7 +13,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { ColorPalette } from '../../theme/colors';
 import { Typography } from '../../theme/typography';
 import { auth } from '../../services/firebase';
-import { resendVerificationEmail } from '../../services/authService';
+import { resendVerificationEmail, logoutUser } from '../../services/authService';
 import { useAuthStore } from '../../store/useAuthStore';
 
 const RESEND_COOLDOWN = 60;
@@ -29,6 +29,8 @@ export default function EmailVerificationScreen() {
   const [cooldown, setCooldown] = useState(0);
   const [resending, setResending] = useState(false);
   const [resentOk, setResentOk] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [notYet, setNotYet] = useState(false);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -48,8 +50,26 @@ export default function EmailVerificationScreen() {
     }
   }
 
-  function handleContinue() {
-    setPendingEmailVerification(false);
+  // Verification is mandatory: only let the user through if Firebase actually
+  // reports the email as verified after a fresh reload.
+  async function handleCheck() {
+    setChecking(true);
+    setNotYet(false);
+    try {
+      await auth.currentUser?.reload();
+      if (auth.currentUser?.emailVerified) {
+        // Force a fresh ID token so its `email_verified` claim is true for the
+        // Firestore security rules (the cached token still says false otherwise).
+        await auth.currentUser.getIdToken(true);
+        setPendingEmailVerification(false);
+      } else {
+        setNotYet(true);
+      }
+    } catch {
+      setNotYet(true);
+    } finally {
+      setChecking(false);
+    }
   }
 
   return (
@@ -85,8 +105,21 @@ export default function EmailVerificationScreen() {
           }
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.continueBtn} onPress={handleContinue}>
-          <Text style={styles.continueBtnText}>{t('auth.continueToApp')}</Text>
+        {notYet ? <Text style={styles.notYet}>{t('auth.notVerifiedYet')}</Text> : null}
+
+        <TouchableOpacity
+          style={[styles.continueBtn, checking && styles.btnDisabled]}
+          onPress={handleCheck}
+          disabled={checking}
+        >
+          {checking
+            ? <ActivityIndicator color="#fff" size="small" />
+            : <Text style={styles.continueBtnText}>{t('auth.iHaveVerified')}</Text>
+          }
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.switchBtn} onPress={() => logoutUser()}>
+          <Text style={styles.switchBtnText}>{t('auth.useAnotherAccount')}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -152,13 +185,30 @@ function makeStyles(c: ColorPalette, topInset: number, bottomInset: number) {
       fontWeight: Typography.fontWeightMedium,
     },
     continueBtn: {
+      backgroundColor: c.primary,
+      borderRadius: 16,
+      paddingVertical: 16,
       alignItems: 'center',
-      paddingVertical: 14,
     },
     continueBtnText: {
+      color: '#fff',
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightSemiBold,
+    },
+    switchBtn: {
+      alignItems: 'center',
+      paddingVertical: 12,
+    },
+    switchBtnText: {
       color: c.textSecondary,
       fontSize: Typography.fontSizeSM,
       fontWeight: Typography.fontWeightMedium,
+    },
+    notYet: {
+      color: c.notification,
+      fontSize: Typography.fontSizeSM,
+      textAlign: 'center',
+      marginBottom: 4,
     },
     btnDisabled: { opacity: 0.5 },
   });

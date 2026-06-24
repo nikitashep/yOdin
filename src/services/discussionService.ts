@@ -15,7 +15,6 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
-  increment,
   writeBatch,
   QueryConstraint,
 } from 'firebase/firestore';
@@ -35,7 +34,7 @@ export async function createDiscussion(
   data: Omit<Discussion, 'id' | 'createdAt' | 'replyCount'>,
   id?: string,
 ): Promise<string> {
-  const payload = { ...data, replyCount: 0, feedScore: 0, createdAt: serverTimestamp() };
+  const payload = { ...data, replyCount: 0, feedScore: 0, engagement: 0, createdAt: serverTimestamp() };
   if (id) {
     await setDoc(doc(db, 'discussions', id), payload);
     return id;
@@ -66,6 +65,21 @@ export async function fetchDiscussions(
 export async function fetchDiscussionById(discussionId: string): Promise<Discussion | null> {
   const snap = await getDoc(doc(db, 'discussions', discussionId));
   return snap.exists() ? ({ id: snap.id, ...snap.data() } as Discussion) : null;
+}
+
+// "Question of the day": the single most-active question (most replies + reply
+// likes/dislikes). Returns null until at least one question has activity.
+export async function fetchTopQuestion(): Promise<Discussion | null> {
+  const snap = await getDocs(
+    query(
+      collection(db, 'discussions'),
+      where('engagement', '>', 0),
+      orderBy('engagement', 'desc'),
+      limit(1),
+    ),
+  );
+  const d = snap.docs[0];
+  return d ? ({ id: d.id, ...d.data() } as Discussion) : null;
 }
 
 export async function fetchUserDiscussions(uid: string): Promise<Discussion[]> {
@@ -100,9 +114,7 @@ export async function addReply(
     dislikes: [],
     createdAt: serverTimestamp(),
   });
-  await updateDoc(doc(db, 'discussions', discussionId), {
-    replyCount: increment(1),
-  });
+  // replyCount is maintained server-side by the onReplyCreated function.
   return ref.id;
 }
 

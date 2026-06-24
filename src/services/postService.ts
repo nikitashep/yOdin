@@ -16,7 +16,6 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
-  increment,
   QueryConstraint,
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -77,7 +76,7 @@ export async function addComment(
     ...data,
     createdAt: serverTimestamp(),
   });
-  await updateDoc(doc(db, 'posts', postId), { commentCount: increment(1) });
+  // commentCount is maintained server-side by the onCommentCreated function.
   return ref.id;
 }
 

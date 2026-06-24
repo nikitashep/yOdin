@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { DocumentSnapshot } from 'firebase/firestore';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
-import { fetchDiscussions, saveDiscussion, unsaveDiscussion, PAGE_SIZE } from '../services/discussionService';
+import { fetchDiscussions, fetchTopQuestion, saveDiscussion, unsaveDiscussion, PAGE_SIZE } from '../services/discussionService';
 import { searchDiscussions, AlgoliaHit } from '../services/algoliaService';
 import { createReport } from '../services/reportService';
 import { Alert } from 'react-native';
@@ -31,6 +31,7 @@ import { weightedSort } from '../utils/weightedSort';
 import FollowButton from '../components/FollowButton';
 import NationFilterDrawer from '../components/NationFilterDrawer';
 import PhotoGrid from '../components/PhotoGrid';
+import QuestionOfDayCard from '../components/QuestionOfDayCard';
 import { COUNTRIES } from '../data/countries';
 
 export default function ForumScreen({ navigation }: any) {
@@ -52,6 +53,7 @@ export default function ForumScreen({ navigation }: any) {
   // Empty = all nationalities; otherwise filter to these (country names).
   const [selectedNations, setSelectedNations] = useState<string[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [topQuestion, setTopQuestion] = useState<Discussion | null>(null);
 
   function toggleNation(name: string) {
     setSelectedNations((prev) =>
@@ -130,6 +132,7 @@ export default function ForumScreen({ navigation }: any) {
       setDiscussions(sorted);
       setLastDoc(last);
       setHasMore(data.length === PAGE_SIZE);
+      fetchTopQuestion().then(setTopQuestion).catch(() => {});
     } catch (e: any) {
       setError(e.message ?? t('errors.generic'));
     } finally {
@@ -395,6 +398,16 @@ export default function ForumScreen({ navigation }: any) {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
           onEndReached={isSearching ? undefined : loadMore}
           onEndReachedThreshold={0.3}
+          ListHeaderComponent={
+            !isSearching && topQuestion ? (
+              <View style={styles.qodWrap}>
+                <QuestionOfDayCard
+                  discussion={topQuestion}
+                  onPress={() => navigation.navigate('DiscussionDetail', { discussionId: topQuestion.id, question: topQuestion.question })}
+                />
+              </View>
+            ) : null
+          }
           ListEmptyComponent={
             <View style={styles.empty}>
               <Text style={styles.emptyEmoji}>{isSearching ? '🔍' : '💬'}</Text>
@@ -498,6 +511,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     drawerBadgeText: { color: '#fff', fontSize: 10, fontWeight: Typography.fontWeightBold },
     natChips: { gap: 8, alignItems: 'center', paddingRight: 8 },
+    qodWrap: { marginBottom: 4 },
     natChip: {
       paddingHorizontal: 14,
       paddingVertical: 7,

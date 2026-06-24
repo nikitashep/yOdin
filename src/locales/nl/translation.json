@@ -33,6 +33,9 @@
     "resendEmail": "E-mail opnieuw sturen",
     "emailResent": "Verstuurd!",
     "continueToApp": "Doorgaan naar app",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "E-mailapp openen"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "Onderwerp",
     "descriptionPlaceholder": "Beschrijving",
     "category": "Categorie",
-    "addPhoto": "Foto toevoegen",
     "photos": "Photos (up to {{count}})",
     "post": "Publiceren"
   },
@@ -164,7 +166,9 @@
     "answered": "Beantwoord",
     "ask": "Stel een vraag",
     "search": "Vragen zoeken",
-    "nothingFound": "Niets gevonden"
+    "nothingFound": "Niets gevonden",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "Beginner",

@@ -33,6 +33,9 @@
     "resendEmail": "Retrimite e-mail",
     "emailResent": "Trimis!",
     "continueToApp": "Continuă în aplicație",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "Deschide aplicația de e-mail"
   },
   "feed": {
@@ -155,7 +158,6 @@
     "topicPlaceholder": "Subiect",
     "descriptionPlaceholder": "Descriere",
     "category": "Categorie",
-    "addPhoto": "Adaugă fotografie",
     "photos": "Photos (up to {{count}})",
     "post": "Publică"
   },
@@ -165,7 +167,9 @@
     "answered": "Răspuns primit",
     "ask": "Pune o întrebare",
     "search": "Caută întrebări",
-    "nothingFound": "Nu s-a găsit nimic"
+    "nothingFound": "Nu s-a găsit nimic",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "Începător",

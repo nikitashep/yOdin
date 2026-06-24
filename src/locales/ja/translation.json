@@ -33,6 +33,9 @@
     "resendEmail": "再送信",
     "emailResent": "送信しました！",
     "continueToApp": "アプリを続ける",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "メールアプリを開く"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "トピック",
     "descriptionPlaceholder": "説明",
     "category": "カテゴリー",
-    "addPhoto": "写真を追加",
     "photos": "Photos (up to {{count}})",
     "post": "投稿する"
   },
@@ -164,7 +166,9 @@
     "answered": "解決済み",
     "ask": "質問する",
     "search": "質問を検索",
-    "nothingFound": "見つかりませんでした"
+    "nothingFound": "見つかりませんでした",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "初心者",

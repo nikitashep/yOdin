@@ -33,6 +33,9 @@
     "resendEmail": "Надіслати знову",
     "emailResent": "Надіслано!",
     "continueToApp": "Продовжити",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "Відкрити пошту"
   },
   "feed": {
@@ -155,7 +158,6 @@
     "topicPlaceholder": "Тема",
     "descriptionPlaceholder": "Опис",
     "category": "Категорія",
-    "addPhoto": "Додати фото",
     "photos": "Photos (up to {{count}})",
     "post": "Опублікувати"
   },
@@ -165,7 +167,9 @@
     "answered": "Відповідь є",
     "ask": "Поставити запитання",
     "search": "Пошук за питаннями",
-    "nothingFound": "Нічого не знайдено"
+    "nothingFound": "Нічого не знайдено",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "Новачок",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { onAuthStateChanged, User } from 'firebase/auth';
@@ -17,7 +17,29 @@ type AppState = 'loading' | 'auth' | 'emailVerification' | 'onboarding' | 'main'
 
 export default function RootNavigator() {
   const [appState, setAppState] = useState<AppState>('loading');
-  const { profile, setProfile, setFirebaseUser, pendingEmailVerification, setIsModerator } = useAuthStore();
+  const { profile, setProfile, setFirebaseUser, pendingEmailVerification, setPendingEmailVerification, setIsModerator } = useAuthStore();
+
+  // Single routing decision for a signed-in user. Email verification is
+  // mandatory: an unverified account is held on the verification screen and
+  // cannot reach onboarding or the app.
+  const routeForUser = useCallback(async (user: User) => {
+    try {
+      setIsModerator(isModerator(await user.getIdTokenResult()));
+    } catch {
+      setIsModerator(false);
+    }
+    // Refresh so a just-clicked verification link is reflected.
+    try { await user.reload(); } catch { /* offline — fall through to gate */ }
+    if (!user.emailVerified) {
+      setPendingEmailVerification(true);
+      setAppState('emailVerification');
+      return;
+    }
+    setPendingEmailVerification(false);
+    const p = await getUserProfile(user.uid);
+    setProfile(p);
+    setAppState(p?.nationality ? 'main' : 'onboarding');
+  }, []);
 
   useEffect(() => {
     let unsub: (() => void) | null = null;
@@ -27,24 +49,16 @@ export default function RootNavigator() {
         setFirebaseUser(user);
         if (!user) {
           setIsModerator(false);
+          setPendingEmailVerification(false);
           setAppState('auth');
           return;
         }
-        // Read the moderator custom claim from the signed ID token.
-        try {
-          const token = await user.getIdTokenResult();
-          setIsModerator(isModerator(token));
-        } catch {
-          setIsModerator(false);
-        }
-        const p = await getUserProfile(user.uid);
-        setProfile(p);
-        setAppState(p?.nationality ? 'main' : 'onboarding');
+        await routeForUser(user);
       });
     });
 
     return () => unsub?.();
-  }, []);
+  }, [routeForUser]);
 
   useEffect(() => {
     if (profile?.nationality && appState === 'onboarding') {
@@ -52,13 +66,13 @@ export default function RootNavigator() {
     }
   }, [profile, appState]);
 
+  // When the user confirms verification on the screen (flag flips to false),
+  // re-evaluate routing — routeForUser re-checks emailVerified before letting in.
   useEffect(() => {
-    if (pendingEmailVerification && (appState === 'onboarding' || appState === 'main')) {
-      setAppState('emailVerification');
-    } else if (!pendingEmailVerification && appState === 'emailVerification') {
-      setAppState(profile?.nationality ? 'main' : 'onboarding');
+    if (appState === 'emailVerification' && !pendingEmailVerification && auth.currentUser) {
+      routeForUser(auth.currentUser);
     }
-  }, [pendingEmailVerification, appState, profile]);
+  }, [pendingEmailVerification, appState, routeForUser]);
 
   if (appState === 'loading') {
     return (

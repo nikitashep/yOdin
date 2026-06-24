@@ -33,6 +33,9 @@
     "resendEmail": "Отправить снова",
     "emailResent": "Отправлено!",
     "continueToApp": "Продолжить",
+    "iHaveVerified": "Я подтвердил — продолжить",
+    "notVerifiedYet": "Email ещё не подтверждён. Откройте ссылку из письма и нажмите здесь.",
+    "useAnotherAccount": "Войти под другим аккаунтом",
     "openEmailApp": "Открыть почту"
   },
   "feed": {
@@ -155,7 +158,6 @@
     "topicPlaceholder": "Тема",
     "descriptionPlaceholder": "Описание",
     "category": "Категория",
-    "addPhoto": "Добавить фото",
     "photos": "Фото (до {{count}})",
     "post": "Опубликовать"
   },
@@ -165,7 +167,9 @@
     "answered": "Отвечено",
     "ask": "Задать вопрос",
     "search": "Поиск по вопросам",
-    "nothingFound": "Ничего не найдено"
+    "nothingFound": "Ничего не найдено",
+    "questionOfDay": "Вопрос дня",
+    "promo": "Промо"
   },
   "rank": {
     "novice": "Новичок",

@@ -33,6 +33,9 @@
     "resendEmail": "ارسال مجدد",
     "emailResent": "ارسال شد!",
     "continueToApp": "ادامه به برنامه",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "باز کردن برنامه ایمیل"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "موضوع",
     "descriptionPlaceholder": "توضیحات",
     "category": "دسته‌بندی",
-    "addPhoto": "افزودن عکس",
     "photos": "Photos (up to {{count}})",
     "post": "انتشار"
   },
@@ -164,7 +166,9 @@
     "answered": "پاسخ داده شد",
     "ask": "پرسیدن سوال",
     "search": "جستجوی سوال‌ها",
-    "nothingFound": "چیزی یافت نشد"
+    "nothingFound": "چیزی یافت نشد",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "تازه‌کار",

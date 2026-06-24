@@ -102,7 +102,6 @@ export default function NewPostModal({ visible, onClose }: Props) {
         title: title.trim(),
         description: description.trim(),
         category,
-        imageURL: imageURLs[0] ?? '',
         imageURLs,
         location: profile.location,
       };

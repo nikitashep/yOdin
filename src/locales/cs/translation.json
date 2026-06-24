@@ -33,6 +33,9 @@
     "resendEmail": "Znovu odeslat e-mail",
     "emailResent": "Odesláno!",
     "continueToApp": "Pokračovat do aplikace",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "Otevřít e-mailovou aplikaci"
   },
   "feed": {
@@ -155,7 +158,6 @@
     "topicPlaceholder": "Téma",
     "descriptionPlaceholder": "Popis",
     "category": "Kategorie",
-    "addPhoto": "Přidat fotku",
     "photos": "Photos (up to {{count}})",
     "post": "Zveřejnit"
   },
@@ -165,7 +167,9 @@
     "answered": "Zodpovězeno",
     "ask": "Položit otázku",
     "search": "Hledat otázky",
-    "nothingFound": "Nic nenalezeno"
+    "nothingFound": "Nic nenalezeno",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "Nováček",

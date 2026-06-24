@@ -27,7 +27,12 @@ export const useFeedStore = create<FeedState>((set) => ({
   hasMore: true,
   setDiscussions: (discussions) => set({ discussions }),
   appendDiscussions: (more) =>
-    set((state) => ({ discussions: [...state.discussions, ...more] })),
+    set((state) => {
+      // Drop any ids already in the list — feedScore re-ranking between pages
+      // can otherwise surface the same doc twice (duplicate FlatList keys).
+      const seen = new Set(state.discussions.map((d) => d.id));
+      return { discussions: [...state.discussions, ...more.filter((d) => !seen.has(d.id))] };
+    }),
   prependDiscussion: (discussion) =>
     set((state) => ({ discussions: [discussion, ...state.discussions] })),
   setLoading: (isLoading) => set({ isLoading }),

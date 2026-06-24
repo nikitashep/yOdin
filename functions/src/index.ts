@@ -19,6 +19,20 @@ function getClient() {
   return algoliasearch(ALGOLIA_APP_ID.value(), ALGOLIA_WRITE_KEY.value());
 }
 
+// Reddit-style "hot" score: a time baseline that grows for newer items plus a
+// logarithmic engagement boost. Because it's anchored to absolute time it stays
+// monotonic in createdAt — new content surfaces and old content sinks naturally,
+// with no scheduled decay job. ~12.5 h of recency ≈ a 10× engagement jump.
+const EPOCH_S = 1_700_000_000;
+function hotScore(engagement: number, createdAtMs: number): number {
+  const order = Math.log10(Math.max(engagement, 0) + 1);
+  const seconds = createdAtMs / 1000 - EPOCH_S;
+  return Number((order + seconds / 45000).toFixed(7));
+}
+function createdMs(data: FirebaseFirestore.DocumentData): number {
+  return data.createdAt?.toMillis?.() ?? Date.now();
+}
+
 // New discussion → index in Algolia
 export const onDiscussionCreated = onDocumentCreated(
   { document: 'discussions/{docId}', secrets: [ALGOLIA_APP_ID, ALGOLIA_WRITE_KEY] },
@@ -41,8 +55,21 @@ export const onDiscussionCreated = onDocumentCreated(
         createdAt: data.createdAt?.toMillis?.() ?? Date.now(),
       },
     });
+    // Seed the recency-based feed score so brand-new questions surface.
+    await db.doc(`discussions/${event.params.docId}`)
+      .update({ feedScore: hotScore(0, createdMs(data)) })
+      .catch(() => {});
   },
 );
+
+// New post → seed its recency-based feed score (no onCreate Algolia for posts).
+export const onPostCreated = onDocumentCreated('posts/{docId}', async (event) => {
+  const data = event.data?.data();
+  if (!data) return;
+  await db.doc(`posts/${event.params.docId}`)
+    .update({ feedScore: hotScore(0, createdMs(data)) })
+    .catch(() => {});
+});
 
 // Discussion deleted → remove from Algolia
 export const onDiscussionDeleted = onDocumentDeleted(
@@ -64,7 +91,7 @@ export const onDiscussionUpdated = onDocumentUpdated(
 
     if (before.replyCount !== after.replyCount) {
       updates.replyCount = after.replyCount;
-      const newFeedScore = (after.replyCount ?? 0) * 2;
+      const newFeedScore = hotScore((after.replyCount ?? 0) * 2, createdMs(after));
       if ((before.feedScore ?? 0) !== newFeedScore) {
         await db.doc(`discussions/${event.params.docId}`).update({ feedScore: newFeedScore });
       }
@@ -112,9 +139,76 @@ export const onPostUpdated = onDocumentUpdated(
     const commentCountChanged = (before.commentCount ?? 0) !== (after.commentCount ?? 0);
     if (!likesChanged && !commentCountChanged) return;
 
-    const newFeedScore = (after.likes?.length ?? 0) * 3 + (after.commentCount ?? 0) * 2;
+    const engagement = (after.likes?.length ?? 0) * 3 + (after.commentCount ?? 0) * 2;
+    const newFeedScore = hotScore(engagement, createdMs(after));
     if ((before.feedScore ?? 0) !== newFeedScore) {
       await db.doc(`posts/${event.params.docId}`).update({ feedScore: newFeedScore });
     }
+  },
+);
+
+// ── Counters maintained server-side ──────────────────────────────────────────
+// The client no longer increments commentCount/replyCount (which fed feedScore
+// and was forgeable). Counts are derived from the actual sub-documents here, so
+// they can't be inflated without real content. (.catch swallows the case where
+// the parent was already deleted — e.g. a discussion delete that batch-removes
+// its replies.)
+
+export const onCommentCreated = onDocumentCreated(
+  'posts/{postId}/comments/{commentId}',
+  async (event) => {
+    await db.doc(`posts/${event.params.postId}`)
+      .update({ commentCount: FieldValue.increment(1) })
+      .catch(() => {});
+  },
+);
+
+export const onCommentDeleted = onDocumentDeleted(
+  'posts/{postId}/comments/{commentId}',
+  async (event) => {
+    await db.doc(`posts/${event.params.postId}`)
+      .update({ commentCount: FieldValue.increment(-1) })
+      .catch(() => {});
+  },
+);
+
+export const onReplyCreated = onDocumentCreated(
+  'discussions/{discussionId}/replies/{replyId}',
+  async (event) => {
+    // A new reply adds 1 comment of activity (its votes start at 0).
+    await db.doc(`discussions/${event.params.discussionId}`)
+      .update({ replyCount: FieldValue.increment(1), engagement: FieldValue.increment(1) })
+      .catch(() => {});
+  },
+);
+
+export const onReplyDeleted = onDocumentDeleted(
+  'discussions/{discussionId}/replies/{replyId}',
+  async (event) => {
+    const r = event.data?.data();
+    const votes = (r?.likes?.length ?? 0) + (r?.dislikes?.length ?? 0);
+    await db.doc(`discussions/${event.params.discussionId}`)
+      .update({
+        replyCount: FieldValue.increment(-1),
+        engagement: FieldValue.increment(-(1 + votes)),
+      })
+      .catch(() => {});
+  },
+);
+
+// Reply voted (likes/dislikes changed) → adjust the parent question's activity.
+export const onReplyUpdated = onDocumentUpdated(
+  'discussions/{discussionId}/replies/{replyId}',
+  async (event) => {
+    const before = event.data?.before.data();
+    const after = event.data?.after.data();
+    if (!before || !after) return;
+    const beforeVotes = (before.likes?.length ?? 0) + (before.dislikes?.length ?? 0);
+    const afterVotes = (after.likes?.length ?? 0) + (after.dislikes?.length ?? 0);
+    const delta = afterVotes - beforeVotes;
+    if (delta === 0) return;
+    await db.doc(`discussions/${event.params.discussionId}`)
+      .update({ engagement: FieldValue.increment(delta) })
+      .catch(() => {});
   },
 );
