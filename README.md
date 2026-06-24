@@ -143,5 +143,9 @@ domains
 i18n
 firebase secret
 firebase functions
+Moderation system
+gmail verification
+password reset
+
 
 
