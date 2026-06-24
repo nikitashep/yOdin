@@ -362,8 +362,8 @@ export default function ProfileScreen({ navigation }: any) {
   function renderPostCard(item: Post, variant: 'mine' | 'saved') {
     return (
       <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={() => openPostDetail(item)}>
-        {item.imageURL ? (
-          <Image source={{ uri: item.imageURL }} style={styles.postCardImage} resizeMode="cover" />
+        {item.imageURLs && item.imageURLs.length > 0 ? (
+          <Image source={{ uri: item.imageURLs[0] }} style={styles.postCardImage} resizeMode="cover" />
         ) : null}
         <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
         <Text style={styles.cardDesc} numberOfLines={2}>{item.description}</Text>

@@ -27,7 +27,6 @@ export interface Post {
   title: string;
   description: string;
   category: PostCategory;
-  imageURL?: string;
   imageURLs?: string[];
   location: string;
   createdAt: number;
@@ -61,6 +60,9 @@ export interface Discussion {
   location?: string;
   createdAt: number;
   replyCount: number;
+  // Total activity under the question (replies + their likes/dislikes), kept by
+  // Cloud Functions. Used to pick the "question of the day".
+  engagement?: number;
   savedBy?: string[];
   acceptedReplyId?: string;
   acceptedReplyText?: string;

@@ -33,6 +33,9 @@
     "resendEmail": "Gửi lại email",
     "emailResent": "Đã gửi!",
     "continueToApp": "Tiếp tục vào ứng dụng",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "Mở ứng dụng email"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "Chủ đề",
     "descriptionPlaceholder": "Mô tả",
     "category": "Danh mục",
-    "addPhoto": "Thêm ảnh",
     "photos": "Photos (up to {{count}})",
     "post": "Đăng"
   },
@@ -164,7 +166,9 @@
     "answered": "Đã trả lời",
     "ask": "Đặt câu hỏi",
     "search": "Tìm câu hỏi",
-    "nothingFound": "Không tìm thấy gì"
+    "nothingFound": "Không tìm thấy gì",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "Người mới",

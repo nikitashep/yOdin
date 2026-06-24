@@ -33,6 +33,9 @@
     "resendEmail": "Reenviar correo",
     "emailResent": "¡Enviado!",
     "continueToApp": "Continuar a la app",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "Abrir app de correo"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "Tema",
     "descriptionPlaceholder": "Descripción",
     "category": "Categoría",
-    "addPhoto": "Añadir foto",
     "photos": "Photos (up to {{count}})",
     "post": "Publicar"
   },
@@ -164,7 +166,9 @@
     "answered": "Respondida",
     "ask": "Hacer una pregunta",
     "search": "Buscar preguntas",
-    "nothingFound": "No se encontró nada"
+    "nothingFound": "No se encontró nada",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "Novato",

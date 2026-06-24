@@ -33,6 +33,9 @@
     "resendEmail": "Yenidən göndər",
     "emailResent": "Göndərildi!",
     "continueToApp": "Tətbiqə keçin",
+    "iHaveVerified": "Təsdiqlədim — davam et",
+    "notVerifiedYet": "Email hələ təsdiqlənməyib. Məktubdakı linkə keçin, sonra buraya toxunun.",
+    "useAnotherAccount": "Başqa hesabla daxil ol",
     "openEmailApp": "Poçtu aç"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "Mövzu",
     "descriptionPlaceholder": "Təsvir",
     "category": "Kateqoriya",
-    "addPhoto": "Şəkil əlavə et",
     "photos": "Şəkillər ({{count}}-ə qədər)",
     "post": "Paylaş"
   },
@@ -164,7 +166,9 @@
     "answered": "Cavablandı",
     "ask": "Sual ver",
     "search": "Suallarda axtarış",
-    "nothingFound": "Heç nə tapılmadı"
+    "nothingFound": "Heç nə tapılmadı",
+    "questionOfDay": "Günün sualı",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "Yeni başlayan",

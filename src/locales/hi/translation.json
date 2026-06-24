@@ -33,6 +33,9 @@
     "resendEmail": "ईमेल पुनः भेजें",
     "emailResent": "भेजा गया!",
     "continueToApp": "ऐप में जाएं",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "ईमेल ऐप खोलें"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "विषय",
     "descriptionPlaceholder": "विवरण",
     "category": "श्रेणी",
-    "addPhoto": "फोटो जोड़ें",
     "photos": "Photos (up to {{count}})",
     "post": "प्रकाशित करें"
   },
@@ -164,7 +166,9 @@
     "answered": "उत्तर मिला",
     "ask": "सवाल पूछें",
     "search": "सवाल खोजें",
-    "nothingFound": "कुछ नहीं मिला"
+    "nothingFound": "कुछ नहीं मिला",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "नौसिखिया",

@@ -33,6 +33,9 @@
     "resendEmail": "Kirim Ulang Email",
     "emailResent": "Terkirim!",
     "continueToApp": "Lanjutkan ke Aplikasi",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "Buka Aplikasi Email"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "Topik",
     "descriptionPlaceholder": "Deskripsi",
     "category": "Kategori",
-    "addPhoto": "Tambah Foto",
     "photos": "Photos (up to {{count}})",
     "post": "Terbitkan"
   },
@@ -164,7 +166,9 @@
     "answered": "Terjawab",
     "ask": "Ajukan Pertanyaan",
     "search": "Cari pertanyaan",
-    "nothingFound": "Tidak ada hasil"
+    "nothingFound": "Tidak ada hasil",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "Pemula",

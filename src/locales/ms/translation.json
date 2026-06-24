@@ -33,6 +33,9 @@
     "resendEmail": "Hantar Semula E-mel",
     "emailResent": "Dihantar!",
     "continueToApp": "Teruskan ke Aplikasi",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "Buka Aplikasi E-mel"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "Topik",
     "descriptionPlaceholder": "Penerangan",
     "category": "Kategori",
-    "addPhoto": "Tambah Foto",
     "photos": "Photos (up to {{count}})",
     "post": "Terbitkan"
   },
@@ -164,7 +166,9 @@
     "answered": "Dijawab",
     "ask": "Tanya Soalan",
     "search": "Cari soalan",
-    "nothingFound": "Tiada hasil ditemui"
+    "nothingFound": "Tiada hasil ditemui",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "Orang baru",

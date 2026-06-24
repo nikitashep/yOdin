@@ -240,14 +240,11 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
                 </TouchableOpacity>
               </View>
 
-              {(() => {
-                const imgs = post.imageURLs?.length ? post.imageURLs : (post.imageURL ? [post.imageURL] : []);
-                return imgs.length ? (
-                  <View style={styles.photoWrap}>
-                    <PhotoGrid images={imgs} />
-                  </View>
-                ) : null;
-              })()}
+              {post.imageURLs && post.imageURLs.length > 0 ? (
+                <View style={styles.photoWrap}>
+                  <PhotoGrid images={post.imageURLs} />
+                </View>
+              ) : null}
 
               <Text style={styles.postTitle}>{post.title}</Text>
               <Text style={styles.postDescription}>{post.description}</Text>
@@ -366,7 +363,6 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
     avatarText: { fontSize: Typography.fontSizeLG, fontWeight: Typography.fontWeightBold, color: c.primary },
     authorName: { fontSize: Typography.fontSizeMD, fontWeight: Typography.fontWeightSemiBold, color: c.textPrimary },
     authorMeta: { fontSize: Typography.fontSizeSM, color: c.textSecondary, marginTop: 2 },
-    postImage: { width: '100%', height: 160, borderRadius: 12, marginBottom: 12, backgroundColor: c.background },
     photoWrap: { marginBottom: 12 },
     postTitle: { fontSize: Typography.fontSizeLG, fontWeight: Typography.fontWeightBold, color: c.textPrimary, marginBottom: 6 },
     postDescription: { fontSize: Typography.fontSizeMD, color: c.textPrimary, lineHeight: 22, marginBottom: 8 },

@@ -33,6 +33,9 @@
     "resendEmail": "Skicka om e-post",
     "emailResent": "Skickat!",
     "continueToApp": "Fortsätt till appen",
+    "iHaveVerified": "I've verified — continue",
+    "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
+    "useAnotherAccount": "Use another account",
     "openEmailApp": "Öppna e-postapp"
   },
   "feed": {
@@ -154,7 +157,6 @@
     "topicPlaceholder": "Ämne",
     "descriptionPlaceholder": "Beskrivning",
     "category": "Kategori",
-    "addPhoto": "Lägg till foto",
     "photos": "Photos (up to {{count}})",
     "post": "Publicera"
   },
@@ -164,7 +166,9 @@
     "answered": "Besvarad",
     "ask": "Ställ en fråga",
     "search": "Sök frågor",
-    "nothingFound": "Inget hittades"
+    "nothingFound": "Inget hittades",
+    "questionOfDay": "Question of the day",
+    "promo": "Promo"
   },
   "rank": {
     "novice": "Nybörjare",

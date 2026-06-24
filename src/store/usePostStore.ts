@@ -26,7 +26,13 @@ export const usePostStore = create<PostState>((set) => ({
   isLoading: false,
   hasMore: true,
   setPosts: (posts) => set({ posts }),
-  appendPosts: (more) => set((state) => ({ posts: [...state.posts, ...more] })),
+  appendPosts: (more) =>
+    set((state) => {
+      // Drop ids already present — feedScore re-ranking between pages can
+      // otherwise return the same post twice (duplicate FlatList keys).
+      const seen = new Set(state.posts.map((p) => p.id));
+      return { posts: [...state.posts, ...more.filter((p) => !seen.has(p.id))] };
+    }),
   prependPost: (post) => set((state) => ({ posts: [post, ...state.posts] })),
   setFilter: (filter) => set({ filter }),
   setLoading: (isLoading) => set({ isLoading }),
