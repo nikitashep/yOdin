@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "Selamat datang ke yOdin",
     "subtitle": "Berhubung merentas budaya",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "Buka Aplikasi E-mel"
+    "openEmailApp": "Buka Aplikasi E-mel",
+    "sendEmail": "Hantar e-mel"
   },
   "feed": {
     "title": "Suapan",
@@ -121,7 +122,12 @@
     "cancel": "Batal",
     "delete": "Padam"
   },
-    "deletePost": { "title": "Padam siaran", "message": "Adakah anda pasti mahu memadam siaran ini?", "cancel": "Batal", "delete": "Padam" },
+  "deletePost": {
+    "title": "Padam siaran",
+    "message": "Adakah anda pasti mahu memadam siaran ini?",
+    "cancel": "Batal",
+    "delete": "Padam"
+  },
   "time": {
     "justNow": "baru sahaja",
     "minutesAgo": "{{count}} min lalu",
@@ -178,7 +184,7 @@
     "guru": "Guru",
     "points": "Mata: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

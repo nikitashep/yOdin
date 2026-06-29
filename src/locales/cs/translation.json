@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "Vítejte v yOdin",
     "subtitle": "Spojte se napříč kulturami",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "Otevřít e-mailovou aplikaci"
+    "openEmailApp": "Otevřít e-mailovou aplikaci",
+    "sendEmail": "Odeslat e-mail"
   },
   "feed": {
     "title": "Přehled",
@@ -122,7 +123,12 @@
     "cancel": "Zrušit",
     "delete": "Smazat"
   },
-    "deletePost": { "title": "Smazat příspěvek", "message": "Opravdu chcete smazat tento příspěvek?", "cancel": "Zrušit", "delete": "Smazat" },
+  "deletePost": {
+    "title": "Smazat příspěvek",
+    "message": "Opravdu chcete smazat tento příspěvek?",
+    "cancel": "Zrušit",
+    "delete": "Smazat"
+  },
   "time": {
     "justNow": "právě teď",
     "minutesAgo": "před {{count}} min",
@@ -179,7 +185,7 @@
     "guru": "Guru",
     "points": "Body: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "yOdin में आपका स्वागत है",
     "subtitle": "संस्कृतियों के पार जुड़ें",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "ईमेल ऐप खोलें"
+    "openEmailApp": "ईमेल ऐप खोलें",
+    "sendEmail": "ईमेल भेजें"
   },
   "feed": {
     "title": "फ़ीड",
@@ -121,7 +122,12 @@
     "cancel": "रद्द करें",
     "delete": "हटाएं"
   },
-    "deletePost": { "title": "पोस्ट हटाएं", "message": "क्या आप वाकई इस पोस्ट को हटाना चाहते हैं?", "cancel": "रद्द करें", "delete": "हटाएं" },
+  "deletePost": {
+    "title": "पोस्ट हटाएं",
+    "message": "क्या आप वाकई इस पोस्ट को हटाना चाहते हैं?",
+    "cancel": "रद्द करें",
+    "delete": "हटाएं"
+  },
   "time": {
     "justNow": "अभी",
     "minutesAgo": "{{count}} मिनट पहले",
@@ -178,7 +184,7 @@
     "guru": "गुरु",
     "points": "अंक: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

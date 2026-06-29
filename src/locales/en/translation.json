@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "Welcome to yOdin",
     "subtitle": "Connect across cultures",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "Open Email App"
+    "openEmailApp": "Open Email App",
+    "sendEmail": "Send Email"
   },
   "feed": {
     "title": "Feed",
@@ -183,7 +184,7 @@
     "guru": "Guru",
     "points": "Points: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "مرحباً بك في yOdin",
     "subtitle": "تواصل عبر الثقافات",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "فتح تطبيق البريد"
+    "openEmailApp": "فتح تطبيق البريد",
+    "sendEmail": "إرسال البريد الإلكتروني"
   },
   "feed": {
     "title": "الرئيسية",
@@ -125,7 +126,12 @@
     "cancel": "إلغاء",
     "delete": "حذف"
   },
-    "deletePost": { "title": "حذف المنشور", "message": "هل أنت متأكد أنك تريد حذف هذا المنشور؟", "cancel": "إلغاء", "delete": "حذف" },
+  "deletePost": {
+    "title": "حذف المنشور",
+    "message": "هل أنت متأكد أنك تريد حذف هذا المنشور؟",
+    "cancel": "إلغاء",
+    "delete": "حذف"
+  },
   "time": {
     "justNow": "الآن",
     "minutesAgo": "منذ {{count}} د",
@@ -182,7 +188,7 @@
     "guru": "جورو",
     "points": "النقاط: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "Chào mừng đến với yOdin",
     "subtitle": "Kết nối qua các nền văn hóa",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "Mở ứng dụng email"
+    "openEmailApp": "Mở ứng dụng email",
+    "sendEmail": "Gửi email"
   },
   "feed": {
     "title": "Bảng tin",
@@ -121,7 +122,12 @@
     "cancel": "Hủy",
     "delete": "Xóa"
   },
-    "deletePost": { "title": "Xóa bài đăng", "message": "Bạn có chắc muốn xóa bài đăng này không?", "cancel": "Hủy", "delete": "Xóa" },
+  "deletePost": {
+    "title": "Xóa bài đăng",
+    "message": "Bạn có chắc muốn xóa bài đăng này không?",
+    "cancel": "Hủy",
+    "delete": "Xóa"
+  },
   "time": {
     "justNow": "vừa xong",
     "minutesAgo": "{{count}} phút trước",
@@ -178,7 +184,7 @@
     "guru": "Guru",
     "points": "Điểm: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

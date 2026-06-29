@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "Welkom bij yOdin",
     "subtitle": "Verbind je over culturen heen",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "E-mailapp openen"
+    "openEmailApp": "E-mailapp openen",
+    "sendEmail": "E-mail verzenden"
   },
   "feed": {
     "title": "Feed",
@@ -121,7 +122,12 @@
     "cancel": "Annuleren",
     "delete": "Verwijderen"
   },
-    "deletePost": { "title": "Bericht verwijderen", "message": "Weet u zeker dat u dit bericht wilt verwijderen?", "cancel": "Annuleren", "delete": "Verwijderen" },
+  "deletePost": {
+    "title": "Bericht verwijderen",
+    "message": "Weet u zeker dat u dit bericht wilt verwijderen?",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen"
+  },
   "time": {
     "justNow": "zojuist",
     "minutesAgo": "{{count}} min geleden",
@@ -178,7 +184,7 @@
     "guru": "Goeroe",
     "points": "Punten: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

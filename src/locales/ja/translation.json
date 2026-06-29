@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "yOdinへようこそ",
     "subtitle": "文化を超えてつながろう",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "メールアプリを開く"
+    "openEmailApp": "メールアプリを開く",
+    "sendEmail": "メールを送信"
   },
   "feed": {
     "title": "フィード",
@@ -121,7 +122,12 @@
     "cancel": "キャンセル",
     "delete": "削除"
   },
-    "deletePost": { "title": "投稿を削除", "message": "この投稿を削除してもよろしいですか？", "cancel": "キャンセル", "delete": "削除" },
+  "deletePost": {
+    "title": "投稿を削除",
+    "message": "この投稿を削除してもよろしいですか？",
+    "cancel": "キャンセル",
+    "delete": "削除"
+  },
   "time": {
     "justNow": "たった今",
     "minutesAgo": "{{count}}分前",
@@ -178,7 +184,7 @@
     "guru": "グル",
     "points": "ポイント：{{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

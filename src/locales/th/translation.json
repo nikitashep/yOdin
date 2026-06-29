@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "ยินดีต้อนรับสู่ yOdin",
     "subtitle": "เชื่อมต่อข้ามวัฒนธรรม",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "เปิดแอปอีเมล"
+    "openEmailApp": "เปิดแอปอีเมล",
+    "sendEmail": "ส่งอีเมล"
   },
   "feed": {
     "title": "ฟีด",
@@ -121,7 +122,12 @@
     "cancel": "ยกเลิก",
     "delete": "ลบ"
   },
-    "deletePost": { "title": "ลบโพสต์", "message": "คุณแน่ใจหรือไม่ว่าต้องการลบโพสต์นี้?", "cancel": "ยกเลิก", "delete": "ลบ" },
+  "deletePost": {
+    "title": "ลบโพสต์",
+    "message": "คุณแน่ใจหรือไม่ว่าต้องการลบโพสต์นี้?",
+    "cancel": "ยกเลิก",
+    "delete": "ลบ"
+  },
   "time": {
     "justNow": "เมื่อกี้",
     "minutesAgo": "{{count}} นาทีที่แล้ว",
@@ -178,7 +184,7 @@
     "guru": "กูรู",
     "points": "คะแนน: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

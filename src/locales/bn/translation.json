@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "yOdin-এ স্বাগতম",
     "subtitle": "সংস্কৃতির সেতুবন্ধন করুন",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "ইমেইল অ্যাপ খুলুন"
+    "openEmailApp": "ইমেইল অ্যাপ খুলুন",
+    "sendEmail": "ইমেইল পাঠান"
   },
   "feed": {
     "title": "ফিড",
@@ -121,7 +122,12 @@
     "cancel": "বাতিল",
     "delete": "মুছুন"
   },
-    "deletePost": { "title": "পোস্ট মুছুন", "message": "আপনি কি এই পোস্টটি মুছতে চান?", "cancel": "বাতিল", "delete": "মুছুন" },
+  "deletePost": {
+    "title": "পোস্ট মুছুন",
+    "message": "আপনি কি এই পোস্টটি মুছতে চান?",
+    "cancel": "বাতিল",
+    "delete": "মুছুন"
+  },
   "time": {
     "justNow": "এইমাত্র",
     "minutesAgo": "{{count}} মিনিট আগে",
@@ -178,7 +184,7 @@
     "guru": "গুরু",
     "points": "পয়েন্ট: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

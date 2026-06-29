@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "Välkommen till yOdin",
     "subtitle": "Koppla samman kulturer",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "Öppna e-postapp"
+    "openEmailApp": "Öppna e-postapp",
+    "sendEmail": "Skicka e-post"
   },
   "feed": {
     "title": "Flöde",
@@ -121,7 +122,12 @@
     "cancel": "Avbryt",
     "delete": "Ta bort"
   },
-    "deletePost": { "title": "Ta bort inlägg", "message": "Är du säker på att du vill ta bort det här inlägget?", "cancel": "Avbryt", "delete": "Ta bort" },
+  "deletePost": {
+    "title": "Ta bort inlägg",
+    "message": "Är du säker på att du vill ta bort det här inlägget?",
+    "cancel": "Avbryt",
+    "delete": "Ta bort"
+  },
   "time": {
     "justNow": "precis nu",
     "minutesAgo": "för {{count}} min sedan",
@@ -178,7 +184,7 @@
     "guru": "Guru",
     "points": "Poäng: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

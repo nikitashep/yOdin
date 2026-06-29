@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "به yOdin خوش آمدید",
     "subtitle": "در فرهنگ‌های مختلف ارتباط برقرار کنید",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "باز کردن برنامه ایمیل"
+    "openEmailApp": "باز کردن برنامه ایمیل",
+    "sendEmail": "ارسال ایمیل"
   },
   "feed": {
     "title": "فید",
@@ -121,7 +122,12 @@
     "cancel": "لغو",
     "delete": "حذف"
   },
-    "deletePost": { "title": "حذف پست", "message": "آیا مطمئن هستید که می‌خواهید این پست را حذف کنید؟", "cancel": "لغو", "delete": "حذف" },
+  "deletePost": {
+    "title": "حذف پست",
+    "message": "آیا مطمئن هستید که می‌خواهید این پست را حذف کنید؟",
+    "cancel": "لغو",
+    "delete": "حذف"
+  },
   "time": {
     "justNow": "همین الان",
     "minutesAgo": "{{count}} دقیقه پیش",
@@ -178,7 +184,7 @@
     "guru": "گورو",
     "points": "امتیاز: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

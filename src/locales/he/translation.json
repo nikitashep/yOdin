@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "ברוך הבא ל-yOdin",
     "subtitle": "התחבר בין תרבויות",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "פתח אפליקציית דואר"
+    "openEmailApp": "פתח אפליקציית דואר",
+    "sendEmail": "שלח מייל"
   },
   "feed": {
     "title": "פיד",
@@ -121,7 +122,12 @@
     "cancel": "ביטול",
     "delete": "מחק"
   },
-    "deletePost": { "title": "מחק פוסט", "message": "האם אתה בטוח שברצונך למחוק פוסט זה?", "cancel": "ביטול", "delete": "מחק" },
+  "deletePost": {
+    "title": "מחק פוסט",
+    "message": "האם אתה בטוח שברצונך למחוק פוסט זה?",
+    "cancel": "ביטול",
+    "delete": "מחק"
+  },
   "time": {
     "justNow": "עכשיו",
     "minutesAgo": "לפני {{count}} דק'",
@@ -178,7 +184,7 @@
     "guru": "גורו",
     "points": "נקודות: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

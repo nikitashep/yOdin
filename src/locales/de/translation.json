@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "Willkommen bei yOdin",
     "subtitle": "Verbinde dich über Kulturen hinweg",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "E-Mail-App öffnen"
+    "openEmailApp": "E-Mail-App öffnen",
+    "sendEmail": "E-Mail senden"
   },
   "feed": {
     "title": "Feed",
@@ -121,7 +122,12 @@
     "cancel": "Abbrechen",
     "delete": "Löschen"
   },
-    "deletePost": { "title": "Beitrag löschen", "message": "Möchten Sie diesen Beitrag wirklich löschen?", "cancel": "Abbrechen", "delete": "Löschen" },
+  "deletePost": {
+    "title": "Beitrag löschen",
+    "message": "Möchten Sie diesen Beitrag wirklich löschen?",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
+  },
   "time": {
     "justNow": "gerade eben",
     "minutesAgo": "vor {{count}} Min.",
@@ -178,7 +184,7 @@
     "guru": "Guru",
     "points": "Punkte: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

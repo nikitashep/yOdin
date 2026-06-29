@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
-  Linking,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -26,9 +25,9 @@ export default function EmailVerificationScreen() {
   const setPendingEmailVerification = useAuthStore((s) => s.setPendingEmailVerification);
 
   const email = auth.currentUser?.email ?? '';
+  const [hasSent, setHasSent] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const [resending, setResending] = useState(false);
-  const [resentOk, setResentOk] = useState(false);
   const [checking, setChecking] = useState(false);
   const [notYet, setNotYet] = useState(false);
 
@@ -40,10 +39,9 @@ export default function EmailVerificationScreen() {
 
   async function handleResend() {
     setResending(true);
-    setResentOk(false);
     try {
       await resendVerificationEmail();
-      setResentOk(true);
+      setHasSent(true);
       setCooldown(RESEND_COOLDOWN);
     } finally {
       setResending(false);
@@ -82,13 +80,6 @@ export default function EmailVerificationScreen() {
 
       <View style={styles.actions}>
         <TouchableOpacity
-          style={styles.openEmailBtn}
-          onPress={() => Linking.openURL('mailto:')}
-        >
-          <Text style={styles.openEmailBtnText}>{t('auth.openEmailApp')}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
           style={[styles.resendBtn, (cooldown > 0 || resending) && styles.btnDisabled]}
           onPress={handleResend}
           disabled={cooldown > 0 || resending}
@@ -96,8 +87,8 @@ export default function EmailVerificationScreen() {
           {resending
             ? <ActivityIndicator color={colors.primary} size="small" />
             : <Text style={styles.resendBtnText}>
-                {resentOk && cooldown > 0
-                  ? `${t('auth.emailResent')} (${cooldown}s)`
+                {!hasSent
+                  ? t('auth.sendEmail')
                   : cooldown > 0
                   ? `${t('auth.resendEmail')} (${cooldown}s)`
                   : t('auth.resendEmail')}
@@ -160,17 +151,6 @@ function makeStyles(c: ColorPalette, topInset: number, bottomInset: number) {
     },
     actions: {
       gap: 12,
-    },
-    openEmailBtn: {
-      backgroundColor: c.primary,
-      borderRadius: 16,
-      paddingVertical: 16,
-      alignItems: 'center',
-    },
-    openEmailBtnText: {
-      color: '#fff',
-      fontSize: Typography.fontSizeMD,
-      fontWeight: Typography.fontWeightSemiBold,
     },
     resendBtn: {
       borderWidth: 1.5,

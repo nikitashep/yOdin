@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "yOdin-ə xoş gəldiniz",
     "subtitle": "Mədəniyyətlər arasında əlaqə",
@@ -36,7 +36,8 @@
     "iHaveVerified": "Təsdiqlədim — davam et",
     "notVerifiedYet": "Email hələ təsdiqlənməyib. Məktubdakı linkə keçin, sonra buraya toxunun.",
     "useAnotherAccount": "Başqa hesabla daxil ol",
-    "openEmailApp": "Poçtu aç"
+    "openEmailApp": "Poçtu aç",
+    "sendEmail": "E-poçt göndər"
   },
   "feed": {
     "title": "Lent",
@@ -121,7 +122,12 @@
     "cancel": "Ləğv et",
     "delete": "Sil"
   },
-    "deletePost": { "title": "Postu sil", "message": "Bu postu silmək istədiyinizə əminsiniz?", "cancel": "Ləğv et", "delete": "Sil" },
+  "deletePost": {
+    "title": "Postu sil",
+    "message": "Bu postu silmək istədiyinizə əminsiniz?",
+    "cancel": "Ləğv et",
+    "delete": "Sil"
+  },
   "time": {
     "justNow": "indicə",
     "minutesAgo": "{{count}} dəq. əvvəl",
@@ -178,7 +184,7 @@
     "guru": "Quru",
     "points": "Xallar: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Şikayət et",
     "message": "Bu məzmun haqqında moderatorlara şikayət edilsin?",
     "confirm": "Şikayət et",

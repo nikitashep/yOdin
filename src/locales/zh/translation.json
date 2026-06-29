@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "欢迎来到 yOdin",
     "subtitle": "跨文化连接",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "打开邮件应用"
+    "openEmailApp": "打开邮件应用",
+    "sendEmail": "发送邮件"
   },
   "feed": {
     "title": "动态",
@@ -121,7 +122,12 @@
     "cancel": "取消",
     "delete": "删除"
   },
-    "deletePost": { "title": "删除帖子", "message": "您确定要删除此帖子吗？", "cancel": "取消", "delete": "删除" },
+  "deletePost": {
+    "title": "删除帖子",
+    "message": "您确定要删除此帖子吗？",
+    "cancel": "取消",
+    "delete": "删除"
+  },
   "time": {
     "justNow": "刚刚",
     "minutesAgo": "{{count}} 分钟前",
@@ -178,7 +184,7 @@
     "guru": "大神",
     "points": "积分：{{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

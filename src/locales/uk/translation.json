@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "Ласкаво просимо до yOdin",
     "subtitle": "Зв'язуйтесь між культурами",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "Відкрити пошту"
+    "openEmailApp": "Відкрити пошту",
+    "sendEmail": "Надіслати листа"
   },
   "feed": {
     "title": "Стрічка",
@@ -122,7 +123,12 @@
     "cancel": "Скасувати",
     "delete": "Видалити"
   },
-    "deletePost": { "title": "Видалити пост", "message": "Ви впевнені, що хочете видалити цей пост?", "cancel": "Скасувати", "delete": "Видалити" },
+  "deletePost": {
+    "title": "Видалити пост",
+    "message": "Ви впевнені, що хочете видалити цей пост?",
+    "cancel": "Скасувати",
+    "delete": "Видалити"
+  },
   "time": {
     "justNow": "щойно",
     "minutesAgo": "{{count}} хв тому",
@@ -179,7 +185,7 @@
     "guru": "Гуру",
     "points": "Бали: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

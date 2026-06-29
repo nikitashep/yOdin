@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "yOdin'e Hoş Geldiniz",
     "subtitle": "Kültürler arası bağlantı",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "E-Posta Uygulamasını Aç"
+    "openEmailApp": "E-Posta Uygulamasını Aç",
+    "sendEmail": "E-posta gönder"
   },
   "feed": {
     "title": "Akış",
@@ -121,7 +122,12 @@
     "cancel": "İptal",
     "delete": "Sil"
   },
-    "deletePost": { "title": "Gönderiyi sil", "message": "Bu gönderiyi silmek istediğinizden emin misiniz?", "cancel": "İptal", "delete": "Sil" },
+  "deletePost": {
+    "title": "Gönderiyi sil",
+    "message": "Bu gönderiyi silmek istediğinizden emin misiniz?",
+    "cancel": "İptal",
+    "delete": "Sil"
+  },
   "time": {
     "justNow": "şimdi",
     "minutesAgo": "{{count}} dk önce",
@@ -178,7 +184,7 @@
     "guru": "Guru",
     "points": "Puan: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",

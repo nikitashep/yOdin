@@ -1,4 +1,4 @@
-﻿{
+{
   "auth": {
     "welcome": "yOdin에 오신 것을 환영합니다",
     "subtitle": "문화를 넘어 연결하세요",
@@ -36,7 +36,8 @@
     "iHaveVerified": "I've verified — continue",
     "notVerifiedYet": "Email not verified yet. Open the link in your inbox, then tap here.",
     "useAnotherAccount": "Use another account",
-    "openEmailApp": "이메일 앱 열기"
+    "openEmailApp": "이메일 앱 열기",
+    "sendEmail": "이메일 보내기"
   },
   "feed": {
     "title": "피드",
@@ -121,7 +122,12 @@
     "cancel": "취소",
     "delete": "삭제"
   },
-    "deletePost": { "title": "게시물 삭제", "message": "이 게시물을 삭제하시겠습니까?", "cancel": "취소", "delete": "삭제" },
+  "deletePost": {
+    "title": "게시물 삭제",
+    "message": "이 게시물을 삭제하시겠습니까?",
+    "cancel": "취소",
+    "delete": "삭제"
+  },
   "time": {
     "justNow": "방금",
     "minutesAgo": "{{count}}분 전",
@@ -178,7 +184,7 @@
     "guru": "구루",
     "points": "포인트: {{count}}"
   },
-    "report": {
+  "report": {
     "title": "Report",
     "message": "Report this to the moderators?",
     "confirm": "Report",
