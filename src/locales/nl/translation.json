@@ -70,7 +70,8 @@
     "empty": "Nog geen meldingen",
     "replied": "heeft gereageerd op jouw discussie",
     "accepted": "heeft je antwoord geaccepteerd",
-    "clearRead": "Gelezen wissen"
+    "clearRead": "Gelezen wissen",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "Profiel",
@@ -156,7 +157,8 @@
     "all": "Alles",
     "news": "Nieuws",
     "events": "Evenementen",
-    "places": "De moeite waard"
+    "places": "De moeite waard",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "Nieuw bericht",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "Beschrijving",
     "category": "Categorie",
     "photos": "Photos (up to {{count}})",
-    "post": "Publiceren"
+    "post": "Publiceren",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "Forum",
@@ -208,5 +215,15 @@
     "title": "Reacties",
     "placeholder": "Schrijf een reactie...",
     "empty": "Nog geen reacties. Wees de eerste!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

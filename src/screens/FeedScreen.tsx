@@ -206,6 +206,7 @@ export default function FeedScreen({ navigation }: any) {
       case 'news': return colors.primary;
       case 'events': return colors.accent;
       case 'places': return colors.success;
+      case 'lifestyle': return '#EC4899';
       default: return colors.textSecondary;
     }
   }
@@ -249,10 +250,21 @@ export default function FeedScreen({ navigation }: any) {
           </TouchableOpacity>
           {!isOwner && <FollowButton targetUid={item.authorId} />}
         </View>
-        <View style={[styles.categoryBadge, { backgroundColor: badgeColor + '22' }]}>
-          <Text style={[styles.categoryBadgeText, { color: badgeColor }]}>
-            {t(`categories.${item.category}`)}
-          </Text>
+        <View style={styles.badgeRow}>
+          <View style={[styles.categoryBadge, { backgroundColor: badgeColor + '22' }]}>
+            <Text style={[styles.categoryBadgeText, { color: badgeColor }]}>
+              {t(`categories.${item.category}`)}
+            </Text>
+          </View>
+          {item.signupEnabled ? (
+            <View style={styles.signupBadge}>
+              <Ionicons name="people" size={13} color={colors.primary} />
+              <Text style={styles.signupBadgeText}>
+                {item.participants?.length ?? 0}
+                {item.participantLimit != null ? `/${item.participantLimit}` : ''}
+              </Text>
+            </View>
+          ) : null}
         </View>
 
         {item.imageURLs && item.imageURLs.length > 0 ? (
@@ -562,16 +574,30 @@ function makeStyles(c: ColorPalette, topInset: number) {
       color: c.textSecondary,
       marginTop: 2,
     },
+    badgeRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10, flexWrap: 'wrap' },
     categoryBadge: {
       paddingHorizontal: 10,
       paddingVertical: 5,
       borderRadius: 12,
       alignSelf: 'flex-start',
-      marginBottom: 10,
     },
     categoryBadgeText: {
       fontSize: Typography.fontSizeXS,
       fontWeight: Typography.fontWeightSemiBold,
+    },
+    signupBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 12,
+      backgroundColor: c.primary + '18',
+    },
+    signupBadgeText: {
+      fontSize: Typography.fontSizeXS,
+      fontWeight: Typography.fontWeightSemiBold,
+      color: c.primary,
     },
     photoWrap: { marginBottom: 12 },
     qodWrap: { marginBottom: 4 },

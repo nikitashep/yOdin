@@ -57,6 +57,10 @@ export default function NotificationsScreen({ navigation }: any) {
   }
 
   function handleNotificationPress(item: AppNotification) {
+    if (item.type === 'participant' && item.postId) {
+      navigation.navigate('PostDetail', { postId: item.postId });
+      return;
+    }
     navigation.navigate('DiscussionDetail', {
       discussionId: item.discussionId,
       question: item.discussionQuestion,
@@ -81,10 +85,16 @@ export default function NotificationsScreen({ navigation }: any) {
         <View style={styles.content}>
           <Text style={styles.text}>
             <Text style={styles.bold}>{item.fromUserName}</Text>
-            {' '}{t(item.type === 'accepted' ? 'notifications.accepted' : 'notifications.replied')}
+            {' '}{t(
+              item.type === 'participant'
+                ? 'notifications.joinedEvent'
+                : item.type === 'accepted'
+                  ? 'notifications.accepted'
+                  : 'notifications.replied',
+            )}
           </Text>
           <Text style={styles.question} numberOfLines={2}>
-            "{item.discussionQuestion}"
+            "{item.type === 'participant' ? item.postTitle : item.discussionQuestion}"
           </Text>
           <Text style={styles.time}>{formatTime(item.createdAt, t)}</Text>
         </View>

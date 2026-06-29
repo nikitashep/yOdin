@@ -71,7 +71,8 @@
     "empty": "Ще немає сповіщень",
     "replied": "відповів на ваше обговорення",
     "accepted": "прийняв(ла) вашу відповідь",
-    "clearRead": "Видалити прочитані"
+    "clearRead": "Видалити прочитані",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "Профіль",
@@ -157,7 +158,8 @@
     "all": "Все",
     "news": "Новини",
     "events": "Заходи",
-    "places": "Варто відвідати"
+    "places": "Варто відвідати",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "Новий допис",
@@ -165,7 +167,12 @@
     "descriptionPlaceholder": "Опис",
     "category": "Категорія",
     "photos": "Photos (up to {{count}})",
-    "post": "Опублікувати"
+    "post": "Опублікувати",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "Форум",
@@ -209,5 +216,15 @@
     "title": "Коментарі",
     "placeholder": "Написати коментар...",
     "empty": "Поки немає коментарів. Будьте першим!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

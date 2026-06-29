@@ -70,7 +70,8 @@
     "empty": "এখনও কোনো বিজ্ঞপ্তি নেই",
     "replied": "আপনার আলোচনায় উত্তর দিয়েছেন",
     "accepted": "আপনার উত্তর গ্রহণ করেছেন",
-    "clearRead": "পড়া মুছুন"
+    "clearRead": "পড়া মুছুন",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "প্রোফাইল",
@@ -156,7 +157,8 @@
     "all": "সব",
     "news": "খবর",
     "events": "ইভেন্ট",
-    "places": "ঘুরে দেখার মতো"
+    "places": "ঘুরে দেখার মতো",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "নতুন পোস্ট",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "বিবরণ",
     "category": "ক্যাটাগরি",
     "photos": "Photos (up to {{count}})",
-    "post": "প্রকাশ করুন"
+    "post": "প্রকাশ করুন",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "ফোরাম",
@@ -208,5 +215,15 @@
     "title": "মন্তব্য",
     "placeholder": "মন্তব্য লিখুন...",
     "empty": "এখনও কোনো মন্তব্য নেই। প্রথম হোন!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

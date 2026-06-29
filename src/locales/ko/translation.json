@@ -70,7 +70,8 @@
     "empty": "아직 알림이 없습니다",
     "replied": "님이 내 토론에 답글을 달았습니다",
     "accepted": "님이 회원님의 답변을 채택했습니다",
-    "clearRead": "읽은 것 삭제"
+    "clearRead": "읽은 것 삭제",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "프로필",
@@ -156,7 +157,8 @@
     "all": "전체",
     "news": "뉴스",
     "events": "이벤트",
-    "places": "가볼 만한 곳"
+    "places": "가볼 만한 곳",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "새 게시물",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "설명",
     "category": "카테고리",
     "photos": "Photos (up to {{count}})",
-    "post": "게시"
+    "post": "게시",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "포럼",
@@ -208,5 +215,15 @@
     "title": "댓글",
     "placeholder": "댓글 작성...",
     "empty": "아직 댓글이 없습니다. 첫 댓글을 남겨보세요!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

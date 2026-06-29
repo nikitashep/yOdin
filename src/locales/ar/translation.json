@@ -74,7 +74,8 @@
     "empty": "لا توجد إشعارات بعد",
     "replied": "ردّ على نقاشك",
     "accepted": "قبل إجابتك",
-    "clearRead": "مسح المقروء"
+    "clearRead": "مسح المقروء",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "الملف الشخصي",
@@ -160,7 +161,8 @@
     "all": "الكل",
     "news": "أخبار",
     "events": "فعاليات",
-    "places": "يستحق الزيارة"
+    "places": "يستحق الزيارة",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "منشور جديد",
@@ -168,7 +170,12 @@
     "descriptionPlaceholder": "الوصف",
     "category": "الفئة",
     "photos": "Photos (up to {{count}})",
-    "post": "نشر"
+    "post": "نشر",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "المنتدى",
@@ -212,5 +219,15 @@
     "title": "التعليقات",
     "placeholder": "اكتب تعليقًا...",
     "empty": "لا توجد تعليقات بعد. كن أول من يعلّق!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

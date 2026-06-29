@@ -70,7 +70,8 @@
     "empty": "Hələ bildiriş yoxdur",
     "replied": "müzakirənizə cavab verdi",
     "accepted": "cavabınızı qəbul etdi",
-    "clearRead": "Oxunmuşları sil"
+    "clearRead": "Oxunmuşları sil",
+    "joinedEvent": "tədbirinizdə iştirak edir"
   },
   "profile": {
     "title": "Profil",
@@ -156,7 +157,8 @@
     "all": "Hamısı",
     "news": "Xəbərlər",
     "events": "Tədbirlər",
-    "places": "Görməyə dəyər"
+    "places": "Görməyə dəyər",
+    "lifestyle": "Həyat tərzi"
   },
   "newPost": {
     "title": "Yeni paylaşım",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "Təsvir",
     "category": "Kateqoriya",
     "photos": "Şəkillər ({{count}}-ə qədər)",
-    "post": "Paylaş"
+    "post": "Paylaş",
+    "signup": "Qeydiyyat siyahısı",
+    "signupHint": "İnsanlar postun altında qoşula bilər",
+    "noLimit": "Limitsiz",
+    "withLimit": "Limitli",
+    "limitPlaceholder": "Maks"
   },
   "forum": {
     "title": "Forum",
@@ -208,5 +215,15 @@
     "title": "Şərhlər",
     "placeholder": "Şərh yazın...",
     "empty": "Hələ şərh yoxdur. İlk siz olun!"
+  },
+  "post": {
+    "participate": "İştirak edirəm",
+    "leaveEvent": "İmtina et",
+    "eventFull": "Yer yoxdur",
+    "participants": "iştirakçı"
+  },
+  "participants": {
+    "title": "İştirakçılar",
+    "empty": "Hələ heç kim qoşulmayıb"
   }
 }

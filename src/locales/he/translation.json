@@ -70,7 +70,8 @@
     "empty": "עדיין אין התראות",
     "replied": "הגיב לדיון שלך",
     "accepted": "אישר/ה את התשובה שלך",
-    "clearRead": "נקה נקראות"
+    "clearRead": "נקה נקראות",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "פרופיל",
@@ -156,7 +157,8 @@
     "all": "הכול",
     "news": "חדשות",
     "events": "אירועים",
-    "places": "שווה ביקור"
+    "places": "שווה ביקור",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "פוסט חדש",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "תיאור",
     "category": "קטגוריה",
     "photos": "Photos (up to {{count}})",
-    "post": "פרסום"
+    "post": "פרסום",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "פורום",
@@ -208,5 +215,15 @@
     "title": "תגובות",
     "placeholder": "כתוב תגובה...",
     "empty": "אין עדיין תגובות. היו הראשונים!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

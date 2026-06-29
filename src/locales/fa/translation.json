@@ -70,7 +70,8 @@
     "empty": "هنوز اعلانی نیست",
     "replied": "به بحث شما پاسخ داد",
     "accepted": "پاسخ شما را پذیرفت",
-    "clearRead": "حذف خوانده‌ها"
+    "clearRead": "حذف خوانده‌ها",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "پروفایل",
@@ -156,7 +157,8 @@
     "all": "همه",
     "news": "اخبار",
     "events": "رویدادها",
-    "places": "ارزش دیدن دارد"
+    "places": "ارزش دیدن دارد",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "پست جدید",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "توضیحات",
     "category": "دسته‌بندی",
     "photos": "Photos (up to {{count}})",
-    "post": "انتشار"
+    "post": "انتشار",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "انجمن",
@@ -208,5 +215,15 @@
     "title": "نظرات",
     "placeholder": "نظر بنویسید...",
     "empty": "هنوز نظری نیست. اولین نفر باشید!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

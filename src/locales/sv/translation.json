@@ -70,7 +70,8 @@
     "empty": "Inga aviseringar än",
     "replied": "svarade på din diskussion",
     "accepted": "accepterade ditt svar",
-    "clearRead": "Rensa lästa"
+    "clearRead": "Rensa lästa",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "Profil",
@@ -156,7 +157,8 @@
     "all": "Allt",
     "news": "Nyheter",
     "events": "Evenemang",
-    "places": "Värt ett besök"
+    "places": "Värt ett besök",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "Nytt inlägg",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "Beskrivning",
     "category": "Kategori",
     "photos": "Photos (up to {{count}})",
-    "post": "Publicera"
+    "post": "Publicera",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "Forum",
@@ -208,5 +215,15 @@
     "title": "Kommentarer",
     "placeholder": "Skriv en kommentar...",
     "empty": "Inga kommentarer än. Bli först!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

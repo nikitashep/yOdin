@@ -70,7 +70,8 @@
     "empty": "Henüz bildirim yok",
     "replied": "tartışmanıza yanıt verdi",
     "accepted": "yanıtını kabul etti",
-    "clearRead": "Okunanları sil"
+    "clearRead": "Okunanları sil",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "Profil",
@@ -156,7 +157,8 @@
     "all": "Tümü",
     "news": "Haberler",
     "events": "Etkinlikler",
-    "places": "Görülmeye değer"
+    "places": "Görülmeye değer",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "Yeni Gönderi",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "Açıklama",
     "category": "Kategori",
     "photos": "Photos (up to {{count}})",
-    "post": "Yayınla"
+    "post": "Yayınla",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "Forum",
@@ -208,5 +215,15 @@
     "title": "Yorumlar",
     "placeholder": "Yorum yaz...",
     "empty": "Henüz yorum yok. İlk sen ol!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

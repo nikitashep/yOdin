@@ -14,12 +14,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore } from '../store/usePostStore';
-import { votePost, addComment, fetchComments } from '../services/postService';
+import { votePost, addComment, fetchComments, joinEvent, leaveEvent } from '../services/postService';
 import { Post, PostComment } from '../types';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
@@ -28,6 +29,8 @@ import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 import PhotoGrid from '../components/PhotoGrid';
+import EventParticipantsModal from '../components/EventParticipantsModal';
+import { createParticipantNotification } from '../services/notificationService';
 
 const SCREEN_H = Dimensions.get('window').height;
 const SHEET_H = Math.round(SCREEN_H * 0.5);
@@ -54,12 +57,18 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
   const post = storePost ?? (fallbackPost && fallbackPost.id === postId ? fallbackPost : undefined);
   const setPostVote = usePostStore((s) => s.setPostVote);
   const incrementCommentCount = usePostStore((s) => s.incrementCommentCount);
+  const toggleParticipant = usePostStore((s) => s.toggleParticipant);
 
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [comments, setComments] = useState<PostComment[]>([]);
   const [loadingComments, setLoadingComments] = useState(false);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  // Local optimistic copy of the attendee list (post may be a fallback that
+  // isn't in the feed store, so we can't rely on the store alone).
+  const [participants, setParticipants] = useState<string[]>([]);
+  const [participantsVisible, setParticipantsVisible] = useState(false);
+  const [joining, setJoining] = useState(false);
 
   const cardAnim = useRef(new Animated.Value(0)).current; // 0 hidden → 1 shown
   // 0 = comments closed (card centered, sheet hidden below); 1 = comments open
@@ -76,6 +85,8 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
       setComments([]);
       loadComments(postId);
       setCommentsOpen(!!startWithComments);
+      setParticipantsVisible(false);
+      setParticipants(post?.participants ?? []);
     }
   }, [visible, postId]);
 
@@ -109,6 +120,47 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
   const likeCount = post?.likes?.length ?? 0;
   const dislikeCount = post?.dislikes?.length ?? 0;
   const commentCount = post?.commentCount ?? 0;
+
+  const participantCap = post?.participantLimit ?? null;
+  const isParticipant = participants.includes(profile?.uid ?? '');
+  const eventFull = participantCap != null && participants.length >= participantCap && !isParticipant;
+
+  async function toggleJoin() {
+    if (!profile?.uid || !post || joining) return;
+    const uid = profile.uid;
+    if (eventFull) {
+      Alert.alert(t('post.eventFull'));
+      return;
+    }
+    setJoining(true);
+    const prev = participants;
+    setParticipants(isParticipant ? participants.filter((id) => id !== uid) : [...participants, uid]);
+    toggleParticipant(post.id, uid); // keep the feed card in sync
+    try {
+      if (isParticipant) {
+        await leaveEvent(post.id, uid);
+      } else {
+        await joinEvent(post.id, uid);
+        // Let the event's author know someone signed up (best-effort).
+        if (post.authorId !== uid) {
+          createParticipantNotification({
+            toUserId: post.authorId,
+            fromUserId: uid,
+            fromUserName: `${profile.firstName} ${profile.lastName}`,
+            fromUserPhoto: profile.photoURL ?? '',
+            postId: post.id,
+            postTitle: post.title,
+          }).catch(() => {});
+        }
+      }
+    } catch (e) {
+      setParticipants(prev);
+      toggleParticipant(post.id, uid); // revert the store too
+      Alert.alert(e instanceof Error && e.message === 'event-full' ? t('post.eventFull') : t('errors.generic'));
+    } finally {
+      setJoining(false);
+    }
+  }
 
   async function handleVote(vote: 'like' | 'dislike') {
     if (!profile?.uid || !post) return;
@@ -195,6 +247,7 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
   });
 
   return (
+    <>
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose} />
@@ -248,6 +301,40 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
 
               <Text style={styles.postTitle}>{post.title}</Text>
               <Text style={styles.postDescription}>{post.description}</Text>
+
+              {post.signupEnabled ? (
+                <View style={styles.signupBox}>
+                  <TouchableOpacity
+                    style={styles.participantsRow}
+                    activeOpacity={0.7}
+                    onPress={() => setParticipantsVisible(true)}
+                  >
+                    <Ionicons name="people" size={18} color={colors.primary} />
+                    <Text style={styles.participantsText}>
+                      {participantCap != null ? `${participants.length} / ${participantCap}` : `${participants.length}`}
+                      {'  '}{t('post.participants')}
+                    </Text>
+                    <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} style={{ marginLeft: 'auto' }} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.joinBtn,
+                      isParticipant && styles.joinBtnLeave,
+                      eventFull && styles.joinBtnDisabled,
+                    ]}
+                    onPress={toggleJoin}
+                    disabled={joining || eventFull}
+                  >
+                    {joining ? (
+                      <ActivityIndicator color={isParticipant ? colors.primary : '#fff'} size="small" />
+                    ) : (
+                      <Text style={[styles.joinBtnText, isParticipant && styles.joinBtnTextLeave]}>
+                        {isParticipant ? t('post.leaveEvent') : eventFull ? t('post.eventFull') : t('post.participate')}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              ) : null}
             </ScrollView>
 
             {/* Action bar — bottom-left like / dislike / comment */}
@@ -333,6 +420,14 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
           </Animated.View>
       </View>
     </Modal>
+
+    <EventParticipantsModal
+      visible={participantsVisible}
+      participantIds={participants}
+      onClose={() => setParticipantsVisible(false)}
+      onOpenProfile={onOpenProfile ? (uid) => { setParticipantsVisible(false); onOpenProfile(uid); } : undefined}
+    />
+    </>
   );
 }
 
@@ -366,6 +461,26 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
     photoWrap: { marginBottom: 12 },
     postTitle: { fontSize: Typography.fontSizeLG, fontWeight: Typography.fontWeightBold, color: c.textPrimary, marginBottom: 6 },
     postDescription: { fontSize: Typography.fontSizeMD, color: c.textPrimary, lineHeight: 22, marginBottom: 8 },
+    signupBox: {
+      backgroundColor: c.background,
+      borderRadius: 14,
+      padding: 12,
+      marginTop: 4,
+      marginBottom: 8,
+      gap: 10,
+    },
+    participantsRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    participantsText: { fontSize: Typography.fontSizeSM, fontWeight: Typography.fontWeightSemiBold, color: c.textPrimary },
+    joinBtn: {
+      backgroundColor: c.primary,
+      borderRadius: 12,
+      paddingVertical: 12,
+      alignItems: 'center',
+    },
+    joinBtnLeave: { backgroundColor: c.primaryLight },
+    joinBtnDisabled: { opacity: 0.5 },
+    joinBtnText: { color: '#fff', fontSize: Typography.fontSizeMD, fontWeight: Typography.fontWeightSemiBold },
+    joinBtnTextLeave: { color: c.primary },
     actionBar: {
       flexDirection: 'row',
       alignItems: 'center',

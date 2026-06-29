@@ -13,9 +13,9 @@ export interface User {
   following?: string[];
 }
 
-export type PostCategory = 'news' | 'events' | 'places';
+export type PostCategory = 'news' | 'events' | 'places' | 'lifestyle';
 
-export const POST_CATEGORIES: PostCategory[] = ['news', 'events', 'places'];
+export const POST_CATEGORIES: PostCategory[] = ['news', 'events', 'places', 'lifestyle'];
 
 export interface Post {
   id: string;
@@ -34,6 +34,12 @@ export interface Post {
   dislikes?: string[];
   commentCount?: number;
   savedBy?: string[];
+  // Event RSVP. Only set on `events` posts whose author turned on a sign-up
+  // sheet. `participantLimit` null/absent = unlimited; `participants` holds the
+  // UIDs of everyone who tapped "I'm going".
+  signupEnabled?: boolean;
+  participantLimit?: number | null;
+  participants?: string[];
 }
 
 export interface PostComment {
@@ -88,13 +94,17 @@ export interface Reply {
 
 export interface AppNotification {
   id: string;
-  type: 'reply' | 'accepted';
+  type: 'reply' | 'accepted' | 'participant';
   toUserId: string;
   fromUserId: string;
   fromUserName: string;
   fromUserPhoto?: string;
-  discussionId: string;
-  discussionQuestion: string;
+  // Forum notifications (reply/accepted) carry the discussion they belong to.
+  discussionId?: string;
+  discussionQuestion?: string;
+  // Event sign-up notifications (participant) carry the post instead.
+  postId?: string;
+  postTitle?: string;
   createdAt: number;
   read: boolean;
 }

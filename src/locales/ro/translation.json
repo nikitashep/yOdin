@@ -71,7 +71,8 @@
     "empty": "Nicio notificare încă",
     "replied": "a răspuns la discuția ta",
     "accepted": "ți-a acceptat răspunsul",
-    "clearRead": "Șterge citite"
+    "clearRead": "Șterge citite",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "Profil",
@@ -157,7 +158,8 @@
     "all": "Tot",
     "news": "Știri",
     "events": "Evenimente",
-    "places": "Merită vizitat"
+    "places": "Merită vizitat",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "Postare nouă",
@@ -165,7 +167,12 @@
     "descriptionPlaceholder": "Descriere",
     "category": "Categorie",
     "photos": "Photos (up to {{count}})",
-    "post": "Publică"
+    "post": "Publică",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "Forum",
@@ -209,5 +216,15 @@
     "title": "Comentarii",
     "placeholder": "Scrie un comentariu...",
     "empty": "Încă nu există comentarii. Fii primul!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

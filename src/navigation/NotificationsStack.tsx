@@ -4,12 +4,14 @@ import NotificationsScreen from '../screens/NotificationsScreen';
 import DiscussionDetailScreen from '../screens/DiscussionDetailScreen';
 import UserProfileScreen from '../screens/UserProfileScreen';
 import FollowListScreen from '../screens/FollowListScreen';
+import PostDetailScreen from '../screens/PostDetailScreen';
 
 export type NotificationsStackParamList = {
   NotificationsHome: undefined;
   DiscussionDetail: { discussionId: string; question: string };
   UserProfile: { userId: string };
   FollowList: { userId: string; initialTab: 'followers' | 'following' };
+  PostDetail: { postId: string };
 };
 
 const Stack = createNativeStackNavigator<NotificationsStackParamList>();
@@ -21,6 +23,7 @@ export default function NotificationsStack() {
       <Stack.Screen name="DiscussionDetail" component={DiscussionDetailScreen} />
       <Stack.Screen name="UserProfile" component={UserProfileScreen} />
       <Stack.Screen name="FollowList" component={FollowListScreen} />
+      <Stack.Screen name="PostDetail" component={PostDetailScreen} />
     </Stack.Navigator>
   );
 }

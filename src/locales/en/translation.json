@@ -70,7 +70,8 @@
     "empty": "No notifications yet",
     "replied": "replied to your discussion",
     "accepted": "accepted your answer",
-    "clearRead": "Clear read"
+    "clearRead": "Clear read",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "Profile",
@@ -156,7 +157,8 @@
     "all": "All",
     "news": "News",
     "events": "Events",
-    "places": "Worth Visiting"
+    "places": "Worth Visiting",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "New Post",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "Description",
     "category": "Category",
     "photos": "Photos (up to {{count}})",
-    "post": "Publish"
+    "post": "Publish",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "Forum",
@@ -208,5 +215,15 @@
     "title": "Comments",
     "placeholder": "Write a comment...",
     "empty": "No comments yet. Be the first!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

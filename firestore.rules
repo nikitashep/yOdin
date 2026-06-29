@@ -33,11 +33,19 @@ service cloud.firestore {
         && request.resource.data.description is string
         && request.resource.data.description.size() > 0
         && request.resource.data.description.size() <= 1000
-        && request.resource.data.category in ['news', 'events', 'places'];
+        && request.resource.data.category in ['news', 'events', 'places', 'lifestyle']
+        // A sign-up sheet is only valid on events and must start with an empty
+        // participant list — the author can't pre-fill attendees.
+        && (
+          request.resource.data.get('signupEnabled', false) == false
+          || (request.resource.data.category == 'events'
+              && request.resource.data.get('participants', []) == [])
+        );
       allow update: if request.auth != null
         && (
           postVoteUpdate()
           || postSavedByUpdate()
+          || participantsUpdate()
         );
       allow delete: if request.auth != null
         && (resource.data.authorId == request.auth.uid || isModerator());
@@ -109,11 +117,19 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.resource.data.fromUserId == request.auth.uid
         && request.resource.data.toUserId is string
-        && request.resource.data.discussionId is string
-        && request.resource.data.discussionQuestion is string
-        && request.resource.data.discussionQuestion.size() <= 500
         && request.resource.data.fromUserName is string
-        && request.resource.data.fromUserName.size() <= 100;
+        && request.resource.data.fromUserName.size() <= 100
+        && (
+          // Forum notification (reply / accepted answer).
+          (request.resource.data.discussionId is string
+            && request.resource.data.discussionQuestion is string
+            && request.resource.data.discussionQuestion.size() <= 500)
+          // Event sign-up notification.
+          || (request.resource.data.type == 'participant'
+            && request.resource.data.postId is string
+            && request.resource.data.postTitle is string
+            && request.resource.data.postTitle.size() <= 100)
+        );
     }
 
     // Reports — any signed-in user can file one; only moderators can see and act on them.
@@ -158,6 +174,19 @@ service cloud.firestore {
     function postSavedByUpdate() {
       return onlyUpdatingField(request, 'savedBy')
         && ownUidArrayChange(resource.data.get('savedBy', []), request.resource.data.get('savedBy', []));
+    }
+
+    // Event RSVP: a user may only add/remove their own UID in participants, and
+    // only while the cap (if any) isn't exceeded. Leaving is always allowed.
+    function participantsUpdate() {
+      return onlyUpdatingField(request, 'participants')
+        && resource.data.get('signupEnabled', false) == true
+        && ownUidArrayChange(resource.data.get('participants', []), request.resource.data.get('participants', []))
+        && (
+          request.resource.data.participants.size() <= resource.data.get('participants', []).size()
+          || resource.data.get('participantLimit', null) == null
+          || request.resource.data.participants.size() <= resource.data.participantLimit
+        );
     }
 
     // Post vote: a user may only add/remove their own UID in likes/dislikes

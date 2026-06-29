@@ -70,7 +70,8 @@
     "empty": "Tiada pemberitahuan lagi",
     "replied": "membalas perbincangan anda",
     "accepted": "menerima jawapan anda",
-    "clearRead": "Padam yang dibaca"
+    "clearRead": "Padam yang dibaca",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "Profil",
@@ -156,7 +157,8 @@
     "all": "Semua",
     "news": "Berita",
     "events": "Acara",
-    "places": "Patut dilawati"
+    "places": "Patut dilawati",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "Kiriman Baharu",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "Penerangan",
     "category": "Kategori",
     "photos": "Photos (up to {{count}})",
-    "post": "Terbitkan"
+    "post": "Terbitkan",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "Forum",
@@ -208,5 +215,15 @@
     "title": "Komen",
     "placeholder": "Tulis komen...",
     "empty": "Belum ada komen. Jadilah yang pertama!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

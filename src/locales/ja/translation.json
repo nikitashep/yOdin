@@ -70,7 +70,8 @@
     "empty": "まだ通知はありません",
     "replied": "があなたのディスカッションに返信しました",
     "accepted": "があなたの回答を採用しました",
-    "clearRead": "既読を削除"
+    "clearRead": "既読を削除",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "プロフィール",
@@ -156,7 +157,8 @@
     "all": "すべて",
     "news": "ニュース",
     "events": "イベント",
-    "places": "おすすめスポット"
+    "places": "おすすめスポット",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "新しい投稿",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "説明",
     "category": "カテゴリー",
     "photos": "Photos (up to {{count}})",
-    "post": "投稿する"
+    "post": "投稿する",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "フォーラム",
@@ -208,5 +215,15 @@
     "title": "コメント",
     "placeholder": "コメントを書く...",
     "empty": "まだコメントがありません。最初のコメントをしましょう！"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

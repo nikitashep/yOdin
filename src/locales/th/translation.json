@@ -70,7 +70,8 @@
     "empty": "ยังไม่มีการแจ้งเตือน",
     "replied": "ตอบกลับการสนทนาของคุณ",
     "accepted": "ยอมรับคำตอบของคุณ",
-    "clearRead": "ลบที่อ่านแล้ว"
+    "clearRead": "ลบที่อ่านแล้ว",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "โปรไฟล์",
@@ -156,7 +157,8 @@
     "all": "ทั้งหมด",
     "news": "ข่าว",
     "events": "กิจกรรม",
-    "places": "น่าไปเยือน"
+    "places": "น่าไปเยือน",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "โพสต์ใหม่",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "คำอธิบาย",
     "category": "หมวดหมู่",
     "photos": "Photos (up to {{count}})",
-    "post": "เผยแพร่"
+    "post": "เผยแพร่",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "ฟอรัม",
@@ -208,5 +215,15 @@
     "title": "ความคิดเห็น",
     "placeholder": "เขียนความคิดเห็น...",
     "empty": "ยังไม่มีความคิดเห็น มาเป็นคนแรกกัน!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

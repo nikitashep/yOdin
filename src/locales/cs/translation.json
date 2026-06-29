@@ -71,7 +71,8 @@
     "empty": "Zatím žádná oznámení",
     "replied": "odpověděl na vaši diskusi",
     "accepted": "přijal(a) vaši odpověď",
-    "clearRead": "Vymazat přečtené"
+    "clearRead": "Vymazat přečtené",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "Profil",
@@ -157,7 +158,8 @@
     "all": "Vše",
     "news": "Novinky",
     "events": "Akce",
-    "places": "Stojí za návštěvu"
+    "places": "Stojí za návštěvu",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "Nový příspěvek",
@@ -165,7 +167,12 @@
     "descriptionPlaceholder": "Popis",
     "category": "Kategorie",
     "photos": "Photos (up to {{count}})",
-    "post": "Zveřejnit"
+    "post": "Zveřejnit",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "Fórum",
@@ -209,5 +216,15 @@
     "title": "Komentáře",
     "placeholder": "Napsat komentář...",
     "empty": "Zatím žádné komentáře. Buďte první!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

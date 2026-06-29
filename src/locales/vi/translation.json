@@ -70,7 +70,8 @@
     "empty": "Chưa có thông báo nào",
     "replied": "đã trả lời cuộc thảo luận của bạn",
     "accepted": "đã chấp nhận câu trả lời của bạn",
-    "clearRead": "Xóa đã đọc"
+    "clearRead": "Xóa đã đọc",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "Hồ sơ",
@@ -156,7 +157,8 @@
     "all": "Tất cả",
     "news": "Tin tức",
     "events": "Sự kiện",
-    "places": "Đáng ghé thăm"
+    "places": "Đáng ghé thăm",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "Bài viết mới",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "Mô tả",
     "category": "Danh mục",
     "photos": "Photos (up to {{count}})",
-    "post": "Đăng"
+    "post": "Đăng",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "Diễn đàn",
@@ -208,5 +215,15 @@
     "title": "Bình luận",
     "placeholder": "Viết bình luận...",
     "empty": "Chưa có bình luận nào. Hãy là người đầu tiên!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

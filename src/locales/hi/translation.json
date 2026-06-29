@@ -70,7 +70,8 @@
     "empty": "अभी कोई सूचना नहीं",
     "replied": "ने आपकी चर्चा का जवाब दिया",
     "accepted": "ने आपका उत्तर स्वीकार किया",
-    "clearRead": "पढ़े हुए हटाएं"
+    "clearRead": "पढ़े हुए हटाएं",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "प्रोफ़ाइल",
@@ -156,7 +157,8 @@
     "all": "सभी",
     "news": "समाचार",
     "events": "कार्यक्रम",
-    "places": "घूमने लायक"
+    "places": "घूमने लायक",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "नई पोस्ट",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "विवरण",
     "category": "श्रेणी",
     "photos": "Photos (up to {{count}})",
-    "post": "प्रकाशित करें"
+    "post": "प्रकाशित करें",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "फ़ोरम",
@@ -208,5 +215,15 @@
     "title": "टिप्पणियाँ",
     "placeholder": "टिप्पणी लिखें...",
     "empty": "अभी कोई टिप्पणी नहीं। पहले बनें!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

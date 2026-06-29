@@ -70,7 +70,8 @@
     "empty": "暂无通知",
     "replied": "回复了您的讨论",
     "accepted": "采纳了你的回答",
-    "clearRead": "清除已读"
+    "clearRead": "清除已读",
+    "joinedEvent": "is going to your event"
   },
   "profile": {
     "title": "个人资料",
@@ -156,7 +157,8 @@
     "all": "全部",
     "news": "新闻",
     "events": "活动",
-    "places": "值得一去"
+    "places": "值得一去",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "新帖子",
@@ -164,7 +166,12 @@
     "descriptionPlaceholder": "描述",
     "category": "分类",
     "photos": "Photos (up to {{count}})",
-    "post": "发布"
+    "post": "发布",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max"
   },
   "forum": {
     "title": "论坛",
@@ -208,5 +215,15 @@
     "title": "评论",
     "placeholder": "写评论...",
     "empty": "暂无评论，来发表第一条吧！"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }
