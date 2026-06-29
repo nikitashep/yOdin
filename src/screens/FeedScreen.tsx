@@ -18,10 +18,11 @@ import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore, FeedFilter } from '../store/usePostStore';
 import { fetchPosts, deletePost, votePost, savePost, unsavePost, PAGE_SIZE } from '../services/postService';
 import { createReport } from '../services/reportService';
+import ReportSheet from '../components/ReportSheet';
 import { fetchTopQuestion } from '../services/discussionService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
-import { Post, PostCategory, POST_CATEGORIES, Discussion } from '../types';
+import { Post, PostCategory, POST_CATEGORIES, Discussion, ReportReason } from '../types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
@@ -54,6 +55,7 @@ export default function FeedScreen({ navigation }: any) {
   const [selectedNations, setSelectedNations] = useState<string[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [topQuestion, setTopQuestion] = useState<Discussion | null>(null);
+  const [reportTarget, setReportTarget] = useState<Post | null>(null);
 
   function toggleNation(name: string) {
     setSelectedNations((prev) =>
@@ -152,32 +154,26 @@ export default function FeedScreen({ navigation }: any) {
 
   function handleReport(item: Post) {
     if (!profile?.uid) return;
-    Alert.alert(
-      t('report.title'),
-      t('report.message'),
-      [
-        { text: t('report.cancel'), style: 'cancel' },
-        {
-          text: t('report.confirm'),
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await createReport({
-                targetType: 'post',
-                targetId: item.id,
-                targetTitle: item.title,
-                targetAuthorId: item.authorId,
-                reportedBy: profile.uid,
-                reason: '',
-              });
-              Alert.alert(t('report.sentTitle'), t('report.sentMessage'));
-            } catch {
-              Alert.alert(t('errors.generic'));
-            }
-          },
-        },
-      ],
-    );
+    setReportTarget(item);
+  }
+
+  async function submitReport(reason: ReportReason) {
+    const item = reportTarget;
+    setReportTarget(null);
+    if (!item || !profile?.uid) return;
+    try {
+      await createReport({
+        targetType: 'post',
+        targetId: item.id,
+        targetTitle: item.title,
+        targetAuthorId: item.authorId,
+        reportedBy: profile.uid,
+        reason,
+      });
+      Alert.alert(t('report.sentTitle'), t('report.sentMessage'));
+    } catch {
+      Alert.alert(t('errors.generic'));
+    }
   }
 
   function handleDelete(postId: string) {
@@ -448,6 +444,12 @@ export default function FeedScreen({ navigation }: any) {
         onToggle={toggleNation}
         onClear={() => setSelectedNations([])}
         myNationality={profile?.nationality}
+      />
+
+      <ReportSheet
+        visible={reportTarget !== null}
+        onClose={() => setReportTarget(null)}
+        onSubmit={submitReport}
       />
     </View>
   );

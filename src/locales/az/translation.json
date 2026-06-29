@@ -71,7 +71,9 @@
     "replied": "müzakirənizə cavab verdi",
     "accepted": "cavabınızı qəbul etdi",
     "clearRead": "Oxunmuşları sil",
-    "joinedEvent": "tədbirinizdə iştirak edir"
+    "joinedEvent": "tədbirinizdə iştirak edir",
+    "contentRemoved": "Məzmununuz qaydaları pozduğu üçün moderator tərəfindən silindi.",
+    "blocked": "Təkrar pozuntulara görə {{count}} gün şərh və cavab yaza bilməzsiniz."
   },
   "profile": {
     "title": "Profil",
@@ -201,7 +203,20 @@
     "confirm": "Şikayət et",
     "cancel": "Ləğv et",
     "sentTitle": "Təşəkkürlər",
-    "sentMessage": "Şikayətiniz moderatorlara göndərildi."
+    "sentMessage": "Şikayətiniz moderatorlara göndərildi.",
+    "subtitle": "Niyə şikayət edirsiniz?",
+    "reasons": {
+      "spam": "Spam",
+      "hate": "Nifrət nitqi və ya simvollar",
+      "violence": "Zorakılıq və ya təhlükəli təşkilatlar",
+      "harassment": "Təqib və ya təhqir",
+      "nudity": "Çılpaqlıq və ya cinsi məzmun",
+      "falseInfo": "Yanlış məlumat",
+      "scam": "Fırıldaqçılıq və ya aldatma",
+      "selfHarm": "İntihar və ya özünə zərər",
+      "ip": "Müəllif hüquqlarının pozulması",
+      "other": "Başqa səbəb"
+    }
   },
   "moderation": {
     "title": "Şikayətlər",
@@ -213,7 +228,10 @@
     "removeMessage": "Bu məzmun həmişəlik silinəcək.",
     "typePost": "Post",
     "typeDiscussion": "Sual",
-    "alreadyGone": "Bu məzmun artıq mövcud deyil."
+    "alreadyGone": "Bu məzmun artıq mövcud deyil.",
+    "typeComment": "Şərh",
+    "typeReply": "Cavab",
+    "blockedBanner": "Təkrar pozuntulara görə şərh yazmaq müvəqqəti bloklanıb."
   },
   "comments": {
     "title": "Şərhlər",

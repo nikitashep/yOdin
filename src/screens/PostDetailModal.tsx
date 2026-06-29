@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore } from '../store/usePostStore';
 import { votePost, addComment, fetchComments, joinEvent, leaveEvent } from '../services/postService';
-import { Post, PostComment } from '../types';
+import { Post, PostComment, ReportReason } from '../types';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -31,7 +31,9 @@ import { Typography } from '../theme/typography';
 import PhotoGrid from '../components/PhotoGrid';
 import VideoPlayerView from '../components/VideoPlayerView';
 import EventParticipantsModal from '../components/EventParticipantsModal';
+import ReportSheet from '../components/ReportSheet';
 import { createParticipantNotification } from '../services/notificationService';
+import { createReport } from '../services/reportService';
 
 const SCREEN_H = Dimensions.get('window').height;
 const SHEET_H = Math.round(SCREEN_H * 0.5);
@@ -70,6 +72,8 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
   const [participants, setParticipants] = useState<string[]>([]);
   const [participantsVisible, setParticipantsVisible] = useState(false);
   const [joining, setJoining] = useState(false);
+  const [reportComment, setReportComment] = useState<PostComment | null>(null);
+  const commentBlocked = (profile?.commentBlockedUntil ?? 0) > Date.now();
 
   const cardAnim = useRef(new Animated.Value(0)).current; // 0 hidden → 1 shown
   // 0 = comments closed (card centered, sheet hidden below); 1 = comments open
@@ -206,10 +210,36 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
     }
   }
 
+  async function submitCommentReport(reason: ReportReason) {
+    const c = reportComment;
+    setReportComment(null);
+    if (!c || !profile?.uid || !post) return;
+    try {
+      await createReport({
+        targetType: 'comment',
+        targetId: c.id,
+        targetPath: `posts/${post.id}/comments/${c.id}`,
+        targetTitle: c.text,
+        targetAuthorId: c.authorId,
+        reportedBy: profile.uid,
+        reason,
+      });
+      Alert.alert(t('report.sentTitle'), t('report.sentMessage'));
+    } catch {
+      Alert.alert(t('errors.generic'));
+    }
+  }
+
   function renderComment({ item }: { item: PostComment }) {
     const initials = item.authorName?.split(' ').map((w) => w[0]).join('').toUpperCase() ?? '?';
+    const isMine = item.authorId === profile?.uid;
     return (
-      <View style={styles.commentRow}>
+      <TouchableOpacity
+        style={styles.commentRow}
+        activeOpacity={1}
+        delayLongPress={300}
+        onLongPress={!isMine ? () => setReportComment(item) : undefined}
+      >
         <TouchableOpacity
           style={styles.commentAvatar}
           activeOpacity={onOpenProfile ? 0.7 : 1}
@@ -233,7 +263,7 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
           <Text style={styles.commentText}>{item.text}</Text>
           <Text style={styles.commentTime}>{formatTime(item.createdAt, t)}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 
@@ -403,24 +433,31 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
               />
             )}
 
-            <View style={styles.inputBar}>
-              <TextInput
-                style={styles.input}
-                placeholder={t('comments.placeholder')}
-                placeholderTextColor={colors.textSecondary}
-                value={text}
-                onChangeText={setText}
-                multiline
-                maxLength={1000}
-              />
-              <TouchableOpacity
-                style={[styles.sendBtn, (!text.trim() || sending) && styles.sendBtnDisabled]}
-                onPress={sendComment}
-                disabled={!text.trim() || sending}
-              >
-                {sending ? <ActivityIndicator color="#fff" size="small" /> : <Text style={styles.sendText}>↑</Text>}
-              </TouchableOpacity>
-            </View>
+            {commentBlocked ? (
+              <View style={styles.blockedBar}>
+                <Ionicons name="lock-closed" size={16} color={colors.notification} />
+                <Text style={styles.blockedText}>{t('moderation.blockedBanner')}</Text>
+              </View>
+            ) : (
+              <View style={styles.inputBar}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={t('comments.placeholder')}
+                  placeholderTextColor={colors.textSecondary}
+                  value={text}
+                  onChangeText={setText}
+                  multiline
+                  maxLength={1000}
+                />
+                <TouchableOpacity
+                  style={[styles.sendBtn, (!text.trim() || sending) && styles.sendBtnDisabled]}
+                  onPress={sendComment}
+                  disabled={!text.trim() || sending}
+                >
+                  {sending ? <ActivityIndicator color="#fff" size="small" /> : <Text style={styles.sendText}>↑</Text>}
+                </TouchableOpacity>
+              </View>
+            )}
           </KeyboardAvoidingView>
           </Animated.View>
       </View>
@@ -431,6 +468,12 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
       participantIds={participants}
       onClose={() => setParticipantsVisible(false)}
       onOpenProfile={onOpenProfile ? (uid) => { setParticipantsVisible(false); onOpenProfile(uid); } : undefined}
+    />
+
+    <ReportSheet
+      visible={reportComment !== null}
+      onClose={() => setReportComment(null)}
+      onSubmit={submitCommentReport}
     />
     </>
   );
@@ -566,5 +609,16 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
     },
     sendBtnDisabled: { opacity: 0.4 },
     sendText: { color: '#fff', fontSize: 20, fontWeight: Typography.fontWeightBold },
+    blockedBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      paddingBottom: Math.max(bottomInset, 12) + 12,
+      borderTopWidth: 1,
+      borderTopColor: c.border,
+    },
+    blockedText: { flex: 1, color: c.notification, fontSize: Typography.fontSizeSM },
   });
 }

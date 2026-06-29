@@ -11,6 +11,12 @@ export interface User {
   points?: number;
   createdAt: number;
   following?: string[];
+  // Moderation (maintained server-side, read-only on the client):
+  // epoch-ms until which the user may not comment/reply; how many removals have
+  // accrued since the last ban; how many bans they've served (drives escalation).
+  commentBlockedUntil?: number;
+  moderationStrikes?: number;
+  banCount?: number;
 }
 
 export type PostCategory = 'news' | 'events' | 'places' | 'lifestyle';
@@ -102,7 +108,7 @@ export interface Reply {
 
 export interface AppNotification {
   id: string;
-  type: 'reply' | 'accepted' | 'participant';
+  type: 'reply' | 'accepted' | 'participant' | 'removed' | 'blocked';
   toUserId: string;
   fromUserId: string;
   fromUserName: string;
@@ -113,16 +119,41 @@ export interface AppNotification {
   // Event sign-up notifications (participant) carry the post instead.
   postId?: string;
   postTitle?: string;
+  // Moderation notifications (removed/blocked), created server-side.
+  // contentSnippet: a short excerpt of the removed item; blockDays: ban length.
+  contentSnippet?: string;
+  blockDays?: number;
   createdAt: number;
   read: boolean;
 }
 
 export type ReportStatus = 'pending' | 'removed' | 'kept';
 
+export type ReportTargetType = 'post' | 'discussion' | 'comment' | 'reply';
+
+// Instagram-style report reasons. Keys map to `report.reasons.<key>` strings.
+export const REPORT_REASONS = [
+  'spam',
+  'hate',
+  'violence',
+  'harassment',
+  'nudity',
+  'falseInfo',
+  'scam',
+  'selfHarm',
+  'ip',
+  'other',
+] as const;
+
+export type ReportReason = (typeof REPORT_REASONS)[number];
+
 export interface Report {
   id: string;
-  targetType: 'post' | 'discussion';
+  targetType: ReportTargetType;
   targetId: string;
+  // Full Firestore document path of the target, so a moderator can remove a
+  // nested comment/reply without reconstructing its parent ids.
+  targetPath?: string;
   targetTitle: string;
   targetAuthorId: string;
   reportedBy: string;

@@ -2,6 +2,7 @@ import {
   collection,
   addDoc,
   doc,
+  deleteDoc,
   updateDoc,
   query,
   orderBy,
@@ -9,12 +10,17 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { Report, ReportStatus } from '../types';
+import { Report, ReportStatus, ReportTargetType } from '../types';
+import { deletePost } from './postService';
+import { deleteDiscussion } from './discussionService';
 
-// Anyone signed in can file a report against a post or a forum question.
+// Anyone signed in can file a report against a post, forum question, comment or
+// reply. `targetPath` is the target's full document path (needed to remove a
+// nested comment/reply later).
 export async function createReport(data: {
-  targetType: 'post' | 'discussion';
+  targetType: ReportTargetType;
   targetId: string;
+  targetPath?: string;
   targetTitle: string;
   targetAuthorId: string;
   reportedBy: string;
@@ -25,6 +31,20 @@ export async function createReport(data: {
     status: 'pending' as ReportStatus,
     createdAt: serverTimestamp(),
   });
+}
+
+// Moderator removal: delete the reported content. Posts/discussions go through
+// their own service (which also cleans up storage); nested comments/replies are
+// deleted by path. The accompanying strike/notification is handled server-side
+// by the onReportUpdated Cloud Function once the report is marked 'removed'.
+export async function removeReportedContent(report: Report): Promise<void> {
+  if (report.targetType === 'post') {
+    await deletePost(report.targetId);
+  } else if (report.targetType === 'discussion') {
+    await deleteDiscussion(report.targetId);
+  } else if (report.targetPath) {
+    await deleteDoc(doc(db, report.targetPath));
+  }
 }
 
 // Live stream of all reports (newest first). Readable only by moderators —

@@ -12,14 +12,22 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { useAuthStore } from '../store/useAuthStore';
-import { subscribeReports, resolveReport } from '../services/reportService';
-import { deletePost, fetchPostById } from '../services/postService';
-import { deleteDiscussion } from '../services/discussionService';
-import { Report, Post } from '../types';
+import { subscribeReports, resolveReport, removeReportedContent } from '../services/reportService';
+import { fetchPostById } from '../services/postService';
+import { Report, Post, ReportTargetType } from '../types';
 import { formatTime } from '../utils/formatTime';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 import PostDetailModal from './PostDetailModal';
+
+// Per-target-type badge styling. Each report can target a post, forum question,
+// comment or reply.
+const TYPE_META: Record<ReportTargetType, { icon: any; labelKey: string; color: (c: ColorPalette) => string }> = {
+  post: { icon: 'newspaper-outline', labelKey: 'moderation.typePost', color: (c) => c.primary },
+  discussion: { icon: 'chatbubbles-outline', labelKey: 'moderation.typeDiscussion', color: (c) => c.accent },
+  comment: { icon: 'chatbubble-outline', labelKey: 'moderation.typeComment', color: (c) => c.success },
+  reply: { icon: 'arrow-undo-outline', labelKey: 'moderation.typeReply', color: (c) => c.notification },
+};
 
 export default function ReportsScreen({ navigation }: any) {
   const { t } = useTranslation();
@@ -63,11 +71,18 @@ export default function ReportsScreen({ navigation }: any) {
   }
 
   async function openTarget(report: Report) {
-    if (report.targetType === 'discussion') {
-      navigation.navigate('DiscussionDetail', { discussionId: report.targetId, question: report.targetTitle });
+    // Forum question, or a reply under one → open the discussion thread.
+    if (report.targetType === 'discussion' || report.targetType === 'reply') {
+      const discussionId = report.targetType === 'reply'
+        ? report.targetPath?.split('/')[1]
+        : report.targetId;
+      if (!discussionId) { Alert.alert(t('moderation.alreadyGone')); return; }
+      navigation.navigate('DiscussionDetail', { discussionId, question: report.targetType === 'discussion' ? report.targetTitle : '' });
       return;
     }
-    const post = await fetchPostById(report.targetId).catch(() => null);
+    // Post, or a comment under one → open the post detail.
+    const postId = report.targetType === 'comment' ? report.targetPath?.split('/')[1] : report.targetId;
+    const post = postId ? await fetchPostById(postId).catch(() => null) : null;
     if (!post) {
       Alert.alert(t('moderation.alreadyGone'));
       return;
@@ -94,8 +109,9 @@ export default function ReportsScreen({ navigation }: any) {
   async function doRemove(report: Report) {
     setBusyId(report.id);
     try {
-      if (report.targetType === 'post') await deletePost(report.targetId);
-      else await deleteDiscussion(report.targetId);
+      // Delete the content; the onReportUpdated Cloud Function then notifies the
+      // author and applies a moderation strike (→ comment ban after 5).
+      await removeReportedContent(report);
       await resolveReport(report.id, 'removed');
     } catch {
       Alert.alert(t('errors.generic'));
@@ -116,19 +132,20 @@ export default function ReportsScreen({ navigation }: any) {
   }
 
   function renderReport({ item }: { item: Report }) {
-    const isPost = item.targetType === 'post';
+    const meta = TYPE_META[item.targetType];
     return (
       <View style={styles.card}>
         <View style={styles.cardTop}>
-          <View style={[styles.typeBadge, isPost ? styles.typePost : styles.typeDiscussion]}>
-            <Ionicons name={isPost ? 'newspaper-outline' : 'chatbubbles-outline'} size={12} color="#fff" />
-            <Text style={styles.typeBadgeText}>
-              {isPost ? t('moderation.typePost') : t('moderation.typeDiscussion')}
-            </Text>
+          <View style={[styles.typeBadge, { backgroundColor: meta.color(colors) }]}>
+            <Ionicons name={meta.icon} size={12} color="#fff" />
+            <Text style={styles.typeBadgeText}>{t(meta.labelKey)}</Text>
           </View>
           <Text style={styles.time}>{formatTime(item.createdAt, t)}</Text>
         </View>
 
+        {item.reason ? (
+          <Text style={styles.reason}>{t(`report.reasons.${item.reason}`, { defaultValue: item.reason })}</Text>
+        ) : null}
         <Text style={styles.targetTitle} numberOfLines={3}>{item.targetTitle}</Text>
 
         <View style={styles.actions}>
@@ -221,6 +238,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     typeDiscussion: { backgroundColor: c.accent },
     typeBadgeText: { color: '#fff', fontSize: Typography.fontSizeXS, fontWeight: Typography.fontWeightSemiBold },
     time: { fontSize: Typography.fontSizeXS, color: c.textSecondary },
+    reason: { fontSize: Typography.fontSizeSM, color: c.notification, fontWeight: Typography.fontWeightSemiBold, marginBottom: 4 },
     targetTitle: { fontSize: Typography.fontSizeMD, color: c.textPrimary, lineHeight: 21, marginBottom: 14 },
     actions: { flexDirection: 'row', gap: 8 },
     actionBtn: {

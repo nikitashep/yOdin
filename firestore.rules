@@ -55,12 +55,13 @@ service cloud.firestore {
         allow read: if request.auth != null;
         allow create: if request.auth != null
           && isVerified()
+          && notBlocked()
           && request.resource.data.authorId == request.auth.uid
           && request.resource.data.text is string
           && request.resource.data.text.size() > 0
           && request.resource.data.text.size() <= 1000;
         allow delete: if request.auth != null
-          && resource.data.authorId == request.auth.uid;
+          && (resource.data.authorId == request.auth.uid || isModerator());
       }
     }
 
@@ -91,6 +92,7 @@ service cloud.firestore {
         allow read: if request.auth != null;
         allow create: if request.auth != null
           && isVerified()
+          && notBlocked()
           && request.resource.data.authorId == request.auth.uid
           && request.resource.data.text is string
           && request.resource.data.text.size() > 0
@@ -101,7 +103,7 @@ service cloud.firestore {
           && ownUidArrayChange(resource.data.get('likes', []), request.resource.data.get('likes', []))
           && ownUidArrayChange(resource.data.get('dislikes', []), request.resource.data.get('dislikes', []));
         allow delete: if request.auth != null
-          && resource.data.authorId == request.auth.uid;
+          && (resource.data.authorId == request.auth.uid || isModerator());
       }
     }
 
@@ -137,7 +139,7 @@ service cloud.firestore {
       allow create: if request.auth != null
         && isVerified()
         && request.resource.data.reportedBy == request.auth.uid
-        && request.resource.data.targetType in ['post', 'discussion']
+        && request.resource.data.targetType in ['post', 'discussion', 'comment', 'reply']
         && request.resource.data.targetId is string
         && request.resource.data.status == 'pending';
       allow read, update, delete: if isModerator();
@@ -152,6 +154,14 @@ service cloud.firestore {
     // the signed ID token, so it can't be spoofed by the client.
     function isVerified() {
       return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    // Comment/reply ban: the onReportUpdated function sets commentBlockedUntil
+    // (epoch ms) on a user after repeated moderator-confirmed removals. While
+    // that time is in the future the user can't post comments or replies.
+    function notBlocked() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid))
+        .data.get('commentBlockedUntil', 0) < request.time.toMillis();
     }
 
     // acceptedReplyId: only the question author may set it, and only once (immutable once answered).
