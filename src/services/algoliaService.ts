@@ -43,7 +43,6 @@ export async function searchDiscussions(query: string, nationalities?: string[])
       query,
       ...(facetFilters ? { facetFilters } : {}),
       hitsPerPage: 50,
-      restrictSearchableAttributes: ['question'],
       attributesToRetrieve: [
         'objectID',
         'question',
