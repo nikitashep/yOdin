@@ -28,6 +28,11 @@ export interface Post {
   description: string;
   category: PostCategory;
   imageURLs?: string[];
+  // A post carries either photos or a single short video (mutually exclusive).
+  // videoPoster is a small JPEG still shown in the feed so the video itself is
+  // only fetched when the user taps to play.
+  videoURL?: string;
+  videoPoster?: string;
   location: string;
   createdAt: number;
   likes?: string[];
@@ -63,6 +68,9 @@ export interface Discussion {
   authorCountryCode: string;
   question: string;
   imageURLs?: string[];
+  // Optional single short video (mutually exclusive with photos). See Post.
+  videoURL?: string;
+  videoPoster?: string;
   location?: string;
   createdAt: number;
   replyCount: number;

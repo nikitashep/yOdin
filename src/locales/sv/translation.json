@@ -151,7 +151,10 @@
     "selectNationalityAndLocation": "Välj din nationalitet och plats.",
     "writeQuestion": "Skriv din fråga.",
     "photoUploadFailed": "Det gick inte att ladda upp bilden. Försök igen.",
-    "fillTitleAndDescription": "Fyll i ämne och beskrivning."
+    "fillTitleAndDescription": "Fyll i ämne och beskrivning.",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "Allt",
@@ -171,7 +174,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "Forum",

@@ -152,7 +152,10 @@
     "selectNationalityAndLocation": "Будь ласка, оберіть вашу національність і місцезнаходження.",
     "writeQuestion": "Будь ласка, напишіть ваше запитання.",
     "photoUploadFailed": "Не вдалося завантажити фото. Спробуйте ще раз.",
-    "fillTitleAndDescription": "Заповніть тему та опис."
+    "fillTitleAndDescription": "Заповніть тему та опис.",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "Все",
@@ -172,7 +175,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "Форум",

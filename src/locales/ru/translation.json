@@ -152,7 +152,10 @@
     "selectNationalityAndLocation": "Пожалуйста, выберите национальность и страну.",
     "writeQuestion": "Напишите ваш вопрос.",
     "photoUploadFailed": "Не удалось загрузить фото. Попробуйте снова.",
-    "fillTitleAndDescription": "Заполните тему и описание."
+    "fillTitleAndDescription": "Заполните тему и описание.",
+    "videoTooLong": "Видео не длиннее {{count}} сек",
+    "videoTooLarge": "Видео слишком большое (макс. 50 МБ)",
+    "videoUploadFailed": "Не удалось загрузить видео"
   },
   "categories": {
     "all": "Всё",
@@ -172,7 +175,8 @@
     "signupHint": "Люди смогут записаться под постом",
     "noLimit": "Без лимита",
     "withLimit": "С лимитом",
-    "limitPlaceholder": "Кол-во"
+    "limitPlaceholder": "Кол-во",
+    "addVideo": "Видео"
   },
   "forum": {
     "title": "Форум",

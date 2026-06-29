@@ -151,7 +151,10 @@
     "selectNationalityAndLocation": "אנא בחר את הלאום והמיקום שלך.",
     "writeQuestion": "אנא כתוב את שאלתך.",
     "photoUploadFailed": "העלאת התמונה נכשלה. אנא נסה שוב.",
-    "fillTitleAndDescription": "נא למלא נושא ותיאור."
+    "fillTitleAndDescription": "נא למלא נושא ותיאור.",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "הכול",
@@ -171,7 +174,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "פורום",

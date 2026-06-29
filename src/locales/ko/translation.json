@@ -151,7 +151,10 @@
     "selectNationalityAndLocation": "국적과 위치를 모두 선택해 주세요.",
     "writeQuestion": "질문을 작성해 주세요.",
     "photoUploadFailed": "사진 업로드에 실패했습니다. 다시 시도해 주세요.",
-    "fillTitleAndDescription": "주제와 설명을 입력해 주세요."
+    "fillTitleAndDescription": "주제와 설명을 입력해 주세요.",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "전체",
@@ -171,7 +174,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "포럼",

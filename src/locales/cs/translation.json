@@ -152,7 +152,10 @@
     "selectNationalityAndLocation": "Prosím vyberte svou národnost a polohu.",
     "writeQuestion": "Prosím napište svou otázku.",
     "photoUploadFailed": "Nahrávání fotografie se nezdařilo. Zkuste to prosím znovu.",
-    "fillTitleAndDescription": "Vyplňte téma a popis."
+    "fillTitleAndDescription": "Vyplňte téma a popis.",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "Vše",
@@ -172,7 +175,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "Fórum",

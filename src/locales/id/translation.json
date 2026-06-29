@@ -151,7 +151,10 @@
     "selectNationalityAndLocation": "Harap pilih kebangsaan dan lokasi Anda.",
     "writeQuestion": "Harap tulis pertanyaan Anda.",
     "photoUploadFailed": "Gagal mengunggah foto. Silakan coba lagi.",
-    "fillTitleAndDescription": "Harap isi topik dan deskripsi."
+    "fillTitleAndDescription": "Harap isi topik dan deskripsi.",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "Semua",
@@ -171,7 +174,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "Forum",

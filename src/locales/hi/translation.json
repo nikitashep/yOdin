@@ -151,7 +151,10 @@
     "selectNationalityAndLocation": "कृपया अपनी राष्ट्रीयता और स्थान दोनों चुनें।",
     "writeQuestion": "कृपया अपना प्रश्न लिखें।",
     "photoUploadFailed": "फ़ोटो अपलोड विफल। कृपया पुनः प्रयास करें।",
-    "fillTitleAndDescription": "कृपया विषय और विवरण भरें।"
+    "fillTitleAndDescription": "कृपया विषय और विवरण भरें।",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "सभी",
@@ -171,7 +174,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "फ़ोरम",

@@ -151,7 +151,10 @@
     "selectNationalityAndLocation": "لطفاً ملیت و موقعیت خود را انتخاب کنید.",
     "writeQuestion": "لطفاً سوال خود را بنویسید.",
     "photoUploadFailed": "آپلود عکس ناموفق بود. لطفاً دوباره تلاش کنید.",
-    "fillTitleAndDescription": "لطفاً موضوع و توضیحات را پر کنید."
+    "fillTitleAndDescription": "لطفاً موضوع و توضیحات را پر کنید.",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "همه",
@@ -171,7 +174,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "انجمن",

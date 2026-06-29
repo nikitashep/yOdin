@@ -30,6 +30,7 @@ import PostDetailModal from './PostDetailModal';
 import FollowButton from '../components/FollowButton';
 import NationFilterDrawer from '../components/NationFilterDrawer';
 import PhotoGrid from '../components/PhotoGrid';
+import VideoPreview from '../components/VideoPreview';
 import QuestionOfDayCard from '../components/QuestionOfDayCard';
 import { weightedSort } from '../utils/weightedSort';
 import { COUNTRIES } from '../data/countries';
@@ -267,7 +268,11 @@ export default function FeedScreen({ navigation }: any) {
           ) : null}
         </View>
 
-        {item.imageURLs && item.imageURLs.length > 0 ? (
+        {item.videoURL ? (
+          <View style={styles.photoWrap}>
+            <VideoPreview poster={item.videoPoster} onPress={() => openDetail(item.id, false)} />
+          </View>
+        ) : item.imageURLs && item.imageURLs.length > 0 ? (
           <View style={styles.photoWrap}>
             <PhotoGrid images={item.imageURLs} />
           </View>

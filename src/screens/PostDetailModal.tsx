@@ -29,6 +29,7 @@ import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 import PhotoGrid from '../components/PhotoGrid';
+import VideoPlayerView from '../components/VideoPlayerView';
 import EventParticipantsModal from '../components/EventParticipantsModal';
 import { createParticipantNotification } from '../services/notificationService';
 
@@ -293,7 +294,11 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
                 </TouchableOpacity>
               </View>
 
-              {post.imageURLs && post.imageURLs.length > 0 ? (
+              {post.videoURL ? (
+                <View style={styles.photoWrap}>
+                  <VideoPlayerView uri={post.videoURL} />
+                </View>
+              ) : post.imageURLs && post.imageURLs.length > 0 ? (
                 <View style={styles.photoWrap}>
                   <PhotoGrid images={post.imageURLs} />
                 </View>

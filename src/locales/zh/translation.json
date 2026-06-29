@@ -151,7 +151,10 @@
     "selectNationalityAndLocation": "请选择您的国籍和所在地。",
     "writeQuestion": "请写下您的问题。",
     "photoUploadFailed": "照片上传失败，请重试。",
-    "fillTitleAndDescription": "请填写主题和描述。"
+    "fillTitleAndDescription": "请填写主题和描述。",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "全部",
@@ -171,7 +174,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "论坛",

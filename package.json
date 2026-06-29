@@ -20,6 +20,8 @@
     "expo-image-picker": "^55.0.20",
     "expo-localization": "^55.0.14",
     "expo-status-bar": "~3.0.9",
+    "expo-video": "~3.0.16",
+    "expo-video-thumbnails": "~10.0.8",
     "firebase": "^12.13.0",
     "firebase-admin": "^14.0.0",
     "i18next": "^26.2.0",

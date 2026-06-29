@@ -151,7 +151,10 @@
     "selectNationalityAndLocation": "Por favor selecciona tu nacionalidad y ubicación.",
     "writeQuestion": "Por favor escribe tu pregunta.",
     "photoUploadFailed": "Error al subir la foto. Por favor intenta de nuevo.",
-    "fillTitleAndDescription": "Completa el tema y la descripción."
+    "fillTitleAndDescription": "Completa el tema y la descripción.",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "Todo",
@@ -171,7 +174,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "Foro",

@@ -151,7 +151,10 @@
     "selectNationalityAndLocation": "আপনার জাতীয়তা এবং অবস্থান উভয়ই নির্বাচন করুন।",
     "writeQuestion": "আপনার প্রশ্ন লিখুন।",
     "photoUploadFailed": "ছবি আপলোড ব্যর্থ। আবার চেষ্টা করুন।",
-    "fillTitleAndDescription": "অনুগ্রহ করে বিষয় ও বিবরণ পূরণ করুন।"
+    "fillTitleAndDescription": "অনুগ্রহ করে বিষয় ও বিবরণ পূরণ করুন।",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "সব",
@@ -171,7 +174,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "ফোরাম",

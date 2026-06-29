@@ -152,7 +152,10 @@
     "selectNationalityAndLocation": "Te rugăm să selectezi naționalitatea și locația.",
     "writeQuestion": "Te rugăm să scrii întrebarea ta.",
     "photoUploadFailed": "Încărcarea fotografiei a eșuat. Te rugăm să încerci din nou.",
-    "fillTitleAndDescription": "Completează subiectul și descrierea."
+    "fillTitleAndDescription": "Completează subiectul și descrierea.",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "Tot",
@@ -172,7 +175,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "Forum",

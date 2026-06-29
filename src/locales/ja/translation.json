@@ -151,7 +151,10 @@
     "selectNationalityAndLocation": "国籍と場所を選択してください。",
     "writeQuestion": "質問を書いてください。",
     "photoUploadFailed": "写真のアップロードに失敗しました。もう一度お試しください。",
-    "fillTitleAndDescription": "トピックと説明を入力してください。"
+    "fillTitleAndDescription": "トピックと説明を入力してください。",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "すべて",
@@ -171,7 +174,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "フォーラム",

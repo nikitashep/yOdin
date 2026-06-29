@@ -151,7 +151,10 @@
     "selectNationalityAndLocation": "กรุณาเลือกสัญชาติและที่อยู่ของคุณ",
     "writeQuestion": "กรุณาเขียนคำถามของคุณ",
     "photoUploadFailed": "อัปโหลดรูปภาพล้มเหลว กรุณาลองอีกครั้ง",
-    "fillTitleAndDescription": "กรุณากรอกหัวข้อและคำอธิบาย"
+    "fillTitleAndDescription": "กรุณากรอกหัวข้อและคำอธิบาย",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "ทั้งหมด",
@@ -171,7 +174,8 @@
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
-    "limitPlaceholder": "Max"
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "ฟอรัม",

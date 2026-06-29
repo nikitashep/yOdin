@@ -151,7 +151,10 @@
     "selectNationalityAndLocation": "Zəhmət olmasa milliyyət və ölkə seçin.",
     "writeQuestion": "Sualınızı yazın.",
     "photoUploadFailed": "Şəkil yüklənmədi. Yenidən cəhd edin.",
-    "fillTitleAndDescription": "Mövzu və təsviri doldurun."
+    "fillTitleAndDescription": "Mövzu və təsviri doldurun.",
+    "videoTooLong": "Video {{count}} saniyədən qısa olmalıdır",
+    "videoTooLarge": "Video çox böyükdür (maks. 50 MB)",
+    "videoUploadFailed": "Video yüklənmədi"
   },
   "categories": {
     "all": "Hamısı",
@@ -171,7 +174,8 @@
     "signupHint": "İnsanlar postun altında qoşula bilər",
     "noLimit": "Limitsiz",
     "withLimit": "Limitli",
-    "limitPlaceholder": "Maks"
+    "limitPlaceholder": "Maks",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "Forum",

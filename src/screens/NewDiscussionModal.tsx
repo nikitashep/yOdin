@@ -18,10 +18,11 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
 import { createDiscussion, newDiscussionId } from '../services/discussionService';
-import { uploadDiscussionImages } from '../services/storageService';
+import { uploadDiscussionImages, uploadDiscussionVideo } from '../services/storageService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getErrorMessage } from '../services/errorHandler';
 import PhotoPicker from '../components/PhotoPicker';
+import VideoAttach, { AttachedVideo } from '../components/VideoAttach';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
@@ -43,6 +44,7 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
   const { prependDiscussion } = useFeedStore();
   const [question, setQuestion] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const [video, setVideo] = useState<AttachedVideo | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const slideAnim = useRef(new Animated.Value(600)).current;
@@ -51,6 +53,7 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
     if (visible) {
       setQuestion('');
       setImages([]);
+      setVideo(null);
       setError('');
       Animated.spring(slideAnim, {
         toValue: 0,
@@ -76,7 +79,17 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
     try {
       const id = newDiscussionId();
       let imageURLs: string[] = [];
-      if (images.length > 0) {
+      let videoURL = '';
+      let videoPoster = '';
+      if (video) {
+        try {
+          const up = await uploadDiscussionVideo(id, video.uri, video.poster);
+          videoURL = up.videoURL;
+          videoPoster = up.videoPoster;
+        } catch {
+          // Video upload failed — post the question without it rather than blocking.
+        }
+      } else if (images.length > 0) {
         try {
           imageURLs = await uploadDiscussionImages(id, images);
         } catch {
@@ -92,6 +105,7 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
         location: profile.location,
         question: question.trim(),
         imageURLs,
+        ...(videoURL ? { videoURL, videoPoster } : {}),
       };
       await createDiscussion(data, id);
       prependDiscussion({ id, ...data, createdAt: Date.now(), replyCount: 0 });
@@ -161,8 +175,15 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
           </View>
 
           <View style={styles.photoSection}>
-            <Text style={styles.sectionLabel}>{t('newPost.photos', { count: MAX_PHOTOS })}</Text>
-            <PhotoPicker images={images} onChange={setImages} max={MAX_PHOTOS} />
+            {!video ? (
+              <>
+                <Text style={styles.sectionLabel}>{t('newPost.photos', { count: MAX_PHOTOS })}</Text>
+                <PhotoPicker images={images} onChange={setImages} max={MAX_PHOTOS} />
+              </>
+            ) : null}
+            <View style={styles.videoRow}>
+              <VideoAttach value={video} onChange={setVideo} disabled={images.length > 0} />
+            </View>
           </View>
 
           {error ? (
@@ -289,6 +310,7 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
       marginBottom: 10,
     },
     photoSection: { marginBottom: 16 },
+    videoRow: { marginTop: 10, alignSelf: 'flex-start' },
     errorRow: {
       flexDirection: 'row',
       alignItems: 'center',

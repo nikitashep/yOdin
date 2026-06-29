@@ -20,8 +20,9 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore } from '../store/usePostStore';
 import { createPost, newPostId } from '../services/postService';
-import { uploadPostImages } from '../services/storageService';
+import { uploadPostImages, uploadPostVideo } from '../services/storageService';
 import PhotoPicker from '../components/PhotoPicker';
+import VideoAttach, { AttachedVideo } from '../components/VideoAttach';
 import { getErrorMessage } from '../services/errorHandler';
 import { PostCategory, POST_CATEGORIES } from '../types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -47,6 +48,7 @@ export default function NewPostModal({ visible, onClose }: Props) {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<PostCategory>('news');
   const [images, setImages] = useState<string[]>([]);
+  const [video, setVideo] = useState<AttachedVideo | null>(null);
   // Event sign-up sheet (only offered for the "events" category).
   const [signupEnabled, setSignupEnabled] = useState(false);
   const [limited, setLimited] = useState(false);
@@ -61,6 +63,7 @@ export default function NewPostModal({ visible, onClose }: Props) {
       setDescription('');
       setCategory('news');
       setImages([]);
+      setVideo(null);
       setSignupEnabled(false);
       setLimited(false);
       setLimitText('');
@@ -95,7 +98,17 @@ export default function NewPostModal({ visible, onClose }: Props) {
       // creation, so they must be present at create time.)
       const id = newPostId();
       let imageURLs: string[] = [];
-      if (images.length > 0) {
+      let videoURL = '';
+      let videoPoster = '';
+      if (video) {
+        try {
+          const up = await uploadPostVideo(id, video.uri, video.poster);
+          videoURL = up.videoURL;
+          videoPoster = up.videoPoster;
+        } catch {
+          Alert.alert(t('errors.videoUploadFailed'));
+        }
+      } else if (images.length > 0) {
         try {
           imageURLs = await uploadPostImages(id, images);
         } catch {
@@ -119,6 +132,7 @@ export default function NewPostModal({ visible, onClose }: Props) {
         description: description.trim(),
         category,
         imageURLs,
+        ...(videoURL ? { videoURL, videoPoster } : {}),
         location: profile.location,
         ...signup,
       };
@@ -250,9 +264,16 @@ export default function NewPostModal({ visible, onClose }: Props) {
               </View>
             ) : null}
 
-            <Text style={styles.sectionLabel}>{t('newPost.photos', { count: MAX_PHOTOS })}</Text>
-            <View style={styles.photoWrapper}>
-              <PhotoPicker images={images} onChange={setImages} max={MAX_PHOTOS} />
+            {!video ? (
+              <>
+                <Text style={styles.sectionLabel}>{t('newPost.photos', { count: MAX_PHOTOS })}</Text>
+                <View style={styles.photoWrapper}>
+                  <PhotoPicker images={images} onChange={setImages} max={MAX_PHOTOS} />
+                </View>
+              </>
+            ) : null}
+            <View style={styles.videoWrapper}>
+              <VideoAttach value={video} onChange={setVideo} disabled={images.length > 0} />
             </View>
           </ScrollView>
 
@@ -420,6 +441,7 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
       textAlign: 'center',
     },
     photoWrapper: { marginBottom: 8 },
+    videoWrapper: { marginBottom: 8, alignSelf: 'flex-start' },
     footer: {
       paddingTop: 14,
       borderTopWidth: 1,

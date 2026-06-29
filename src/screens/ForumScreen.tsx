@@ -31,6 +31,7 @@ import { weightedSort } from '../utils/weightedSort';
 import FollowButton from '../components/FollowButton';
 import NationFilterDrawer from '../components/NationFilterDrawer';
 import PhotoGrid from '../components/PhotoGrid';
+import VideoPreview from '../components/VideoPreview';
 import QuestionOfDayCard from '../components/QuestionOfDayCard';
 import { COUNTRIES } from '../data/countries';
 
@@ -270,7 +271,14 @@ export default function ForumScreen({ navigation }: any) {
           </View>
         </View>
         <Text style={styles.question}>{item.question}</Text>
-        {item.imageURLs && item.imageURLs.length > 0 ? (
+        {item.videoURL ? (
+          <View style={styles.photoWrap}>
+            <VideoPreview
+              poster={item.videoPoster}
+              onPress={() => navigation.navigate('DiscussionDetail', { discussionId: item.id, question: item.question })}
+            />
+          </View>
+        ) : item.imageURLs && item.imageURLs.length > 0 ? (
           <View style={styles.photoWrap}>
             <PhotoGrid images={item.imageURLs} />
           </View>

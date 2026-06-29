@@ -34,6 +34,7 @@ import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 import { TAB_BAR_HEIGHT } from '../constants/layout';
 import PhotoGrid from '../components/PhotoGrid';
+import VideoPlayerView from '../components/VideoPlayerView';
 
 export default function DiscussionDetailScreen({ route, navigation }: any) {
   const { discussionId, question: questionParam } = route.params;
@@ -460,7 +461,11 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
                 )}
               </TouchableOpacity>
               <Text style={styles.questionText}>{discussion.question}</Text>
-              {discussion.imageURLs && discussion.imageURLs.length > 0 ? (
+              {discussion.videoURL ? (
+                <View style={styles.questionPhotos}>
+                  <VideoPlayerView uri={discussion.videoURL} />
+                </View>
+              ) : discussion.imageURLs && discussion.imageURLs.length > 0 ? (
                 <View style={styles.questionPhotos}>
                   <PhotoGrid images={discussion.imageURLs} />
                 </View>
