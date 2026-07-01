@@ -70,7 +70,10 @@
     "empty": "Aún no hay notificaciones",
     "replied": "respondió a tu discusión",
     "accepted": "aceptó tu respuesta",
-    "clearRead": "Borrar leídas"
+    "clearRead": "Borrar leídas",
+    "joinedEvent": "is going to your event",
+    "contentRemoved": "Your content was removed by a moderator for violating the rules.",
+    "blocked": "You can’t comment or reply for {{count}} days due to repeated violations."
   },
   "profile": {
     "title": "Perfil",
@@ -150,13 +153,17 @@
     "selectNationalityAndLocation": "Por favor selecciona tu nacionalidad y ubicación.",
     "writeQuestion": "Por favor escribe tu pregunta.",
     "photoUploadFailed": "Error al subir la foto. Por favor intenta de nuevo.",
-    "fillTitleAndDescription": "Completa el tema y la descripción."
+    "fillTitleAndDescription": "Completa el tema y la descripción.",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "Todo",
     "news": "Noticias",
     "events": "Eventos",
-    "places": "Vale la pena visitar"
+    "places": "Vale la pena visitar",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "Nueva publicación",
@@ -164,7 +171,13 @@
     "descriptionPlaceholder": "Descripción",
     "category": "Categoría",
     "photos": "Photos (up to {{count}})",
-    "post": "Publicar"
+    "post": "Publicar",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "Foro",
@@ -186,11 +199,22 @@
   },
   "report": {
     "title": "Report",
-    "message": "Report this to the moderators?",
-    "confirm": "Report",
     "cancel": "Cancel",
     "sentTitle": "Thank you",
-    "sentMessage": "Your report has been sent to the moderators."
+    "sentMessage": "Your report has been sent to the moderators.",
+    "subtitle": "Why are you reporting this?",
+    "reasons": {
+      "spam": "Spam",
+      "hate": "Hate speech or symbols",
+      "violence": "Violence or dangerous organizations",
+      "harassment": "Bullying or harassment",
+      "nudity": "Nudity or sexual activity",
+      "falseInfo": "False information",
+      "scam": "Scam or fraud",
+      "selfHarm": "Suicide or self-harm",
+      "ip": "Intellectual property violation",
+      "other": "Something else"
+    }
   },
   "moderation": {
     "title": "Reports",
@@ -202,11 +226,24 @@
     "removeMessage": "This will permanently delete the reported content.",
     "typePost": "Post",
     "typeDiscussion": "Question",
-    "alreadyGone": "This content is no longer available."
+    "alreadyGone": "This content is no longer available.",
+    "typeComment": "Comment",
+    "typeReply": "Reply",
+    "blockedBanner": "You are temporarily blocked from commenting due to repeated violations."
   },
   "comments": {
     "title": "Comentarios",
     "placeholder": "Escribe un comentario...",
     "empty": "Aún no hay comentarios. ¡Sé el primero!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

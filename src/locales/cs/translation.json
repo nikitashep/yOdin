@@ -71,7 +71,10 @@
     "empty": "Zatím žádná oznámení",
     "replied": "odpověděl na vaši diskusi",
     "accepted": "přijal(a) vaši odpověď",
-    "clearRead": "Vymazat přečtené"
+    "clearRead": "Vymazat přečtené",
+    "joinedEvent": "is going to your event",
+    "contentRemoved": "Your content was removed by a moderator for violating the rules.",
+    "blocked": "You can’t comment or reply for {{count}} days due to repeated violations."
   },
   "profile": {
     "title": "Profil",
@@ -151,13 +154,17 @@
     "selectNationalityAndLocation": "Prosím vyberte svou národnost a polohu.",
     "writeQuestion": "Prosím napište svou otázku.",
     "photoUploadFailed": "Nahrávání fotografie se nezdařilo. Zkuste to prosím znovu.",
-    "fillTitleAndDescription": "Vyplňte téma a popis."
+    "fillTitleAndDescription": "Vyplňte téma a popis.",
+    "videoTooLong": "Video must be under {{count}}s",
+    "videoTooLarge": "Video is too large (max 50 MB)",
+    "videoUploadFailed": "Couldn’t upload the video"
   },
   "categories": {
     "all": "Vše",
     "news": "Novinky",
     "events": "Akce",
-    "places": "Stojí za návštěvu"
+    "places": "Stojí za návštěvu",
+    "lifestyle": "Lifestyle"
   },
   "newPost": {
     "title": "Nový příspěvek",
@@ -165,7 +172,13 @@
     "descriptionPlaceholder": "Popis",
     "category": "Kategorie",
     "photos": "Photos (up to {{count}})",
-    "post": "Zveřejnit"
+    "post": "Zveřejnit",
+    "signup": "Sign-up sheet",
+    "signupHint": "People can RSVP under the post",
+    "noLimit": "No limit",
+    "withLimit": "Limited",
+    "limitPlaceholder": "Max",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "Fórum",
@@ -187,11 +200,22 @@
   },
   "report": {
     "title": "Report",
-    "message": "Report this to the moderators?",
-    "confirm": "Report",
     "cancel": "Cancel",
     "sentTitle": "Thank you",
-    "sentMessage": "Your report has been sent to the moderators."
+    "sentMessage": "Your report has been sent to the moderators.",
+    "subtitle": "Why are you reporting this?",
+    "reasons": {
+      "spam": "Spam",
+      "hate": "Hate speech or symbols",
+      "violence": "Violence or dangerous organizations",
+      "harassment": "Bullying or harassment",
+      "nudity": "Nudity or sexual activity",
+      "falseInfo": "False information",
+      "scam": "Scam or fraud",
+      "selfHarm": "Suicide or self-harm",
+      "ip": "Intellectual property violation",
+      "other": "Something else"
+    }
   },
   "moderation": {
     "title": "Reports",
@@ -203,11 +227,24 @@
     "removeMessage": "This will permanently delete the reported content.",
     "typePost": "Post",
     "typeDiscussion": "Question",
-    "alreadyGone": "This content is no longer available."
+    "alreadyGone": "This content is no longer available.",
+    "typeComment": "Comment",
+    "typeReply": "Reply",
+    "blockedBanner": "You are temporarily blocked from commenting due to repeated violations."
   },
   "comments": {
     "title": "Komentáře",
     "placeholder": "Napsat komentář...",
     "empty": "Zatím žádné komentáře. Buďte první!"
+  },
+  "post": {
+    "participate": "I'm going",
+    "leaveEvent": "Leave",
+    "eventFull": "Event full",
+    "participants": "going"
+  },
+  "participants": {
+    "title": "Participants",
+    "empty": "No one has signed up yet"
   }
 }

@@ -57,6 +57,12 @@ export default function NotificationsScreen({ navigation }: any) {
   }
 
   function handleNotificationPress(item: AppNotification) {
+    // Moderation notices (removed/blocked) aren't tappable — the content is gone.
+    if (item.type === 'removed' || item.type === 'blocked') return;
+    if (item.type === 'participant' && item.postId) {
+      navigation.navigate('PostDetail', { postId: item.postId });
+      return;
+    }
     navigation.navigate('DiscussionDetail', {
       discussionId: item.discussionId,
       question: item.discussionQuestion,
@@ -65,6 +71,30 @@ export default function NotificationsScreen({ navigation }: any) {
 
   function renderItem({ item }: { item: AppNotification }) {
     const initials = item.fromUserName?.split(' ').map((w) => w[0]).join('').toUpperCase() ?? '?';
+    const isModeration = item.type === 'removed' || item.type === 'blocked';
+
+    if (isModeration) {
+      return (
+        <View style={[styles.item, !item.read && styles.itemUnread]}>
+          <View style={[styles.avatar, styles.modAvatar]}>
+            <Ionicons name="shield-outline" size={22} color={colors.notification} />
+          </View>
+          <View style={styles.content}>
+            <Text style={styles.text}>
+              {item.type === 'blocked'
+                ? t('notifications.blocked', { count: item.blockDays ?? 0 })
+                : t('notifications.contentRemoved')}
+            </Text>
+            {item.contentSnippet ? (
+              <Text style={styles.question} numberOfLines={2}>"{item.contentSnippet}"</Text>
+            ) : null}
+            <Text style={styles.time}>{formatTime(item.createdAt, t)}</Text>
+          </View>
+          {!item.read && <View style={styles.dot} />}
+        </View>
+      );
+    }
+
     return (
       <TouchableOpacity
         style={[styles.item, !item.read && styles.itemUnread]}
@@ -81,10 +111,16 @@ export default function NotificationsScreen({ navigation }: any) {
         <View style={styles.content}>
           <Text style={styles.text}>
             <Text style={styles.bold}>{item.fromUserName}</Text>
-            {' '}{t(item.type === 'accepted' ? 'notifications.accepted' : 'notifications.replied')}
+            {' '}{t(
+              item.type === 'participant'
+                ? 'notifications.joinedEvent'
+                : item.type === 'accepted'
+                  ? 'notifications.accepted'
+                  : 'notifications.replied',
+            )}
           </Text>
           <Text style={styles.question} numberOfLines={2}>
-            "{item.discussionQuestion}"
+            "{item.type === 'participant' ? item.postTitle : item.discussionQuestion}"
           </Text>
           <Text style={styles.time}>{formatTime(item.createdAt, t)}</Text>
         </View>
@@ -193,6 +229,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
       color: c.primary,
     },
     avatarImage: { width: 44, height: 44, borderRadius: 22 },
+    modAvatar: { backgroundColor: c.background },
     content: { flex: 1 },
     text: { fontSize: Typography.fontSizeMD, color: c.textPrimary, marginBottom: 4 },
     bold: { fontWeight: Typography.fontWeightSemiBold },

@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   Keyboard,
   ScrollView,
+  Switch,
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,8 +20,9 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore } from '../store/usePostStore';
 import { createPost, newPostId } from '../services/postService';
-import { uploadPostImages } from '../services/storageService';
+import { uploadPostImages, uploadPostVideo } from '../services/storageService';
 import PhotoPicker from '../components/PhotoPicker';
+import VideoAttach, { AttachedVideo } from '../components/VideoAttach';
 import { getErrorMessage } from '../services/errorHandler';
 import { PostCategory, POST_CATEGORIES } from '../types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -46,6 +48,11 @@ export default function NewPostModal({ visible, onClose }: Props) {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<PostCategory>('news');
   const [images, setImages] = useState<string[]>([]);
+  const [video, setVideo] = useState<AttachedVideo | null>(null);
+  // Event sign-up sheet (only offered for the "events" category).
+  const [signupEnabled, setSignupEnabled] = useState(false);
+  const [limited, setLimited] = useState(false);
+  const [limitText, setLimitText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const slideAnim = useRef(new Animated.Value(600)).current;
@@ -56,6 +63,10 @@ export default function NewPostModal({ visible, onClose }: Props) {
       setDescription('');
       setCategory('news');
       setImages([]);
+      setVideo(null);
+      setSignupEnabled(false);
+      setLimited(false);
+      setLimitText('');
       setError('');
       Animated.spring(slideAnim, {
         toValue: 0,
@@ -87,6 +98,17 @@ export default function NewPostModal({ visible, onClose }: Props) {
       // creation, so they must be present at create time.)
       const id = newPostId();
       let imageURLs: string[] = [];
+      let videoURL = '';
+      let videoPoster = '';
+      if (video) {
+        try {
+          const up = await uploadPostVideo(id, video.uri, video.poster);
+          videoURL = up.videoURL;
+          videoPoster = up.videoPoster;
+        } catch {
+          Alert.alert(t('errors.videoUploadFailed'));
+        }
+      }
       if (images.length > 0) {
         try {
           imageURLs = await uploadPostImages(id, images);
@@ -94,6 +116,13 @@ export default function NewPostModal({ visible, onClose }: Props) {
           Alert.alert(t('errors.photoUploadFailed'));
         }
       }
+      // Sign-up sheet is only attached to events. A limit of 0/blank while
+      // "limited" is on is treated as unlimited.
+      const cap = limited ? (parseInt(limitText, 10) || 0) : 0;
+      const signup =
+        category === 'events' && signupEnabled
+          ? { signupEnabled: true, participantLimit: cap > 0 ? cap : null }
+          : {};
       const data = {
         authorId: profile.uid,
         authorName: `${profile.firstName} ${profile.lastName}`,
@@ -104,7 +133,9 @@ export default function NewPostModal({ visible, onClose }: Props) {
         description: description.trim(),
         category,
         imageURLs,
+        ...(videoURL ? { videoURL, videoPoster } : {}),
         location: profile.location,
+        ...signup,
       };
       await createPost(data, id);
       if (filter === 'all' || filter === category) {
@@ -185,9 +216,61 @@ export default function NewPostModal({ visible, onClose }: Props) {
               })}
             </View>
 
+            {category === 'events' ? (
+              <View style={styles.signupBlock}>
+                <View style={styles.signupToggleRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.signupTitle}>{t('newPost.signup')}</Text>
+                    <Text style={styles.signupHint}>{t('newPost.signupHint')}</Text>
+                  </View>
+                  <Switch
+                    value={signupEnabled}
+                    onValueChange={setSignupEnabled}
+                    trackColor={{ false: colors.border, true: colors.primary }}
+                    thumbColor="#fff"
+                  />
+                </View>
+
+                {signupEnabled ? (
+                  <View style={styles.limitRow}>
+                    <TouchableOpacity
+                      style={[styles.limitChip, !limited && styles.limitChipActive]}
+                      onPress={() => setLimited(false)}
+                    >
+                      <Text style={[styles.limitChipText, !limited && styles.limitChipTextActive]}>
+                        {t('newPost.noLimit')}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.limitChip, limited && styles.limitChipActive]}
+                      onPress={() => setLimited(true)}
+                    >
+                      <Text style={[styles.limitChipText, limited && styles.limitChipTextActive]}>
+                        {t('newPost.withLimit')}
+                      </Text>
+                    </TouchableOpacity>
+                    {limited ? (
+                      <TextInput
+                        style={styles.limitInput}
+                        placeholder={t('newPost.limitPlaceholder')}
+                        placeholderTextColor={colors.textSecondary}
+                        value={limitText}
+                        onChangeText={(v) => setLimitText(v.replace(/[^0-9]/g, '').slice(0, 4))}
+                        keyboardType="number-pad"
+                        maxLength={4}
+                      />
+                    ) : null}
+                  </View>
+                ) : null}
+              </View>
+            ) : null}
+
             <Text style={styles.sectionLabel}>{t('newPost.photos', { count: MAX_PHOTOS })}</Text>
             <View style={styles.photoWrapper}>
               <PhotoPicker images={images} onChange={setImages} max={MAX_PHOTOS} />
+            </View>
+            <View style={styles.videoWrapper}>
+              <VideoAttach value={video} onChange={setVideo} />
             </View>
           </ScrollView>
 
@@ -319,7 +402,43 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
       fontWeight: Typography.fontWeightMedium,
     },
     categoryChipTextActive: { color: '#fff', fontWeight: Typography.fontWeightSemiBold },
+    signupBlock: {
+      backgroundColor: c.background,
+      borderWidth: 1,
+      borderColor: c.border,
+      borderRadius: 14,
+      padding: 14,
+      marginBottom: 18,
+    },
+    signupToggleRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    signupTitle: { fontSize: Typography.fontSizeMD, fontWeight: Typography.fontWeightSemiBold, color: c.textPrimary },
+    signupHint: { fontSize: Typography.fontSizeXS, color: c.textSecondary, marginTop: 2 },
+    limitRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12, flexWrap: 'wrap' },
+    limitChip: {
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 18,
+      backgroundColor: c.surface,
+      borderWidth: 1,
+      borderColor: c.border,
+    },
+    limitChipActive: { backgroundColor: c.primary, borderColor: c.primary },
+    limitChipText: { fontSize: Typography.fontSizeSM, color: c.textSecondary, fontWeight: Typography.fontWeightMedium },
+    limitChipTextActive: { color: '#fff', fontWeight: Typography.fontWeightSemiBold },
+    limitInput: {
+      width: 80,
+      backgroundColor: c.surface,
+      borderWidth: 1.5,
+      borderColor: c.border,
+      borderRadius: 14,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+      textAlign: 'center',
+    },
     photoWrapper: { marginBottom: 8 },
+    videoWrapper: { marginBottom: 8, alignSelf: 'flex-start' },
     footer: {
       paddingTop: 14,
       borderTopWidth: 1,

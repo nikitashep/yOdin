@@ -18,6 +18,7 @@ interface PostState {
   setPostVote: (postId: string, likes: string[], dislikes: string[]) => void;
   incrementCommentCount: (postId: string) => void;
   togglePostSaved: (postId: string, userId: string) => void;
+  toggleParticipant: (postId: string, userId: string) => void;
 }
 
 export const usePostStore = create<PostState>((set) => ({
@@ -58,6 +59,20 @@ export const usePostStore = create<PostState>((set) => ({
         return {
           ...p,
           savedBy: isSaved ? savedBy.filter((id) => id !== userId) : [...savedBy, userId],
+        };
+      }),
+    })),
+  toggleParticipant: (postId, userId) =>
+    set((state) => ({
+      posts: state.posts.map((p) => {
+        if (p.id !== postId) return p;
+        const participants = p.participants ?? [];
+        const joined = participants.includes(userId);
+        return {
+          ...p,
+          participants: joined
+            ? participants.filter((id) => id !== userId)
+            : [...participants, userId],
         };
       }),
     })),

@@ -70,7 +70,10 @@
     "empty": "Hələ bildiriş yoxdur",
     "replied": "müzakirənizə cavab verdi",
     "accepted": "cavabınızı qəbul etdi",
-    "clearRead": "Oxunmuşları sil"
+    "clearRead": "Oxunmuşları sil",
+    "joinedEvent": "tədbirinizdə iştirak edir",
+    "contentRemoved": "Məzmununuz qaydaları pozduğu üçün moderator tərəfindən silindi.",
+    "blocked": "Təkrar pozuntulara görə {{count}} gün şərh və cavab yaza bilməzsiniz."
   },
   "profile": {
     "title": "Profil",
@@ -150,13 +153,17 @@
     "selectNationalityAndLocation": "Zəhmət olmasa milliyyət və ölkə seçin.",
     "writeQuestion": "Sualınızı yazın.",
     "photoUploadFailed": "Şəkil yüklənmədi. Yenidən cəhd edin.",
-    "fillTitleAndDescription": "Mövzu və təsviri doldurun."
+    "fillTitleAndDescription": "Mövzu və təsviri doldurun.",
+    "videoTooLong": "Video {{count}} saniyədən qısa olmalıdır",
+    "videoTooLarge": "Video çox böyükdür (maks. 50 MB)",
+    "videoUploadFailed": "Video yüklənmədi"
   },
   "categories": {
     "all": "Hamısı",
     "news": "Xəbərlər",
     "events": "Tədbirlər",
-    "places": "Görməyə dəyər"
+    "places": "Görməyə dəyər",
+    "lifestyle": "Həyat tərzi"
   },
   "newPost": {
     "title": "Yeni paylaşım",
@@ -164,7 +171,13 @@
     "descriptionPlaceholder": "Təsvir",
     "category": "Kateqoriya",
     "photos": "Şəkillər ({{count}}-ə qədər)",
-    "post": "Paylaş"
+    "post": "Paylaş",
+    "signup": "Qeydiyyat siyahısı",
+    "signupHint": "İnsanlar postun altında qoşula bilər",
+    "noLimit": "Limitsiz",
+    "withLimit": "Limitli",
+    "limitPlaceholder": "Maks",
+    "addVideo": "Video"
   },
   "forum": {
     "title": "Forum",
@@ -186,11 +199,22 @@
   },
   "report": {
     "title": "Şikayət et",
-    "message": "Bu məzmun haqqında moderatorlara şikayət edilsin?",
-    "confirm": "Şikayət et",
     "cancel": "Ləğv et",
     "sentTitle": "Təşəkkürlər",
-    "sentMessage": "Şikayətiniz moderatorlara göndərildi."
+    "sentMessage": "Şikayətiniz moderatorlara göndərildi.",
+    "subtitle": "Niyə şikayət edirsiniz?",
+    "reasons": {
+      "spam": "Spam",
+      "hate": "Nifrət nitqi və ya simvollar",
+      "violence": "Zorakılıq və ya təhlükəli təşkilatlar",
+      "harassment": "Təqib və ya təhqir",
+      "nudity": "Çılpaqlıq və ya cinsi məzmun",
+      "falseInfo": "Yanlış məlumat",
+      "scam": "Fırıldaqçılıq və ya aldatma",
+      "selfHarm": "İntihar və ya özünə zərər",
+      "ip": "Müəllif hüquqlarının pozulması",
+      "other": "Başqa səbəb"
+    }
   },
   "moderation": {
     "title": "Şikayətlər",
@@ -202,11 +226,24 @@
     "removeMessage": "Bu məzmun həmişəlik silinəcək.",
     "typePost": "Post",
     "typeDiscussion": "Sual",
-    "alreadyGone": "Bu məzmun artıq mövcud deyil."
+    "alreadyGone": "Bu məzmun artıq mövcud deyil.",
+    "typeComment": "Şərh",
+    "typeReply": "Cavab",
+    "blockedBanner": "Təkrar pozuntulara görə şərh yazmaq müvəqqəti bloklanıb."
   },
   "comments": {
     "title": "Şərhlər",
     "placeholder": "Şərh yazın...",
     "empty": "Hələ şərh yoxdur. İlk siz olun!"
+  },
+  "post": {
+    "participate": "İştirak edirəm",
+    "leaveEvent": "İmtina et",
+    "eventFull": "Yer yoxdur",
+    "participants": "iştirakçı"
+  },
+  "participants": {
+    "title": "İştirakçılar",
+    "empty": "Hələ heç kim qoşulmayıb"
   }
 }

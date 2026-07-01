@@ -11,11 +11,17 @@ export interface User {
   points?: number;
   createdAt: number;
   following?: string[];
+  // Moderation (maintained server-side, read-only on the client):
+  // epoch-ms until which the user may not comment/reply; how many removals have
+  // accrued since the last ban; how many bans they've served (drives escalation).
+  commentBlockedUntil?: number;
+  moderationStrikes?: number;
+  banCount?: number;
 }
 
-export type PostCategory = 'news' | 'events' | 'places';
+export type PostCategory = 'news' | 'events' | 'places' | 'lifestyle';
 
-export const POST_CATEGORIES: PostCategory[] = ['news', 'events', 'places'];
+export const POST_CATEGORIES: PostCategory[] = ['news', 'events', 'places', 'lifestyle'];
 
 export interface Post {
   id: string;
@@ -28,12 +34,23 @@ export interface Post {
   description: string;
   category: PostCategory;
   imageURLs?: string[];
+  // A post carries either photos or a single short video (mutually exclusive).
+  // videoPoster is a small JPEG still shown in the feed so the video itself is
+  // only fetched when the user taps to play.
+  videoURL?: string;
+  videoPoster?: string;
   location: string;
   createdAt: number;
   likes?: string[];
   dislikes?: string[];
   commentCount?: number;
   savedBy?: string[];
+  // Event RSVP. Only set on `events` posts whose author turned on a sign-up
+  // sheet. `participantLimit` null/absent = unlimited; `participants` holds the
+  // UIDs of everyone who tapped "I'm going".
+  signupEnabled?: boolean;
+  participantLimit?: number | null;
+  participants?: string[];
 }
 
 export interface PostComment {
@@ -57,6 +74,9 @@ export interface Discussion {
   authorCountryCode: string;
   question: string;
   imageURLs?: string[];
+  // Optional single short video (mutually exclusive with photos). See Post.
+  videoURL?: string;
+  videoPoster?: string;
   location?: string;
   createdAt: number;
   replyCount: number;
@@ -88,23 +108,52 @@ export interface Reply {
 
 export interface AppNotification {
   id: string;
-  type: 'reply' | 'accepted';
+  type: 'reply' | 'accepted' | 'participant' | 'removed' | 'blocked';
   toUserId: string;
   fromUserId: string;
   fromUserName: string;
   fromUserPhoto?: string;
-  discussionId: string;
-  discussionQuestion: string;
+  // Forum notifications (reply/accepted) carry the discussion they belong to.
+  discussionId?: string;
+  discussionQuestion?: string;
+  // Event sign-up notifications (participant) carry the post instead.
+  postId?: string;
+  postTitle?: string;
+  // Moderation notifications (removed/blocked), created server-side.
+  // contentSnippet: a short excerpt of the removed item; blockDays: ban length.
+  contentSnippet?: string;
+  blockDays?: number;
   createdAt: number;
   read: boolean;
 }
 
 export type ReportStatus = 'pending' | 'removed' | 'kept';
 
+export type ReportTargetType = 'post' | 'discussion' | 'comment' | 'reply';
+
+// Instagram-style report reasons. Keys map to `report.reasons.<key>` strings.
+export const REPORT_REASONS = [
+  'spam',
+  'hate',
+  'violence',
+  'harassment',
+  'nudity',
+  'falseInfo',
+  'scam',
+  'selfHarm',
+  'ip',
+  'other',
+] as const;
+
+export type ReportReason = (typeof REPORT_REASONS)[number];
+
 export interface Report {
   id: string;
-  targetType: 'post' | 'discussion';
+  targetType: ReportTargetType;
   targetId: string;
+  // Full Firestore document path of the target, so a moderator can remove a
+  // nested comment/reply without reconstructing its parent ids.
+  targetPath?: string;
   targetTitle: string;
   targetAuthorId: string;
   reportedBy: string;

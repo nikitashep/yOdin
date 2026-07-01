@@ -26,7 +26,8 @@ import {
   acceptReply,
 } from '../services/discussionService';
 import { createNotification } from '../services/notificationService';
-import { Reply, Discussion } from '../types';
+import { createReport } from '../services/reportService';
+import { Reply, Discussion, ReportReason } from '../types';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
@@ -34,6 +35,8 @@ import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 import { TAB_BAR_HEIGHT } from '../constants/layout';
 import PhotoGrid from '../components/PhotoGrid';
+import VideoPlayerView from '../components/VideoPlayerView';
+import ReportSheet from '../components/ReportSheet';
 
 export default function DiscussionDetailScreen({ route, navigation }: any) {
   const { discussionId, question: questionParam } = route.params;
@@ -54,6 +57,8 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [replyingTo, setReplyingTo] = useState<Reply | null>(null);
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
+  const [reportReply, setReportReply] = useState<Reply | null>(null);
+  const replyBlocked = (profile?.commentBlockedUntil ?? 0) > Date.now();
   const listRef = useRef<FlatList>(null);
   const inputRef = useRef<TextInput>(null);
 
@@ -275,6 +280,26 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
     setTimeout(() => setHighlightedId((cur) => (cur === id ? null : cur)), 1500);
   }
 
+  async function submitReplyReport(reason: ReportReason) {
+    const r = reportReply;
+    setReportReply(null);
+    if (!r || !profile?.uid) return;
+    try {
+      await createReport({
+        targetType: 'reply',
+        targetId: r.id,
+        targetPath: `discussions/${discussionId}/replies/${r.id}`,
+        targetTitle: r.text,
+        targetAuthorId: r.authorId,
+        reportedBy: profile.uid,
+        reason,
+      });
+      Alert.alert(t('report.sentTitle'), t('report.sentMessage'));
+    } catch {
+      Alert.alert(t('errors.generic'));
+    }
+  }
+
   function renderReply({ item }: { item: Reply }) {
     const isMe = item.authorId === profile?.uid;
     const isAccepted = item.id === discussion?.acceptedReplyId;
@@ -303,7 +328,10 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
           </TouchableOpacity>
         )}
         <View style={styles.msgContent}>
-          <View
+          <TouchableOpacity
+            activeOpacity={isMe ? 1 : 0.85}
+            delayLongPress={300}
+            onLongPress={!isMe ? () => setReportReply(item) : undefined}
             style={[
               styles.bubble,
               isMe ? styles.bubbleMe : styles.bubbleOther,
@@ -342,7 +370,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
               </TouchableOpacity>
             )}
             <Text style={[styles.msgText, isMe && styles.msgTextMe]}>{item.text}</Text>
-          </View>
+          </TouchableOpacity>
 
           <View style={[styles.msgActions, isMe ? styles.msgActionsMe : styles.msgActionsOther]}>
             <TouchableOpacity
@@ -460,7 +488,11 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
                 )}
               </TouchableOpacity>
               <Text style={styles.questionText}>{discussion.question}</Text>
-              {discussion.imageURLs && discussion.imageURLs.length > 0 ? (
+              {discussion.videoURL ? (
+                <View style={styles.questionPhotos}>
+                  <VideoPlayerView uri={discussion.videoURL} />
+                </View>
+              ) : discussion.imageURLs && discussion.imageURLs.length > 0 ? (
                 <View style={styles.questionPhotos}>
                   <PhotoGrid images={discussion.imageURLs} />
                 </View>
@@ -510,36 +542,49 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
           </TouchableOpacity>
         </View>
       ) : null}
-      <View
-        style={[
-          styles.inputBar,
-          {
-            marginBottom: keyboardLift,
-            paddingBottom: keyboardHeight > 0 ? 12 : undefined,
-          },
-        ]}
-      >
-        <TextInput
-          ref={inputRef}
-          style={styles.input}
-          placeholder={t('discussion.replyPlaceholder')}
-          placeholderTextColor={colors.textSecondary}
-          value={text}
-          onChangeText={(v) => { setText(v); if (sendError) setSendError(''); }}
-          multiline
-          maxLength={1000}
-        />
-        <TouchableOpacity
-          style={[styles.sendBtn, (!text.trim() || sending) && styles.sendBtnDisabled]}
-          onPress={sendReply}
-          disabled={!text.trim() || sending}
+      {replyBlocked ? (
+        <View style={[styles.blockedBar, { marginBottom: keyboardLift }]}>
+          <Ionicons name="lock-closed" size={16} color={colors.notification} />
+          <Text style={styles.blockedText}>{t('moderation.blockedBanner')}</Text>
+        </View>
+      ) : (
+        <View
+          style={[
+            styles.inputBar,
+            {
+              marginBottom: keyboardLift,
+              paddingBottom: keyboardHeight > 0 ? 12 : undefined,
+            },
+          ]}
         >
-          {sending
-            ? <ActivityIndicator color="#fff" size="small" />
-            : <Text style={styles.sendText}>↑</Text>
-          }
-        </TouchableOpacity>
-      </View>
+          <TextInput
+            ref={inputRef}
+            style={styles.input}
+            placeholder={t('discussion.replyPlaceholder')}
+            placeholderTextColor={colors.textSecondary}
+            value={text}
+            onChangeText={(v) => { setText(v); if (sendError) setSendError(''); }}
+            multiline
+            maxLength={1000}
+          />
+          <TouchableOpacity
+            style={[styles.sendBtn, (!text.trim() || sending) && styles.sendBtnDisabled]}
+            onPress={sendReply}
+            disabled={!text.trim() || sending}
+          >
+            {sending
+              ? <ActivityIndicator color="#fff" size="small" />
+              : <Text style={styles.sendText}>↑</Text>
+            }
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <ReportSheet
+        visible={reportReply !== null}
+        onClose={() => setReportReply(null)}
+        onSubmit={submitReplyReport}
+      />
     </View>
   );
 }
@@ -800,5 +845,17 @@ function makeStyles(c: ColorPalette, topInset: number, bottomInset: number) {
     },
     sendBtnDisabled: { opacity: 0.4 },
     sendText: { color: '#fff', fontSize: 20, fontWeight: Typography.fontWeightBold },
+    blockedBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      paddingBottom: Math.max(bottomInset, 12) + 2,
+      borderTopWidth: 1,
+      borderTopColor: c.border,
+      backgroundColor: c.surface,
+    },
+    blockedText: { flex: 1, color: c.notification, fontSize: Typography.fontSizeSM },
   });
 }

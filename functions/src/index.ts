@@ -196,6 +196,77 @@ export const onReplyDeleted = onDocumentDeleted(
   },
 );
 
+// ── Moderation: removal notice + escalating comment ban ──────────────────────
+// When a moderator marks a report 'removed', notify the author and add a strike.
+// Strikes are only added on moderator-confirmed removals (not raw reports), so
+// the ban can't be farmed. Every 5 strikes triggers a comment ban that escalates
+// 3 days → 7 days → 30 days. The ban is enforced by the Firestore rules, which
+// reject comment/reply creates while `now < commentBlockedUntil`.
+const BAN_THRESHOLD = 5;
+const DAY_MS = 24 * 60 * 60 * 1000;
+function banDurationMs(banCount: number): number {
+  if (banCount <= 1) return 3 * DAY_MS;
+  if (banCount === 2) return 7 * DAY_MS;
+  return 30 * DAY_MS;
+}
+
+export const onReportUpdated = onDocumentUpdated('reports/{reportId}', async (event) => {
+  const before = event.data?.before.data();
+  const after = event.data?.after.data();
+  if (!before || !after) return;
+  // Only act on the pending → removed transition.
+  if (before.status === after.status || after.status !== 'removed') return;
+
+  const authorId: string | undefined = after.targetAuthorId;
+  if (!authorId) return;
+  const snippet = String(after.targetTitle ?? '').slice(0, 140);
+
+  // 1) Tell the author their content was removed.
+  await db.collection('notifications').add({
+    type: 'removed',
+    toUserId: authorId,
+    fromUserId: 'system',
+    fromUserName: '',
+    contentSnippet: snippet,
+    createdAt: FieldValue.serverTimestamp(),
+    read: false,
+  }).catch(() => {});
+
+  // 2) Add a strike; on every 5th, apply an escalating comment ban.
+  const userRef = db.doc(`users/${authorId}`);
+  let banDays = 0;
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(userRef);
+    if (!snap.exists) return;
+    const strikes = (snap.get('moderationStrikes') ?? 0) + 1;
+    if (strikes < BAN_THRESHOLD) {
+      tx.update(userRef, { moderationStrikes: strikes });
+      return;
+    }
+    const banCount = (snap.get('banCount') ?? 0) + 1;
+    const ms = banDurationMs(banCount);
+    tx.update(userRef, {
+      moderationStrikes: 0,
+      banCount,
+      commentBlockedUntil: Date.now() + ms,
+    });
+    banDays = Math.round(ms / DAY_MS);
+  }).catch(() => {});
+
+  // 3) Notify the user about the ban so they know why they can't comment.
+  if (banDays > 0) {
+    await db.collection('notifications').add({
+      type: 'blocked',
+      toUserId: authorId,
+      fromUserId: 'system',
+      fromUserName: '',
+      blockDays: banDays,
+      createdAt: FieldValue.serverTimestamp(),
+      read: false,
+    }).catch(() => {});
+  }
+});
+
 // Reply voted (likes/dislikes changed) → adjust the parent question's activity.
 export const onReplyUpdated = onDocumentUpdated(
   'discussions/{discussionId}/replies/{replyId}',

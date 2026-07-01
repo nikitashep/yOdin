@@ -1,11 +1,11 @@
 import { ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 import { storage } from './firebase';
 
-async function uploadOne(path: string, uri: string): Promise<string> {
+async function uploadOne(path: string, uri: string, contentType = 'image/jpeg'): Promise<string> {
   const response = await fetch(uri);
   const blob = await response.blob();
   const storageRef = ref(storage, path);
-  await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' });
+  await uploadBytes(storageRef, blob, { contentType });
   return await getDownloadURL(storageRef);
 }
 
@@ -20,6 +20,32 @@ export async function uploadPostImages(postId: string, uris: string[]): Promise<
 
 export async function uploadDiscussionImages(discussionId: string, uris: string[]): Promise<string[]> {
   return Promise.all(uris.map((uri, i) => uploadOne(`discussions/${discussionId}/${i}.jpg`, uri)));
+}
+
+// Upload a post's video plus its poster still. The poster is a tiny JPEG used
+// in the feed so the (larger) video is only downloaded when the user taps play.
+export async function uploadPostVideo(
+  postId: string,
+  videoUri: string,
+  posterUri: string,
+): Promise<{ videoURL: string; videoPoster: string }> {
+  const [videoURL, videoPoster] = await Promise.all([
+    uploadOne(`posts/${postId}/video.mp4`, videoUri, 'video/mp4'),
+    posterUri ? uploadOne(`posts/${postId}/poster.jpg`, posterUri) : Promise.resolve(''),
+  ]);
+  return { videoURL, videoPoster };
+}
+
+export async function uploadDiscussionVideo(
+  discussionId: string,
+  videoUri: string,
+  posterUri: string,
+): Promise<{ videoURL: string; videoPoster: string }> {
+  const [videoURL, videoPoster] = await Promise.all([
+    uploadOne(`discussions/${discussionId}/video.mp4`, videoUri, 'video/mp4'),
+    posterUri ? uploadOne(`discussions/${discussionId}/poster.jpg`, posterUri) : Promise.resolve(''),
+  ]);
+  return { videoURL, videoPoster };
 }
 
 // Remove every file under a folder (used to clean up a deleted post/discussion's

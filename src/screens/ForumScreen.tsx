@@ -19,10 +19,11 @@ import { useFeedStore } from '../store/useFeedStore';
 import { fetchDiscussions, fetchTopQuestion, saveDiscussion, unsaveDiscussion, PAGE_SIZE } from '../services/discussionService';
 import { searchDiscussions, AlgoliaHit } from '../services/algoliaService';
 import { createReport } from '../services/reportService';
+import ReportSheet from '../components/ReportSheet';
 import { Alert } from 'react-native';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
-import { Discussion } from '../types';
+import { Discussion, ReportReason } from '../types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
@@ -31,6 +32,7 @@ import { weightedSort } from '../utils/weightedSort';
 import FollowButton from '../components/FollowButton';
 import NationFilterDrawer from '../components/NationFilterDrawer';
 import PhotoGrid from '../components/PhotoGrid';
+import VideoPreview from '../components/VideoPreview';
 import QuestionOfDayCard from '../components/QuestionOfDayCard';
 import { COUNTRIES } from '../data/countries';
 
@@ -54,6 +56,7 @@ export default function ForumScreen({ navigation }: any) {
   const [selectedNations, setSelectedNations] = useState<string[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [topQuestion, setTopQuestion] = useState<Discussion | null>(null);
+  const [reportTarget, setReportTarget] = useState<Discussion | null>(null);
 
   function toggleNation(name: string) {
     setSelectedNations((prev) =>
@@ -196,32 +199,26 @@ export default function ForumScreen({ navigation }: any) {
 
   function handleReport(item: Discussion) {
     if (!profile?.uid) return;
-    Alert.alert(
-      t('report.title'),
-      t('report.message'),
-      [
-        { text: t('report.cancel'), style: 'cancel' },
-        {
-          text: t('report.confirm'),
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await createReport({
-                targetType: 'discussion',
-                targetId: item.id,
-                targetTitle: item.question,
-                targetAuthorId: item.authorId,
-                reportedBy: profile.uid,
-                reason: '',
-              });
-              Alert.alert(t('report.sentTitle'), t('report.sentMessage'));
-            } catch {
-              Alert.alert(t('errors.generic'));
-            }
-          },
-        },
-      ],
-    );
+    setReportTarget(item);
+  }
+
+  async function submitReport(reason: ReportReason) {
+    const item = reportTarget;
+    setReportTarget(null);
+    if (!item || !profile?.uid) return;
+    try {
+      await createReport({
+        targetType: 'discussion',
+        targetId: item.id,
+        targetTitle: item.question,
+        targetAuthorId: item.authorId,
+        reportedBy: profile.uid,
+        reason,
+      });
+      Alert.alert(t('report.sentTitle'), t('report.sentMessage'));
+    } catch {
+      Alert.alert(t('errors.generic'));
+    }
   }
 
   function renderCard({ item }: { item: Discussion }) {
@@ -270,7 +267,14 @@ export default function ForumScreen({ navigation }: any) {
           </View>
         </View>
         <Text style={styles.question}>{item.question}</Text>
-        {item.imageURLs && item.imageURLs.length > 0 ? (
+        {item.videoURL ? (
+          <View style={styles.photoWrap}>
+            <VideoPreview
+              poster={item.videoPoster}
+              onPress={() => navigation.navigate('DiscussionDetail', { discussionId: item.id, question: item.question })}
+            />
+          </View>
+        ) : item.imageURLs && item.imageURLs.length > 0 ? (
           <View style={styles.photoWrap}>
             <PhotoGrid images={item.imageURLs} />
           </View>
@@ -431,6 +435,12 @@ export default function ForumScreen({ navigation }: any) {
         onToggle={toggleNation}
         onClear={() => setSelectedNations([])}
         myNationality={profile?.nationality}
+      />
+
+      <ReportSheet
+        visible={reportTarget !== null}
+        onClose={() => setReportTarget(null)}
+        onSubmit={submitReport}
       />
     </View>
   );

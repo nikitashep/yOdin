@@ -14,24 +14,28 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore } from '../store/usePostStore';
-import { votePost, addComment, fetchComments } from '../services/postService';
-import { Post, PostComment } from '../types';
+import { votePost, addComment, fetchComments, joinEvent, leaveEvent } from '../services/postService';
+import { Post, PostComment, ReportReason } from '../types';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
-import PhotoGrid from '../components/PhotoGrid';
+import MediaCarousel from '../components/MediaCarousel';
+import EventParticipantsModal from '../components/EventParticipantsModal';
+import ReportSheet from '../components/ReportSheet';
+import { createParticipantNotification } from '../services/notificationService';
+import { createReport } from '../services/reportService';
 
 const SCREEN_H = Dimensions.get('window').height;
 const SHEET_H = Math.round(SCREEN_H * 0.5);
-const CARD_MAX = SCREEN_H - SHEET_H - 80; // card stays fully above the comments sheet
 
 interface Props {
   visible: boolean;
@@ -54,12 +58,20 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
   const post = storePost ?? (fallbackPost && fallbackPost.id === postId ? fallbackPost : undefined);
   const setPostVote = usePostStore((s) => s.setPostVote);
   const incrementCommentCount = usePostStore((s) => s.incrementCommentCount);
+  const toggleParticipant = usePostStore((s) => s.toggleParticipant);
 
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [comments, setComments] = useState<PostComment[]>([]);
   const [loadingComments, setLoadingComments] = useState(false);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  // Local optimistic copy of the attendee list (post may be a fallback that
+  // isn't in the feed store, so we can't rely on the store alone).
+  const [participants, setParticipants] = useState<string[]>([]);
+  const [participantsVisible, setParticipantsVisible] = useState(false);
+  const [joining, setJoining] = useState(false);
+  const [reportComment, setReportComment] = useState<PostComment | null>(null);
+  const commentBlocked = (profile?.commentBlockedUntil ?? 0) > Date.now();
 
   const cardAnim = useRef(new Animated.Value(0)).current; // 0 hidden → 1 shown
   // 0 = comments closed (card centered, sheet hidden below); 1 = comments open
@@ -76,6 +88,8 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
       setComments([]);
       loadComments(postId);
       setCommentsOpen(!!startWithComments);
+      setParticipantsVisible(false);
+      setParticipants(post?.participants ?? []);
     }
   }, [visible, postId]);
 
@@ -109,6 +123,47 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
   const likeCount = post?.likes?.length ?? 0;
   const dislikeCount = post?.dislikes?.length ?? 0;
   const commentCount = post?.commentCount ?? 0;
+
+  const participantCap = post?.participantLimit ?? null;
+  const isParticipant = participants.includes(profile?.uid ?? '');
+  const eventFull = participantCap != null && participants.length >= participantCap && !isParticipant;
+
+  async function toggleJoin() {
+    if (!profile?.uid || !post || joining) return;
+    const uid = profile.uid;
+    if (eventFull) {
+      Alert.alert(t('post.eventFull'));
+      return;
+    }
+    setJoining(true);
+    const prev = participants;
+    setParticipants(isParticipant ? participants.filter((id) => id !== uid) : [...participants, uid]);
+    toggleParticipant(post.id, uid); // keep the feed card in sync
+    try {
+      if (isParticipant) {
+        await leaveEvent(post.id, uid);
+      } else {
+        await joinEvent(post.id, uid);
+        // Let the event's author know someone signed up (best-effort).
+        if (post.authorId !== uid) {
+          createParticipantNotification({
+            toUserId: post.authorId,
+            fromUserId: uid,
+            fromUserName: `${profile.firstName} ${profile.lastName}`,
+            fromUserPhoto: profile.photoURL ?? '',
+            postId: post.id,
+            postTitle: post.title,
+          }).catch(() => {});
+        }
+      }
+    } catch (e) {
+      setParticipants(prev);
+      toggleParticipant(post.id, uid); // revert the store too
+      Alert.alert(e instanceof Error && e.message === 'event-full' ? t('post.eventFull') : t('errors.generic'));
+    } finally {
+      setJoining(false);
+    }
+  }
 
   async function handleVote(vote: 'like' | 'dislike') {
     if (!profile?.uid || !post) return;
@@ -153,10 +208,36 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
     }
   }
 
+  async function submitCommentReport(reason: ReportReason) {
+    const c = reportComment;
+    setReportComment(null);
+    if (!c || !profile?.uid || !post) return;
+    try {
+      await createReport({
+        targetType: 'comment',
+        targetId: c.id,
+        targetPath: `posts/${post.id}/comments/${c.id}`,
+        targetTitle: c.text,
+        targetAuthorId: c.authorId,
+        reportedBy: profile.uid,
+        reason,
+      });
+      Alert.alert(t('report.sentTitle'), t('report.sentMessage'));
+    } catch {
+      Alert.alert(t('errors.generic'));
+    }
+  }
+
   function renderComment({ item }: { item: PostComment }) {
     const initials = item.authorName?.split(' ').map((w) => w[0]).join('').toUpperCase() ?? '?';
+    const isMine = item.authorId === profile?.uid;
     return (
-      <View style={styles.commentRow}>
+      <TouchableOpacity
+        style={styles.commentRow}
+        activeOpacity={1}
+        delayLongPress={300}
+        onLongPress={!isMine ? () => setReportComment(item) : undefined}
+      >
         <TouchableOpacity
           style={styles.commentAvatar}
           activeOpacity={onOpenProfile ? 0.7 : 1}
@@ -180,11 +261,16 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
           <Text style={styles.commentText}>{item.text}</Text>
           <Text style={styles.commentTime}>{formatTime(item.createdAt, t)}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 
-  // Lift the centered card into the upper half when the comments sheet is open.
+  // The post sizes to its content (same as the feed card). It may grow up to
+  // most of the screen when comments are closed; when they're open it's capped
+  // to the area above the sheet and lifted there.
+  const fullH = SCREEN_H - insets.top - insets.bottom - 24;
+  const upperH = SCREEN_H - SHEET_H - insets.top - 24;
+  const cardMax = commentsOpen ? upperH : fullH;
   const cardShift = commentsAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [0, -Math.round(SHEET_H / 2)],
@@ -195,6 +281,7 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
   });
 
   return (
+    <>
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose} />
@@ -205,15 +292,16 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
             style={[
               styles.card,
               {
+                maxHeight: cardMax,
                 opacity: cardAnim,
                 transform: [
-                  { scale: cardAnim.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1] }) },
+                  { scale: cardAnim.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] }) },
                   { translateY: cardShift },
                 ],
               },
             ]}
           >
-            <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+            <ScrollView style={{ flexShrink: 1 }} showsVerticalScrollIndicator={false} bounces={false}>
               <View style={styles.cardHeader}>
                 <TouchableOpacity
                   style={styles.authorTap}
@@ -240,14 +328,53 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
                 </TouchableOpacity>
               </View>
 
-              {post.imageURLs && post.imageURLs.length > 0 ? (
+              {post.videoURL || (post.imageURLs && post.imageURLs.length > 0) ? (
                 <View style={styles.photoWrap}>
-                  <PhotoGrid images={post.imageURLs} />
+                  <MediaCarousel
+                    images={post.imageURLs}
+                    videoURL={post.videoURL}
+                    videoPoster={post.videoPoster}
+                    videoInline
+                  />
                 </View>
               ) : null}
 
               <Text style={styles.postTitle}>{post.title}</Text>
               <Text style={styles.postDescription}>{post.description}</Text>
+
+              {post.signupEnabled ? (
+                <View style={styles.signupBox}>
+                  <TouchableOpacity
+                    style={styles.participantsRow}
+                    activeOpacity={0.7}
+                    onPress={() => setParticipantsVisible(true)}
+                  >
+                    <Ionicons name="people" size={18} color={colors.primary} />
+                    <Text style={styles.participantsText}>
+                      {participantCap != null ? `${participants.length} / ${participantCap}` : `${participants.length}`}
+                      {'  '}{t('post.participants')}
+                    </Text>
+                    <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} style={{ marginLeft: 'auto' }} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.joinBtn,
+                      isParticipant && styles.joinBtnLeave,
+                      eventFull && styles.joinBtnDisabled,
+                    ]}
+                    onPress={toggleJoin}
+                    disabled={joining || eventFull}
+                  >
+                    {joining ? (
+                      <ActivityIndicator color={isParticipant ? colors.primary : '#fff'} size="small" />
+                    ) : (
+                      <Text style={[styles.joinBtnText, isParticipant && styles.joinBtnTextLeave]}>
+                        {isParticipant ? t('post.leaveEvent') : eventFull ? t('post.eventFull') : t('post.participate')}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              ) : null}
             </ScrollView>
 
             {/* Action bar — bottom-left like / dislike / comment */}
@@ -311,28 +438,49 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
               />
             )}
 
-            <View style={styles.inputBar}>
-              <TextInput
-                style={styles.input}
-                placeholder={t('comments.placeholder')}
-                placeholderTextColor={colors.textSecondary}
-                value={text}
-                onChangeText={setText}
-                multiline
-                maxLength={1000}
-              />
-              <TouchableOpacity
-                style={[styles.sendBtn, (!text.trim() || sending) && styles.sendBtnDisabled]}
-                onPress={sendComment}
-                disabled={!text.trim() || sending}
-              >
-                {sending ? <ActivityIndicator color="#fff" size="small" /> : <Text style={styles.sendText}>↑</Text>}
-              </TouchableOpacity>
-            </View>
+            {commentBlocked ? (
+              <View style={styles.blockedBar}>
+                <Ionicons name="lock-closed" size={16} color={colors.notification} />
+                <Text style={styles.blockedText}>{t('moderation.blockedBanner')}</Text>
+              </View>
+            ) : (
+              <View style={styles.inputBar}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={t('comments.placeholder')}
+                  placeholderTextColor={colors.textSecondary}
+                  value={text}
+                  onChangeText={setText}
+                  multiline
+                  maxLength={1000}
+                />
+                <TouchableOpacity
+                  style={[styles.sendBtn, (!text.trim() || sending) && styles.sendBtnDisabled]}
+                  onPress={sendComment}
+                  disabled={!text.trim() || sending}
+                >
+                  {sending ? <ActivityIndicator color="#fff" size="small" /> : <Text style={styles.sendText}>↑</Text>}
+                </TouchableOpacity>
+              </View>
+            )}
           </KeyboardAvoidingView>
           </Animated.View>
       </View>
     </Modal>
+
+    <EventParticipantsModal
+      visible={participantsVisible}
+      participantIds={participants}
+      onClose={() => setParticipantsVisible(false)}
+      onOpenProfile={onOpenProfile ? (uid) => { setParticipantsVisible(false); onOpenProfile(uid); } : undefined}
+    />
+
+    <ReportSheet
+      visible={reportComment !== null}
+      onClose={() => setReportComment(null)}
+      onSubmit={submitCommentReport}
+    />
+    </>
   );
 }
 
@@ -343,7 +491,6 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
     centerWrap: { ...StyleSheet.absoluteFillObject, justifyContent: 'center' },
     card: {
       marginHorizontal: 16,
-      maxHeight: CARD_MAX,
       backgroundColor: c.surface,
       borderRadius: 20,
       padding: 16,
@@ -366,6 +513,26 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
     photoWrap: { marginBottom: 12 },
     postTitle: { fontSize: Typography.fontSizeLG, fontWeight: Typography.fontWeightBold, color: c.textPrimary, marginBottom: 6 },
     postDescription: { fontSize: Typography.fontSizeMD, color: c.textPrimary, lineHeight: 22, marginBottom: 8 },
+    signupBox: {
+      backgroundColor: c.background,
+      borderRadius: 14,
+      padding: 12,
+      marginTop: 4,
+      marginBottom: 8,
+      gap: 10,
+    },
+    participantsRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    participantsText: { fontSize: Typography.fontSizeSM, fontWeight: Typography.fontWeightSemiBold, color: c.textPrimary },
+    joinBtn: {
+      backgroundColor: c.primary,
+      borderRadius: 12,
+      paddingVertical: 12,
+      alignItems: 'center',
+    },
+    joinBtnLeave: { backgroundColor: c.primaryLight },
+    joinBtnDisabled: { opacity: 0.5 },
+    joinBtnText: { color: '#fff', fontSize: Typography.fontSizeMD, fontWeight: Typography.fontWeightSemiBold },
+    joinBtnTextLeave: { color: c.primary },
     actionBar: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -446,5 +613,16 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
     },
     sendBtnDisabled: { opacity: 0.4 },
     sendText: { color: '#fff', fontSize: 20, fontWeight: Typography.fontWeightBold },
+    blockedBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      paddingBottom: Math.max(bottomInset, 12) + 12,
+      borderTopWidth: 1,
+      borderTopColor: c.border,
+    },
+    blockedText: { flex: 1, color: c.notification, fontSize: Typography.fontSizeSM },
   });
 }

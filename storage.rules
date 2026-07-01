@@ -13,16 +13,22 @@ service firebase.storage {
       // create/update validate the incoming file; delete has no request.resource,
       // so it needs its own rule — otherwise cleaning up a removed post's image
       // would be denied (request.resource.size on a null resource fails).
+      // Images stay small (≤5 MB); a single short video may be up to 50 MB.
       allow create, update: if request.auth != null
-        && request.resource.size < 5 * 1024 * 1024
-        && request.resource.contentType.matches('image/.*');
+        && (
+          (request.resource.contentType.matches('image/.*') && request.resource.size < 5 * 1024 * 1024)
+          || (request.resource.contentType.matches('video/.*') && request.resource.size < 50 * 1024 * 1024)
+        );
       allow delete: if request.auth != null;
     }
     match /discussions/{discussionId}/{fileName} {
       allow read: if true;
+      // Images stay small (≤5 MB); a single short video may be up to 50 MB.
       allow create, update: if request.auth != null
-        && request.resource.size < 5 * 1024 * 1024
-        && request.resource.contentType.matches('image/.*');
+        && (
+          (request.resource.contentType.matches('image/.*') && request.resource.size < 5 * 1024 * 1024)
+          || (request.resource.contentType.matches('video/.*') && request.resource.size < 50 * 1024 * 1024)
+        );
       allow delete: if request.auth != null;
     }
   }

@@ -16,12 +16,14 @@ import { useTranslation } from 'react-i18next';
 import { DocumentSnapshot } from 'firebase/firestore';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore, FeedFilter } from '../store/usePostStore';
-import { fetchPosts, deletePost, votePost, savePost, unsavePost, PAGE_SIZE } from '../services/postService';
+import { fetchPosts, deletePost, votePost, savePost, unsavePost, joinEvent, leaveEvent, PAGE_SIZE } from '../services/postService';
+import { createParticipantNotification } from '../services/notificationService';
 import { createReport } from '../services/reportService';
+import ReportSheet from '../components/ReportSheet';
 import { fetchTopQuestion } from '../services/discussionService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
-import { Post, PostCategory, POST_CATEGORIES, Discussion } from '../types';
+import { Post, PostCategory, POST_CATEGORIES, Discussion, ReportReason } from '../types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
@@ -29,7 +31,8 @@ import { Typography } from '../theme/typography';
 import PostDetailModal from './PostDetailModal';
 import FollowButton from '../components/FollowButton';
 import NationFilterDrawer from '../components/NationFilterDrawer';
-import PhotoGrid from '../components/PhotoGrid';
+import MediaCarousel from '../components/MediaCarousel';
+import EventParticipantsModal from '../components/EventParticipantsModal';
 import QuestionOfDayCard from '../components/QuestionOfDayCard';
 import { weightedSort } from '../utils/weightedSort';
 import { COUNTRIES } from '../data/countries';
@@ -42,7 +45,7 @@ export default function FeedScreen({ navigation }: any) {
   const insets = useSafeAreaInsets();
   const styles = makeStyles(colors, insets.top);
   const { profile } = useAuthStore();
-  const { posts, filter, setFilter, setPosts, appendPosts, setLoading, isLoading, setHasMore, hasMore, removePost, setPostVote, togglePostSaved } = usePostStore();
+  const { posts, filter, setFilter, setPosts, appendPosts, setLoading, isLoading, setHasMore, hasMore, removePost, setPostVote, togglePostSaved, toggleParticipant } = usePostStore();
   const [refreshing, setRefreshing] = useState(false);
   const [lastDoc, setLastDoc] = useState<DocumentSnapshot | null>(null);
   const [error, setError] = useState('');
@@ -53,6 +56,8 @@ export default function FeedScreen({ navigation }: any) {
   const [selectedNations, setSelectedNations] = useState<string[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [topQuestion, setTopQuestion] = useState<Discussion | null>(null);
+  const [reportTarget, setReportTarget] = useState<Post | null>(null);
+  const [participantsPost, setParticipantsPost] = useState<Post | null>(null);
 
   function toggleNation(name: string) {
     setSelectedNations((prev) =>
@@ -151,32 +156,26 @@ export default function FeedScreen({ navigation }: any) {
 
   function handleReport(item: Post) {
     if (!profile?.uid) return;
-    Alert.alert(
-      t('report.title'),
-      t('report.message'),
-      [
-        { text: t('report.cancel'), style: 'cancel' },
-        {
-          text: t('report.confirm'),
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await createReport({
-                targetType: 'post',
-                targetId: item.id,
-                targetTitle: item.title,
-                targetAuthorId: item.authorId,
-                reportedBy: profile.uid,
-                reason: '',
-              });
-              Alert.alert(t('report.sentTitle'), t('report.sentMessage'));
-            } catch {
-              Alert.alert(t('errors.generic'));
-            }
-          },
-        },
-      ],
-    );
+    setReportTarget(item);
+  }
+
+  async function submitReport(reason: ReportReason) {
+    const item = reportTarget;
+    setReportTarget(null);
+    if (!item || !profile?.uid) return;
+    try {
+      await createReport({
+        targetType: 'post',
+        targetId: item.id,
+        targetTitle: item.title,
+        targetAuthorId: item.authorId,
+        reportedBy: profile.uid,
+        reason,
+      });
+      Alert.alert(t('report.sentTitle'), t('report.sentMessage'));
+    } catch {
+      Alert.alert(t('errors.generic'));
+    }
   }
 
   function handleDelete(postId: string) {
@@ -206,7 +205,41 @@ export default function FeedScreen({ navigation }: any) {
       case 'news': return colors.primary;
       case 'events': return colors.accent;
       case 'places': return colors.success;
+      case 'lifestyle': return '#EC4899';
       default: return colors.textSecondary;
+    }
+  }
+
+  async function handleJoinEvent(item: Post) {
+    if (!profile?.uid) return;
+    const uid = profile.uid;
+    const participants = item.participants ?? [];
+    const isIn = participants.includes(uid);
+    const cap = item.participantLimit ?? null;
+    if (!isIn && cap != null && participants.length >= cap) {
+      Alert.alert(t('post.eventFull'));
+      return;
+    }
+    toggleParticipant(item.id, uid); // optimistic — the card re-renders from the store
+    try {
+      if (isIn) {
+        await leaveEvent(item.id, uid);
+      } else {
+        await joinEvent(item.id, uid);
+        if (item.authorId !== uid) {
+          createParticipantNotification({
+            toUserId: item.authorId,
+            fromUserId: uid,
+            fromUserName: `${profile.firstName} ${profile.lastName}`,
+            fromUserPhoto: profile.photoURL ?? '',
+            postId: item.id,
+            postTitle: item.title,
+          }).catch(() => {});
+        }
+      }
+    } catch (e) {
+      toggleParticipant(item.id, uid); // revert
+      Alert.alert(e instanceof Error && e.message === 'event-full' ? t('post.eventFull') : t('errors.generic'));
     }
   }
 
@@ -219,6 +252,10 @@ export default function FeedScreen({ navigation }: any) {
     const dislikeCount = item.dislikes?.length ?? 0;
     const commentCount = item.commentCount ?? 0;
     const isSaved = item.savedBy?.includes(profile?.uid ?? '') ?? false;
+    const isParticipant = item.participants?.includes(profile?.uid ?? '') ?? false;
+    const eventFull = item.participantLimit != null
+      && (item.participants?.length ?? 0) >= item.participantLimit
+      && !isParticipant;
     return (
       <TouchableOpacity
         style={styles.card}
@@ -226,12 +263,12 @@ export default function FeedScreen({ navigation }: any) {
         onPress={() => openDetail(item.id, false)}
       >
         <View style={styles.cardHeader}>
-          <TouchableOpacity
-            style={styles.authorTap}
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('UserProfile', { userId: item.authorId })}
-          >
-            <View style={styles.avatar}>
+          <View style={styles.authorTap}>
+            <TouchableOpacity
+              style={styles.avatar}
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('UserProfile', { userId: item.authorId })}
+            >
               {item.authorPhoto ? (
                 <Image source={{ uri: item.authorPhoto }} style={styles.avatarImage} />
               ) : (
@@ -239,30 +276,74 @@ export default function FeedScreen({ navigation }: any) {
                   {item.authorName?.charAt(0).toUpperCase()}
                 </Text>
               )}
-            </View>
+            </TouchableOpacity>
             <View style={styles.authorInfo}>
-              <Text style={styles.authorName}>{item.authorName}</Text>
+              <Text
+                style={styles.authorName}
+                onPress={() => navigation.navigate('UserProfile', { userId: item.authorId })}
+                suppressHighlighting
+              >
+                {item.authorName}
+              </Text>
               <Text style={styles.authorMeta}>
                 {getFlagEmoji(item.authorCountryCode)}{'  '}{item.authorNationality}
               </Text>
             </View>
-          </TouchableOpacity>
+          </View>
           {!isOwner && <FollowButton targetUid={item.authorId} />}
         </View>
-        <View style={[styles.categoryBadge, { backgroundColor: badgeColor + '22' }]}>
-          <Text style={[styles.categoryBadgeText, { color: badgeColor }]}>
-            {t(`categories.${item.category}`)}
-          </Text>
+        <View style={styles.badgeRow}>
+          <View style={[styles.categoryBadge, { backgroundColor: badgeColor + '22' }]}>
+            <Text style={[styles.categoryBadgeText, { color: badgeColor }]}>
+              {t(`categories.${item.category}`)}
+            </Text>
+          </View>
         </View>
 
-        {item.imageURLs && item.imageURLs.length > 0 ? (
+        {item.videoURL || (item.imageURLs && item.imageURLs.length > 0) ? (
           <View style={styles.photoWrap}>
-            <PhotoGrid images={item.imageURLs} />
+            <MediaCarousel
+              images={item.imageURLs}
+              videoURL={item.videoURL}
+              videoPoster={item.videoPoster}
+              onVideoPress={() => openDetail(item.id, false)}
+            />
           </View>
         ) : null}
 
         <Text style={styles.postTitle}>{item.title}</Text>
         <Text style={styles.postDescription}>{item.description}</Text>
+
+        {item.signupEnabled ? (
+          <View style={styles.eventRow}>
+            <TouchableOpacity
+              style={[styles.joinBtn, isParticipant && styles.joinBtnLeave, eventFull && styles.joinBtnDisabled]}
+              onPress={() => handleJoinEvent(item)}
+              disabled={eventFull}
+              activeOpacity={0.85}
+            >
+              <Ionicons
+                name={isParticipant ? 'checkmark-circle' : 'people'}
+                size={16}
+                color={isParticipant ? colors.primary : '#fff'}
+              />
+              <Text style={[styles.joinBtnText, isParticipant && styles.joinBtnTextLeave]}>
+                {isParticipant ? t('post.leaveEvent') : eventFull ? t('post.eventFull') : t('post.participate')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.participantsBtn}
+              onPress={() => setParticipantsPost(item)}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="people-outline" size={16} color={colors.primary} />
+              <Text style={styles.participantsBtnText}>
+                {item.participants?.length ?? 0}
+                {item.participantLimit != null ? `/${item.participantLimit}` : ''}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
 
         <View style={styles.cardFooter}>
           <View style={styles.actionBar}>
@@ -432,6 +513,22 @@ export default function FeedScreen({ navigation }: any) {
         onClear={() => setSelectedNations([])}
         myNationality={profile?.nationality}
       />
+
+      <ReportSheet
+        visible={reportTarget !== null}
+        onClose={() => setReportTarget(null)}
+        onSubmit={submitReport}
+      />
+
+      <EventParticipantsModal
+        visible={participantsPost !== null}
+        participantIds={participantsPost?.participants ?? []}
+        onClose={() => setParticipantsPost(null)}
+        onOpenProfile={(userId) => {
+          setParticipantsPost(null);
+          setTimeout(() => navigation.navigate('UserProfile', { userId }), 250);
+        }}
+      />
     </View>
   );
 }
@@ -562,12 +659,12 @@ function makeStyles(c: ColorPalette, topInset: number) {
       color: c.textSecondary,
       marginTop: 2,
     },
+    badgeRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10, flexWrap: 'wrap' },
     categoryBadge: {
       paddingHorizontal: 10,
       paddingVertical: 5,
       borderRadius: 12,
       alignSelf: 'flex-start',
-      marginBottom: 10,
     },
     categoryBadgeText: {
       fontSize: Typography.fontSizeXS,
@@ -587,6 +684,31 @@ function makeStyles(c: ColorPalette, topInset: number) {
       lineHeight: 22,
       marginBottom: 12,
     },
+    eventRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
+    joinBtn: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 6,
+      backgroundColor: c.primary,
+      borderRadius: 12,
+      paddingVertical: 11,
+    },
+    joinBtnLeave: { backgroundColor: c.primaryLight },
+    joinBtnDisabled: { opacity: 0.5 },
+    joinBtnText: { color: '#fff', fontSize: Typography.fontSizeSM, fontWeight: Typography.fontWeightSemiBold },
+    joinBtnTextLeave: { color: c.primary },
+    participantsBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 5,
+      paddingHorizontal: 14,
+      borderRadius: 12,
+      borderWidth: 1.5,
+      borderColor: c.primary,
+    },
+    participantsBtnText: { color: c.primary, fontSize: Typography.fontSizeSM, fontWeight: Typography.fontWeightSemiBold },
     cardFooter: {
       flexDirection: 'row',
       justifyContent: 'space-between',

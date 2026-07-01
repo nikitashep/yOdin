@@ -16,6 +16,7 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  runTransaction,
   QueryConstraint,
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -40,6 +41,8 @@ export async function createPost(
     dislikes: [],
     commentCount: 0,
     feedScore: 0,
+    // Event sign-up sheets always start empty — the author can't pre-seed it.
+    ...(data.signupEnabled ? { participants: [] } : {}),
     createdAt: serverTimestamp(),
   };
   if (id) {
@@ -66,6 +69,27 @@ export async function votePost(
     if (current.liked) update.likes = arrayRemove(userId);
   }
   await updateDoc(postRef, update);
+}
+
+// Join an event's sign-up sheet. Runs in a transaction so the participant cap
+// can't be exceeded by two people tapping "I'm going" at the same time.
+// Throws 'event-full' when the limit is reached. Idempotent if already joined.
+export async function joinEvent(postId: string, uid: string): Promise<void> {
+  const ref = doc(db, 'posts', postId);
+  await runTransaction(db, async (tx) => {
+    const snap = await tx.get(ref);
+    if (!snap.exists()) throw new Error('not-found');
+    const data = snap.data();
+    const participants: string[] = data.participants ?? [];
+    if (participants.includes(uid)) return;
+    const cap: number | null = data.participantLimit ?? null;
+    if (cap != null && participants.length >= cap) throw new Error('event-full');
+    tx.update(ref, { participants: arrayUnion(uid) });
+  });
+}
+
+export async function leaveEvent(postId: string, uid: string): Promise<void> {
+  await updateDoc(doc(db, 'posts', postId), { participants: arrayRemove(uid) });
 }
 
 export async function addComment(
