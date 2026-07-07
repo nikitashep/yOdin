@@ -171,14 +171,15 @@
     "topicPlaceholder": "বিষয়",
     "descriptionPlaceholder": "বিবরণ",
     "category": "ক্যাটাগরি",
-    "photos": "Photos (up to {{count}})",
     "post": "প্রকাশ করুন",
     "signup": "Sign-up sheet",
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
     "limitPlaceholder": "Max",
-    "addVideo": "Video"
+    "media": "Media",
+    "addMedia": "Photo / video",
+    "maxPhotos": "Up to {{count}} photos"
   },
   "forum": {
     "title": "ফোরাম",

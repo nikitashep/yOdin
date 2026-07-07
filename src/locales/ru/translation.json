@@ -172,14 +172,15 @@
     "topicPlaceholder": "Тема",
     "descriptionPlaceholder": "Описание",
     "category": "Категория",
-    "photos": "Фото (до {{count}})",
     "post": "Опубликовать",
     "signup": "Набор участников",
     "signupHint": "Люди смогут записаться под постом",
     "noLimit": "Без лимита",
     "withLimit": "С лимитом",
     "limitPlaceholder": "Кол-во",
-    "addVideo": "Видео"
+    "media": "Медиа",
+    "addMedia": "Фото / видео",
+    "maxPhotos": "До {{count}} фото"
   },
   "forum": {
     "title": "Форум",

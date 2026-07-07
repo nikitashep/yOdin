@@ -171,14 +171,15 @@
     "topicPlaceholder": "Tema",
     "descriptionPlaceholder": "Descrição",
     "category": "Categoria",
-    "photos": "Photos (up to {{count}})",
     "post": "Publicar",
     "signup": "Sign-up sheet",
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
     "limitPlaceholder": "Max",
-    "addVideo": "Video"
+    "media": "Media",
+    "addMedia": "Photo / video",
+    "maxPhotos": "Up to {{count}} photos"
   },
   "forum": {
     "title": "Fórum",

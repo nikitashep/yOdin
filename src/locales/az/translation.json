@@ -171,14 +171,15 @@
     "topicPlaceholder": "Mövzu",
     "descriptionPlaceholder": "Təsvir",
     "category": "Kateqoriya",
-    "photos": "Şəkillər ({{count}}-ə qədər)",
     "post": "Paylaş",
     "signup": "Qeydiyyat siyahısı",
     "signupHint": "İnsanlar postun altında qoşula bilər",
     "noLimit": "Limitsiz",
     "withLimit": "Limitli",
     "limitPlaceholder": "Maks",
-    "addVideo": "Video"
+    "media": "Media",
+    "addMedia": "Foto / video",
+    "maxPhotos": "{{count}} fotoya qədər"
   },
   "forum": {
     "title": "Forum",

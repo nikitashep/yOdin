@@ -21,8 +21,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore } from '../store/usePostStore';
 import { createPost, newPostId } from '../services/postService';
 import { uploadPostImages, uploadPostVideo } from '../services/storageService';
-import PhotoPicker from '../components/PhotoPicker';
-import VideoAttach, { AttachedVideo } from '../components/VideoAttach';
+import MediaPicker, { AttachedVideo } from '../components/MediaPicker';
 import { getErrorMessage } from '../services/errorHandler';
 import { PostCategory, POST_CATEGORIES } from '../types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -270,12 +269,15 @@ export default function NewPostModal({ visible, onClose }: Props) {
               </View>
             ) : null}
 
-            <Text style={styles.sectionLabel}>{t('newPost.photos', { count: MAX_PHOTOS })}</Text>
+            <Text style={styles.sectionLabel}>{t('newPost.media')}</Text>
             <View style={styles.photoWrapper}>
-              <PhotoPicker images={images} onChange={setImages} max={MAX_PHOTOS} />
-            </View>
-            <View style={styles.videoWrapper}>
-              <VideoAttach value={video} onChange={setVideo} />
+              <MediaPicker
+                images={images}
+                onChangeImages={setImages}
+                video={video}
+                onChangeVideo={setVideo}
+                maxPhotos={MAX_PHOTOS}
+              />
             </View>
           </ScrollView>
 
@@ -443,7 +445,6 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
       textAlign: 'center',
     },
     photoWrapper: { marginBottom: 8 },
-    videoWrapper: { marginBottom: 8, alignSelf: 'flex-start' },
     footer: {
       paddingTop: 14,
       borderTopWidth: 1,

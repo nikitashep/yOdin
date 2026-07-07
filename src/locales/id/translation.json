@@ -171,14 +171,15 @@
     "topicPlaceholder": "Topik",
     "descriptionPlaceholder": "Deskripsi",
     "category": "Kategori",
-    "photos": "Photos (up to {{count}})",
     "post": "Terbitkan",
     "signup": "Sign-up sheet",
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
     "limitPlaceholder": "Max",
-    "addVideo": "Video"
+    "media": "Media",
+    "addMedia": "Photo / video",
+    "maxPhotos": "Up to {{count}} photos"
   },
   "forum": {
     "title": "Forum",

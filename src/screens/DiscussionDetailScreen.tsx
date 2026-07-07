@@ -480,7 +480,8 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
                 <View style={styles.questionPhotos}>
                   <VideoPlayerView uri={discussion.videoURL} />
                 </View>
-              ) : discussion.imageURLs && discussion.imageURLs.length > 0 ? (
+              ) : null}
+              {discussion.imageURLs && discussion.imageURLs.length > 0 ? (
                 <View style={styles.questionPhotos}>
                   <PhotoGrid images={discussion.imageURLs} />
                 </View>
