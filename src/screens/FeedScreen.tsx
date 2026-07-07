@@ -538,9 +538,9 @@ function makeStyles(c: ColorPalette, topInset: number) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: c.background },
     header: {
-      paddingHorizontal: 20,
+      paddingHorizontal: 16,
       paddingTop: topInset + 12,
-      paddingBottom: 12,
+      paddingBottom: 16,
       backgroundColor: c.surface,
       flexDirection: 'row',
       alignItems: 'center',
