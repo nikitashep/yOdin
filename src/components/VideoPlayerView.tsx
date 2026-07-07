@@ -11,7 +11,7 @@ interface Props {
 // Inline player used in the detail views. Native controls + fullscreen come for
 // free from expo-video; we only manage autoplay.
 export default function VideoPlayerView({ uri, autoPlay, style }: Props) {
-  const player = useVideoPlayer(uri, (p) => {
+  const player = useVideoPlayer(uri, (p: ReturnType<typeof useVideoPlayer>) => {
     p.loop = false;
     if (autoPlay) p.play();
   });

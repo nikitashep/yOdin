@@ -196,7 +196,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     headerTitle: {
       fontSize: Typography.fontSizeXL,
       fontWeight: Typography.fontWeightBold,
-      color: c.textPrimary,
+      color: c.primary,
     },
     backBtn: { width: 32 },
     clearBtn: { width: 32, alignItems: 'center', justifyContent: 'center' },

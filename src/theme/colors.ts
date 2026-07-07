@@ -1,23 +1,23 @@
 export type ColorPalette = typeof LightColors;
 
 export const LightColors = {
-  primary: '#5B4FE8',
-  primaryLight: '#EAE8FF',
+  primary: '#6C35DE',
+  primaryLight: '#EDE0FF',
   accent: '#FF6B6B',
-  background: '#F8F8FF',
+  background: '#EDE4FF',
   surface: '#FFFFFF',
   textPrimary: '#1A1A2E',
   textSecondary: '#6B7280',
-  border: '#E5E7EB',
+  border: '#DDD0F5',
   success: '#10B981',
   notification: '#EF4444',
   tabBar: '#FFFFFF',
-  tabBarActive: '#5B4FE8',
+  tabBarActive: '#6C35DE',
   tabBarInactive: '#9CA3AF',
 };
 
 export const DarkColors: ColorPalette = {
-  primary: '#7C71F0',
+  primary: '#8B6EF5',
   primaryLight: '#2D2B4E',
   accent: '#FF6B6B',
   background: '#0F0F1A',
@@ -28,6 +28,6 @@ export const DarkColors: ColorPalette = {
   success: '#10B981',
   notification: '#EF4444',
   tabBar: '#1A1A2E',
-  tabBarActive: '#7C71F0',
+  tabBarActive: '#8B6EF5',
   tabBarInactive: '#6B7280',
 };
