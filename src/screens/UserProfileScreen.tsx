@@ -132,8 +132,8 @@ export default function UserProfileScreen({ route, navigation }: any) {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+          <Ionicons name="chevron-back" size={22} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.topTitle} numberOfLines={1}>
           {user ? `${user.firstName} ${user.lastName}` : ''}
@@ -256,13 +256,18 @@ function makeStyles(c: ColorPalette, topInset: number) {
       justifyContent: 'space-between',
       paddingHorizontal: 16,
       paddingTop: topInset + 12,
-      paddingBottom: 12,
-      backgroundColor: c.surface,
-      borderBottomWidth: 1,
-      borderBottomColor: c.border,
+      paddingBottom: 14,
+      backgroundColor: c.primary,
     },
-    backBtn: { padding: 2 },
-    topTitle: { flex: 1, textAlign: 'center', fontSize: Typography.fontSizeLG, fontWeight: Typography.fontWeightBold, color: c.textPrimary },
+    backBtn: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: 'rgba(255,255,255,0.18)',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    topTitle: { flex: 1, textAlign: 'center', fontSize: Typography.fontSizeLG, fontWeight: Typography.fontWeightBold, color: '#fff' },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     header: {
       paddingHorizontal: 20,
@@ -299,14 +304,23 @@ function makeStyles(c: ColorPalette, topInset: number) {
     tabActive: { borderBottomColor: c.primary },
     tabText: { fontSize: Typography.fontSizeSM, fontWeight: Typography.fontWeightMedium, color: c.textSecondary },
     tabTextActive: { color: c.primary, fontWeight: Typography.fontWeightSemiBold },
-    card: { backgroundColor: c.surface, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: c.border },
+    card: {
+      backgroundColor: c.surface,
+      borderRadius: 20,
+      padding: 16,
+      shadowColor: '#6C35DE',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.07,
+      shadowRadius: 10,
+      elevation: 2,
+    },
     cardTitle: { fontSize: Typography.fontSizeMD, fontWeight: Typography.fontWeightSemiBold, color: c.textPrimary, marginBottom: 4 },
     cardDesc: { fontSize: Typography.fontSizeSM, color: c.textSecondary, lineHeight: 20 },
     postImage: { width: '100%', height: 140, borderRadius: 10, marginBottom: 10, backgroundColor: c.background },
     metaRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 10 },
     metaMuted: { fontSize: Typography.fontSizeXS, color: c.textSecondary },
     metaTime: { fontSize: Typography.fontSizeXS, color: c.textSecondary, marginLeft: 'auto' },
-    cardAnswered: { borderColor: c.success, borderWidth: 1.5, backgroundColor: c.success + '0a' },
+    cardAnswered: { borderWidth: 1.5, borderColor: c.success, backgroundColor: c.success + '10' },
     answeredRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 6 },
     answeredText: { fontSize: Typography.fontSizeXS, color: c.success, fontWeight: Typography.fontWeightSemiBold },
     cardQuestion: { fontSize: Typography.fontSizeMD, color: c.textPrimary, lineHeight: 22, marginBottom: 6 },

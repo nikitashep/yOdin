@@ -398,8 +398,16 @@ export default function ProfileScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.headerTopRow}>
-          <View style={styles.profileRow}>
+        {/* Cover banner */}
+        <View style={styles.coverBanner}>
+          <View style={styles.bannerGlow} />
+          <TouchableOpacity style={styles.menuBtnBanner} onPress={() => setMenuVisible(true)}>
+            <Ionicons name="menu-outline" size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.profileContent}>
+          <View style={styles.headerTopRow}>
             <TouchableOpacity onPress={handlePickPhoto} disabled={uploadingPhoto}>
               <View style={styles.avatar}>
                 {profile?.photoURL ? (
@@ -440,25 +448,22 @@ export default function ProfileScreen({ navigation }: any) {
               </TouchableOpacity>
             </View>
           </View>
-          <TouchableOpacity style={styles.menuBtn} onPress={() => setMenuVisible(true)}>
-            <Ionicons name="menu-outline" size={26} color={colors.textPrimary} />
-          </TouchableOpacity>
-        </View>
 
-        <Text style={styles.name}>{profile?.firstName} {profile?.lastName}</Text>
-        <Text style={styles.nationality}>{flag}  {profile?.nationality}</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-          <Ionicons name="location-sharp" size={13} color={colors.textSecondary} style={{ marginRight: 4 }} />
-          <Text style={styles.location}>{profile?.location}</Text>
-        </View>
-        <View style={styles.rankRow}>
-          <View style={styles.rankBadge}>
-            <Ionicons name="ribbon" size={12} color={colors.primary} />
-            <Text style={styles.rankBadgeText}>{t(`rank.${rankKey}`)}</Text>
+          <Text style={styles.name}>{profile?.firstName} {profile?.lastName}</Text>
+          <Text style={styles.nationality}>{flag}  {profile?.nationality}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+            <Ionicons name="location-sharp" size={13} color={colors.textSecondary} style={{ marginRight: 4 }} />
+            <Text style={styles.location}>{profile?.location}</Text>
           </View>
-          <Text style={styles.rankPoints}>{t('rank.points', { count: points })}</Text>
+          <View style={styles.rankRow}>
+            <View style={styles.rankBadge}>
+              <Ionicons name="ribbon" size={12} color={colors.primary} />
+              <Text style={styles.rankBadgeText}>{t(`rank.${rankKey}`)}</Text>
+            </View>
+            <Text style={styles.rankPoints}>{t('rank.points', { count: points })}</Text>
+          </View>
+          {photoError ? <Text style={styles.photoError}>{photoError}</Text> : null}
         </View>
-        {photoError ? <Text style={styles.photoError}>{photoError}</Text> : null}
       </View>
 
       <View style={styles.tabs}>
@@ -926,28 +931,57 @@ function makeStyles(c: ColorPalette, topInset: number) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: c.background },
     header: {
-      paddingHorizontal: 20,
-      paddingTop: topInset + 12,
-      paddingBottom: 20,
       backgroundColor: c.surface,
       borderBottomWidth: 1,
       borderBottomColor: c.border,
     },
+    coverBanner: {
+      height: topInset + 88,
+      backgroundColor: c.primary,
+      overflow: 'hidden',
+      justifyContent: 'flex-end',
+      alignItems: 'flex-end',
+      paddingTop: topInset,
+      paddingRight: 16,
+      paddingBottom: 12,
+    },
+    bannerGlow: {
+      position: 'absolute',
+      width: 260,
+      height: 260,
+      borderRadius: 130,
+      backgroundColor: 'rgba(255,255,255,0.09)',
+      left: -60,
+      top: -60,
+    },
+    menuBtnBanner: {
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      backgroundColor: 'rgba(255,255,255,0.18)',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    profileContent: {
+      paddingHorizontal: 20,
+      paddingBottom: 18,
+    },
     headerTopRow: {
       flexDirection: 'row',
-      alignItems: 'flex-start',
-      justifyContent: 'space-between',
-      marginBottom: 14,
+      alignItems: 'flex-end',
+      marginBottom: 12,
     },
-    profileRow: { flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 12 },
     avatar: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
+      width: 84,
+      height: 84,
+      borderRadius: 42,
       backgroundColor: c.primaryLight,
       alignItems: 'center',
       justifyContent: 'center',
       marginRight: 20,
+      marginTop: -32,
+      borderWidth: 3,
+      borderColor: c.surface,
     },
     avatarText: {
       fontSize: Typography.fontSizeXXL,
@@ -991,7 +1025,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
       color: c.notification,
       marginTop: 4,
     },
-    menuBtn: { padding: 6, marginTop: 0 },
     tabs: {
       flexDirection: 'row',
       backgroundColor: c.surface,
@@ -1041,10 +1074,13 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     card: {
       backgroundColor: c.surface,
-      borderRadius: 14,
+      borderRadius: 20,
       padding: 16,
-      borderWidth: 1,
-      borderColor: c.border,
+      shadowColor: '#6C35DE',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.07,
+      shadowRadius: 10,
+      elevation: 2,
     },
     cardQuestion: {
       fontSize: Typography.fontSizeMD,
