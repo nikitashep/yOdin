@@ -276,7 +276,8 @@ export default function ForumScreen({ navigation }: any) {
               onPress={() => navigation.navigate('DiscussionDetail', { discussionId: item.id, question: item.question })}
             />
           </View>
-        ) : item.imageURLs && item.imageURLs.length > 0 ? (
+        ) : null}
+        {item.imageURLs && item.imageURLs.length > 0 ? (
           <View style={styles.photoWrap}>
             <PhotoGrid images={item.imageURLs} />
           </View>
@@ -324,10 +325,10 @@ export default function ForumScreen({ navigation }: any) {
         answerFilter === 'answered' ? !!d.acceptedReplyId : !d.acceptedReplyId,
       );
 
-  const ANSWER_FILTERS: { key: typeof answerFilter; label: string }[] = [
-    { key: 'all', label: t('categories.all') },
-    { key: 'answered', label: t('forum.answered') },
-    { key: 'unanswered', label: t('forum.unanswered') },
+  const ANSWER_FILTERS: { key: typeof answerFilter; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+    { key: 'all', label: t('categories.all'), icon: 'apps-outline' },
+    { key: 'answered', label: t('forum.answered'), icon: 'checkmark-circle-outline' },
+    { key: 'unanswered', label: t('forum.unanswered'), icon: 'help-circle-outline' },
   ];
 
   return (
@@ -395,16 +396,18 @@ export default function ForumScreen({ navigation }: any) {
         </ScrollView>
         </View>
 
-        <View style={styles.answerRow}>
+        <View style={styles.segment}>
           {ANSWER_FILTERS.map((f) => {
             const active = answerFilter === f.key;
             return (
               <TouchableOpacity
                 key={f.key}
-                style={[styles.answerChip, active && styles.answerChipActive]}
+                style={[styles.segmentItem, active && styles.segmentItemActive]}
                 onPress={() => setAnswerFilter(f.key)}
+                activeOpacity={0.7}
               >
-                <Text style={[styles.answerChipText, active && styles.answerChipTextActive]}>
+                <Ionicons name={f.icon} size={15} color={active ? '#fff' : colors.textSecondary} />
+                <Text style={[styles.segmentText, active && styles.segmentTextActive]} numberOfLines={1}>
                   {f.label}
                 </Text>
               </TouchableOpacity>
@@ -572,18 +575,35 @@ function makeStyles(c: ColorPalette, topInset: number) {
       fontWeight: Typography.fontWeightMedium,
     },
     natChipTextActive: { color: '#fff', fontWeight: Typography.fontWeightSemiBold },
-    answerRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingBottom: 12, paddingTop: 4 },
-    answerChip: {
-      paddingHorizontal: 16,
-      paddingVertical: 7,
-      borderRadius: 18,
+    segment: {
+      flexDirection: 'row',
+      gap: 4,
+      marginHorizontal: 16,
+      marginBottom: 12,
+      marginTop: 2,
+      padding: 4,
+      borderRadius: 14,
       backgroundColor: c.background,
-      borderWidth: 1,
-      borderColor: c.border,
     },
-    answerChipActive: { backgroundColor: c.primary, borderColor: c.primary },
-    answerChipText: { fontSize: Typography.fontSizeSM, color: c.textSecondary, fontWeight: Typography.fontWeightMedium },
-    answerChipTextActive: { color: '#fff', fontWeight: Typography.fontWeightSemiBold },
+    segmentItem: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 5,
+      paddingVertical: 8,
+      borderRadius: 10,
+    },
+    segmentItemActive: {
+      backgroundColor: c.primary,
+      shadowColor: c.primary,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 5,
+      elevation: 2,
+    },
+    segmentText: { fontSize: Typography.fontSizeSM, color: c.textSecondary, fontWeight: Typography.fontWeightMedium },
+    segmentTextActive: { color: '#fff', fontWeight: Typography.fontWeightSemiBold },
     list: { padding: 14, gap: 14, paddingBottom: 96 },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     empty: { alignItems: 'center', paddingTop: 80 },

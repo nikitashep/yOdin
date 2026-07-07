@@ -21,8 +21,7 @@ import { createDiscussion, newDiscussionId } from '../services/discussionService
 import { uploadDiscussionImages, uploadDiscussionVideo } from '../services/storageService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getErrorMessage } from '../services/errorHandler';
-import PhotoPicker from '../components/PhotoPicker';
-import VideoAttach, { AttachedVideo } from '../components/VideoAttach';
+import MediaPicker, { AttachedVideo } from '../components/MediaPicker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
@@ -89,7 +88,8 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
         } catch {
           // Video upload failed — post the question without it rather than blocking.
         }
-      } else if (images.length > 0) {
+      }
+      if (images.length > 0) {
         try {
           imageURLs = await uploadDiscussionImages(id, images);
         } catch {
@@ -175,15 +175,14 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
           </View>
 
           <View style={styles.photoSection}>
-            {!video ? (
-              <>
-                <Text style={styles.sectionLabel}>{t('newPost.photos', { count: MAX_PHOTOS })}</Text>
-                <PhotoPicker images={images} onChange={setImages} max={MAX_PHOTOS} />
-              </>
-            ) : null}
-            <View style={styles.videoRow}>
-              <VideoAttach value={video} onChange={setVideo} disabled={images.length > 0} />
-            </View>
+            <Text style={styles.sectionLabel}>{t('newPost.media')}</Text>
+            <MediaPicker
+              images={images}
+              onChangeImages={setImages}
+              video={video}
+              onChangeVideo={setVideo}
+              maxPhotos={MAX_PHOTOS}
+            />
           </View>
 
           {error ? (
@@ -310,7 +309,6 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
       marginBottom: 10,
     },
     photoSection: { marginBottom: 16 },
-    videoRow: { marginTop: 10, alignSelf: 'flex-start' },
     errorRow: {
       flexDirection: 'row',
       alignItems: 'center',

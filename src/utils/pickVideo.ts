@@ -21,22 +21,18 @@ export class VideoPickError extends Error {
   }
 }
 
-export async function pickVideo(): Promise<PickedVideo | null> {
-  const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  if (status !== 'granted') return null;
+// Picker options to pass when a video may be selected — re-encode to a smaller
+// resolution/bitrate at pick time. iOS honours the export preset.
+export const videoPickerOptions = {
+  videoExportPreset: ImagePicker.VideoExportPreset.MediumQuality,
+  videoMaxDuration: MAX_VIDEO_DURATION_S,
+} as const;
 
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ['videos'],
-    allowsMultipleSelection: false,
-    // Re-encode to a smaller resolution/bitrate at pick time. iOS honours the
-    // export preset; both platforms honour `quality`.
-    quality: 0.5,
-    videoExportPreset: ImagePicker.VideoExportPreset.MediumQuality,
-    videoMaxDuration: MAX_VIDEO_DURATION_S,
-  });
-  if (result.canceled || result.assets.length === 0) return null;
-
-  const asset = result.assets[0];
+// Validate a picked video asset and generate a compact poster still. Throws a
+// VideoPickError (with a translation key) if it's too long or too large.
+export async function processVideoAsset(
+  asset: ImagePicker.ImagePickerAsset,
+): Promise<PickedVideo> {
   const durationMs = asset.duration ?? 0;
 
   // videoMaxDuration only caps in-app recording, not library picks — enforce it.

@@ -172,14 +172,15 @@
     "topicPlaceholder": "Subiect",
     "descriptionPlaceholder": "Descriere",
     "category": "Categorie",
-    "photos": "Photos (up to {{count}})",
     "post": "Publică",
     "signup": "Sign-up sheet",
     "signupHint": "People can RSVP under the post",
     "noLimit": "No limit",
     "withLimit": "Limited",
     "limitPlaceholder": "Max",
-    "addVideo": "Video"
+    "media": "Media",
+    "addMedia": "Photo / video",
+    "maxPhotos": "Up to {{count}} photos"
   },
   "forum": {
     "title": "Forum",
