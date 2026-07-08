@@ -320,7 +320,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     metaRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 10 },
     metaMuted: { fontSize: Typography.fontSizeXS, color: c.textSecondary },
     metaTime: { fontSize: Typography.fontSizeXS, color: c.textSecondary, marginLeft: 'auto' },
-    cardAnswered: { borderWidth: 1.5, borderColor: c.success, backgroundColor: c.success + '10' },
+    cardAnswered: { borderWidth: 1.5, borderColor: c.success, backgroundColor: c.successTint },
     answeredRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 6 },
     answeredText: { fontSize: Typography.fontSizeXS, color: c.success, fontWeight: Typography.fontWeightSemiBold },
     cardQuestion: { fontSize: Typography.fontSizeMD, color: c.textPrimary, lineHeight: 22, marginBottom: 6 },

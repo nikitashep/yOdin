@@ -633,7 +633,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     cardAnswered: {
       borderWidth: 1.5,
       borderColor: c.success,
-      backgroundColor: c.success + '10',
+      backgroundColor: c.successTint,
     },
     cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
     authorTap: { flexDirection: 'row', alignItems: 'center', flex: 1 },
