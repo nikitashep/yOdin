@@ -151,15 +151,16 @@ export default function ForumScreen({ navigation }: any) {
 
   useEffect(() => {
     loadFeed();
-  }, [profile?.uid, selectedNations]);
+  }, [profile?.uid, selectedNations, answerFilter]);
 
   async function loadFeed() {
     if (!profile?.uid) return;
     setError('');
     setLoading(true);
     try {
-      const { discussions: data, lastDoc: last } = await fetchDiscussions(selectedNations);
-      const sorted = selectedNations.length === 0
+      const { discussions: data, lastDoc: last } = await fetchDiscussions(selectedNations, answerFilter);
+      const useRecommendations = selectedNations.length === 0 && answerFilter === 'all';
+      const sorted = useRecommendations
         ? weightedSort(data, { myNationality: profile.nationality, following: profile.following ?? [] }, (d) => d.replyCount ?? 0)
         : data;
       setDiscussions(sorted);
@@ -177,9 +178,10 @@ export default function ForumScreen({ navigation }: any) {
     if (!hasMore || isLoading || !lastDoc) return;
     setLoading(true);
     try {
-      const { discussions: data, lastDoc: last } = await fetchDiscussions(selectedNations, lastDoc);
-      const sorted = selectedNations.length === 0 && profile?.nationality
-        ? weightedSort(data, { myNationality: profile.nationality, following: profile.following ?? [] }, (d) => d.replyCount ?? 0)
+      const { discussions: data, lastDoc: last } = await fetchDiscussions(selectedNations, answerFilter, lastDoc);
+      const useRecommendations = selectedNations.length === 0 && answerFilter === 'all' && !!profile?.nationality;
+      const sorted = useRecommendations
+        ? weightedSort(data, { myNationality: profile!.nationality, following: profile!.following ?? [] }, (d) => d.replyCount ?? 0)
         : data;
       appendDiscussions(sorted);
       setLastDoc(last);
@@ -346,12 +348,7 @@ export default function ForumScreen({ navigation }: any) {
     );
   }
 
-  const baseList = isSearching ? searchResults : discussions;
-  const visibleList = answerFilter === 'all'
-    ? baseList
-    : baseList.filter((d) =>
-        answerFilter === 'answered' ? !!d.acceptedReplyId : !d.acceptedReplyId,
-      );
+  const visibleList = isSearching ? searchResults : discussions;
 
 
   return (

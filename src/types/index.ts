@@ -87,6 +87,7 @@ export interface Discussion {
   acceptedReplyId?: string;
   acceptedReplyText?: string;
   acceptedReplyAuthorName?: string;
+  isAnswered?: boolean;
 }
 
 export interface Reply {

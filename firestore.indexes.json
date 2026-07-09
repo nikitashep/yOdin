@@ -114,6 +114,40 @@
         { "fieldPath": "authorNationality", "order": "ASCENDING" },
         { "fieldPath": "feedScore", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "discussions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "acceptedReplyId", "order": "ASCENDING" },
+        { "fieldPath": "feedScore", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "discussions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "isAnswered", "order": "ASCENDING" },
+        { "fieldPath": "feedScore", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "discussions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "authorNationality", "order": "ASCENDING" },
+        { "fieldPath": "acceptedReplyId", "order": "ASCENDING" },
+        { "fieldPath": "feedScore", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "discussions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "authorNationality", "order": "ASCENDING" },
+        { "fieldPath": "isAnswered", "order": "ASCENDING" },
+        { "fieldPath": "feedScore", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

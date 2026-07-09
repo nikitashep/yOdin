@@ -34,7 +34,7 @@ export async function createDiscussion(
   data: Omit<Discussion, 'id' | 'createdAt' | 'replyCount'>,
   id?: string,
 ): Promise<string> {
-  const payload = { ...data, replyCount: 0, feedScore: 0, engagement: 0, createdAt: serverTimestamp() };
+  const payload = { ...data, replyCount: 0, feedScore: 0, engagement: 0, isAnswered: false, createdAt: serverTimestamp() };
   if (id) {
     await setDoc(doc(db, 'discussions', id), payload);
     return id;
@@ -48,11 +48,16 @@ export async function createDiscussion(
 // nationalities (Firestore `in` supports up to 30 values).
 export async function fetchDiscussions(
   nationalities?: string[],
+  answerFilter?: 'all' | 'answered' | 'unanswered',
   cursor?: DocumentSnapshot,
 ): Promise<{ discussions: Discussion[]; lastDoc: DocumentSnapshot | null }> {
   const constraints: QueryConstraint[] = [];
   if (nationalities && nationalities.length > 0 && nationalities.length <= 30)
     constraints.push(where('authorNationality', 'in', nationalities));
+  if (answerFilter === 'answered')
+    constraints.push(where('isAnswered', '==', true));
+  else if (answerFilter === 'unanswered')
+    constraints.push(where('acceptedReplyId', '==', null));
   constraints.push(orderBy('feedScore', 'desc'), limit(PAGE_SIZE));
   if (cursor) constraints.push(startAfter(cursor));
 
@@ -173,6 +178,7 @@ export async function acceptReply(
     acceptedReplyId: replyId,
     acceptedReplyText: replyText,
     acceptedReplyAuthorName: replyAuthorName,
+    isAnswered: true,
   });
 }
 
