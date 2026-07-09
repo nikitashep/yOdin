@@ -99,14 +99,14 @@ export default function ForumScreen({ navigation }: any) {
   const runSearch = useCallback(async (q: string) => {
     setSearching(true);
     try {
-      const hits = await searchDiscussions(q, selectedNations);
+      const hits = await searchDiscussions(q, selectedNations, answerFilter);
       setAlgoliaHits(hits);
     } catch {
       setAlgoliaHits([]);
     } finally {
       setSearching(false);
     }
-  }, [selectedNations]);
+  }, [selectedNations, answerFilter]);
 
   // Debounced Algolia search — fires 300ms after the user stops typing
   useEffect(() => {

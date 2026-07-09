@@ -28,20 +28,30 @@ export type AlgoliaHit = {
   acceptedReplyId?: string;
   acceptedReplyText?: string;
   acceptedReplyAuthorName?: string;
+  isAnswered?: boolean;
 };
 
-export async function searchDiscussions(query: string, nationalities?: string[]): Promise<AlgoliaHit[]> {
+export async function searchDiscussions(
+  query: string,
+  nationalities?: string[],
+  answerFilter?: 'all' | 'answered' | 'unanswered',
+): Promise<AlgoliaHit[]> {
   const client = getClient();
   if (!client) return [];
-  // A single inner array means OR — match any of the selected nationalities.
-  const facetFilters = nationalities && nationalities.length > 0
-    ? [nationalities.map((n) => 'authorNationality:' + n)]
-    : undefined;
+
+  const facetFilters: string[][] = [];
+  if (nationalities && nationalities.length > 0)
+    facetFilters.push(nationalities.map((n) => 'authorNationality:' + n));
+  if (answerFilter === 'answered')
+    facetFilters.push(['isAnswered:true']);
+  else if (answerFilter === 'unanswered')
+    facetFilters.push(['isAnswered:false']);
+
   const result = await client.searchSingleIndex({
     indexName: INDEX,
     searchParams: {
       query,
-      ...(facetFilters ? { facetFilters } : {}),
+      ...(facetFilters.length > 0 ? { facetFilters } : {}),
       hitsPerPage: 50,
       attributesToRetrieve: [
         'objectID',
@@ -57,6 +67,7 @@ export async function searchDiscussions(query: string, nationalities?: string[])
         'acceptedReplyId',
         'acceptedReplyText',
         'acceptedReplyAuthorName',
+        'isAnswered',
       ],
     },
   });
