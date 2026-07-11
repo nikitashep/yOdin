@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing, View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Typography } from '../../theme/typography';
 import Logo from '../../components/Logo';
@@ -8,15 +8,35 @@ const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
 const AUTH_BG = '#6C35DE';
 
+function useBloom(toScale: number, duration: number, delay = 0) {
+  const anim = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.delay(delay),
+        Animated.timing(anim, { toValue: toScale, duration, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(anim, { toValue: 1, duration, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, []);
+  return anim;
+}
+
 export default function WelcomeScreen({ navigation }: any) {
   const { t } = useTranslation();
 
+  const scaleOuter = useBloom(1.14, 2800);
+  const scaleMid   = useBloom(1.18, 2200, 400);
+  const scaleInner = useBloom(1.22, 1800, 800);
+
   return (
     <View style={styles.container}>
-      {/* Glow orb layers */}
-      <View style={styles.orbOuter} />
-      <View style={styles.orbMid} />
-      <View style={styles.orbInner} />
+      {/* Animated bloom orbs */}
+      <Animated.View style={[styles.orbOuter, { transform: [{ scale: scaleOuter }] }]} />
+      <Animated.View style={[styles.orbMid,   { transform: [{ scale: scaleMid }] }]} />
+      <Animated.View style={[styles.orbInner, { transform: [{ scale: scaleInner }] }]} />
 
       <View style={styles.content}>
         <Logo size={60} />
