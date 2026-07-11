@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Typography } from '../../theme/typography';
-import WanderingEye from '../../components/WanderingEye';
+import Logo from '../../components/Logo';
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
@@ -19,11 +19,7 @@ export default function WelcomeScreen({ navigation }: any) {
       <View style={styles.orbInner} />
 
       <View style={styles.content}>
-        <View style={styles.logoRow}>
-          <Text style={styles.logoText}>y</Text>
-          <WanderingEye />
-          <Text style={styles.logoText}>din</Text>
-        </View>
+        <Logo size={60} />
         <Text style={styles.title}>{t('auth.welcome')}</Text>
         <Text style={styles.subtitle}>{t('auth.subtitle')}</Text>
       </View>
@@ -89,19 +85,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  logoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 14,
-  },
-  logoText: {
-    fontSize: 60,
-    fontWeight: Typography.fontWeightBold,
-    color: '#fff',
-    letterSpacing: -1.5,
-    lineHeight: 68,
   },
   title: {
     fontSize: Typography.fontSizeLG,
