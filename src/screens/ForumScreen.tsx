@@ -455,7 +455,7 @@ export default function ForumScreen({ navigation }: any) {
           onScroll={handleScroll}
           scrollEventThrottle={16}
           ListHeaderComponent={
-            !isSearching && topQuestion ? (
+            !isSearching && topQuestion && selectedNations.length === 0 && answerFilter === 'all' ? (
               <View style={styles.qodWrap}>
                 <QuestionOfDayCard
                   discussion={topQuestion}
