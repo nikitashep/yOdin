@@ -35,6 +35,7 @@ import NationFilterDrawer from '../components/NationFilterDrawer';
 import PhotoGrid from '../components/PhotoGrid';
 import VideoPreview from '../components/VideoPreview';
 import QuestionOfDayCard from '../components/QuestionOfDayCard';
+import EmptyState from '../components/EmptyState';
 import { COUNTRIES } from '../data/countries';
 
 export default function ForumScreen({ navigation }: any) {
@@ -465,12 +466,10 @@ export default function ForumScreen({ navigation }: any) {
             ) : null
           }
           ListEmptyComponent={
-            <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>{isSearching || answerFilter !== 'all' ? '🔍' : '💬'}</Text>
-              <Text style={styles.emptyText}>
-                {isSearching || answerFilter !== 'all' ? t('forum.nothingFound') : t('forum.empty')}
-              </Text>
-            </View>
+            <EmptyState
+              icon={isSearching || answerFilter !== 'all' ? 'search-outline' : 'chatbubbles-outline'}
+              text={isSearching || answerFilter !== 'all' ? t('forum.nothingFound') : t('forum.empty')}
+            />
           }
           ListFooterComponent={
             isLoading && discussions.length > 0
@@ -610,18 +609,11 @@ function makeStyles(c: ColorPalette, topInset: number) {
     natChipTextActive: { color: '#fff', fontWeight: Typography.fontWeightSemiBold },
     list: { padding: 14, gap: 14, paddingBottom: 96 },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-    empty: { alignItems: 'center', paddingTop: 80 },
-    emptyEmoji: { fontSize: 48, marginBottom: 12 },
-    emptyText: {
-      fontSize: Typography.fontSizeMD,
-      color: c.textSecondary,
-      textAlign: 'center',
-    },
     card: {
       backgroundColor: c.surface,
       borderRadius: 20,
       padding: 16,
-      shadowColor: '#6C35DE',
+      shadowColor: c.primary,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.08,
       shadowRadius: 12,

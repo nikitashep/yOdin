@@ -19,6 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
+import EmptyState from '../components/EmptyState';
 
 export default function NotificationsScreen({ navigation }: any) {
   const { t } = useTranslation();
@@ -167,10 +168,7 @@ export default function NotificationsScreen({ navigation }: any) {
           renderItem={renderItem}
           contentContainerStyle={notifications.length === 0 ? styles.center : { paddingTop: 8, paddingBottom: 96 }}
           ListEmptyComponent={
-            <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>🔔</Text>
-              <Text style={styles.emptyText}>{t('notifications.empty')}</Text>
-            </View>
+            <EmptyState icon="notifications-outline" text={t('notifications.empty')} />
           }
         />
       )}
@@ -201,9 +199,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
     backBtn: { width: 32 },
     clearBtn: { width: 32, alignItems: 'center', justifyContent: 'center' },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-    empty: { alignItems: 'center', paddingTop: 80 },
-    emptyEmoji: { fontSize: 48, marginBottom: 12 },
-    emptyText: { fontSize: Typography.fontSizeMD, color: c.textSecondary },
     item: {
       flexDirection: 'row',
       alignItems: 'flex-start',
@@ -213,7 +208,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
       marginVertical: 5,
       borderRadius: 18,
       backgroundColor: c.surface,
-      shadowColor: '#6C35DE',
+      shadowColor: c.primary,
       shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.07,
       shadowRadius: 10,

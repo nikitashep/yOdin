@@ -21,11 +21,6 @@ import { Typography } from '../../theme/typography';
 
 type Mode = 'register' | 'login';
 
-const AUTH_BG = '#6C35DE';
-const INPUT_BG = '#4E25A8';
-const INPUT_TEXT = '#FFFFFF';
-const INPUT_PLACEHOLDER = 'rgba(255,255,255,0.5)';
-
 export default function RegisterScreen({ navigation, route }: any) {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -76,11 +71,11 @@ export default function RegisterScreen({ navigation, route }: any) {
         {mode === 'register' && (
           <View style={styles.row}>
             <View style={[styles.inputWrap, { flex: 1 }]}>
-              <Ionicons name="person-outline" size={18} color={INPUT_PLACEHOLDER} />
+              <Ionicons name="person-outline" size={18} color={colors.textSecondary} />
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.firstName')}
-                placeholderTextColor={INPUT_PLACEHOLDER}
+                placeholderTextColor={colors.textSecondary}
                 value={firstName}
                 onChangeText={setFirstName}
                 autoCapitalize="words"
@@ -91,7 +86,7 @@ export default function RegisterScreen({ navigation, route }: any) {
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.lastName')}
-                placeholderTextColor={INPUT_PLACEHOLDER}
+                placeholderTextColor={colors.textSecondary}
                 value={lastName}
                 onChangeText={setLastName}
                 autoCapitalize="words"
@@ -101,11 +96,11 @@ export default function RegisterScreen({ navigation, route }: any) {
         )}
 
         <View style={styles.inputWrap}>
-          <Ionicons name="mail-outline" size={18} color={INPUT_PLACEHOLDER} />
+          <Ionicons name="mail-outline" size={18} color={colors.textSecondary} />
           <TextInput
             style={styles.input}
             placeholder={t('auth.email')}
-            placeholderTextColor={INPUT_PLACEHOLDER}
+            placeholderTextColor={colors.textSecondary}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -115,17 +110,17 @@ export default function RegisterScreen({ navigation, route }: any) {
         </View>
 
         <View style={styles.inputWrap}>
-          <Ionicons name="lock-closed-outline" size={18} color={INPUT_PLACEHOLDER} />
+          <Ionicons name="lock-closed-outline" size={18} color={colors.textSecondary} />
           <TextInput
             style={styles.input}
             placeholder={t('auth.password')}
-            placeholderTextColor={INPUT_PLACEHOLDER}
+            placeholderTextColor={colors.textSecondary}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
           />
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={18} color={INPUT_PLACEHOLDER} />
+            <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={18} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
 
@@ -146,7 +141,7 @@ export default function RegisterScreen({ navigation, route }: any) {
           disabled={loading}
         >
           {loading
-            ? <ActivityIndicator color={colors.primary} />
+            ? <ActivityIndicator color="#fff" />
             : <Text style={styles.btnText}>{mode === 'register' ? t('auth.next') : t('auth.login')}</Text>
           }
         </TouchableOpacity>
@@ -190,7 +185,9 @@ function makeStyles(topInset: number, c: import('../../theme/colors').ColorPalet
     },
     row: { flexDirection: 'row', marginBottom: 12 },
     inputWrap: {
-      backgroundColor: INPUT_BG,
+      backgroundColor: c.surface,
+      borderWidth: 1.5,
+      borderColor: c.border,
       borderRadius: 14,
       paddingHorizontal: 16,
       flexDirection: 'row',
@@ -201,29 +198,29 @@ function makeStyles(topInset: number, c: import('../../theme/colors').ColorPalet
     input: {
       flex: 1,
       fontSize: Typography.fontSizeMD,
-      color: INPUT_TEXT,
+      color: c.textPrimary,
       paddingVertical: 16,
     },
     error: {
-      color: '#EF4444',
+      color: c.notification,
       fontSize: Typography.fontSizeSM,
       marginBottom: 12,
     },
     btn: {
-      backgroundColor: '#fff',
+      backgroundColor: c.primary,
       borderRadius: 16,
       paddingVertical: 16,
       alignItems: 'center',
       marginTop: 8,
-      shadowColor: '#6C35DE',
+      shadowColor: c.primary,
       shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.15,
+      shadowOpacity: 0.25,
       shadowRadius: 12,
       elevation: 4,
     },
     btnDisabled: { opacity: 0.6 },
     btnText: {
-      color: c.primary,
+      color: '#fff',
       fontSize: Typography.fontSizeMD,
       fontWeight: Typography.fontWeightSemiBold,
     },

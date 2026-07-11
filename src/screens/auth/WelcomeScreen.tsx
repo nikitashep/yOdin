@@ -2,11 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Typography } from '../../theme/typography';
+import { LightColors } from '../../theme/colors';
 import Logo from '../../components/Logo';
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
-const AUTH_BG = '#6C35DE';
+// Branded landing hero — always the light-theme purple regardless of scheme.
+const AUTH_BG = LightColors.primary;
 
 function useBloom(toScale: number, duration: number, delay = 0) {
   const anim = useRef(new Animated.Value(1)).current;

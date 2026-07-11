@@ -35,6 +35,7 @@ import NationFilterDrawer from '../components/NationFilterDrawer';
 import MediaCarousel from '../components/MediaCarousel';
 import EventParticipantsModal from '../components/EventParticipantsModal';
 import QuestionOfDayCard from '../components/QuestionOfDayCard';
+import EmptyState from '../components/EmptyState';
 import { weightedSort } from '../utils/weightedSort';
 import { COUNTRIES } from '../data/countries';
 
@@ -220,7 +221,7 @@ export default function FeedScreen({ navigation }: any) {
       case 'news': return colors.primary;
       case 'events': return colors.accent;
       case 'places': return colors.success;
-      case 'lifestyle': return '#EC4899';
+      case 'lifestyle': return colors.pink;
       default: return colors.textSecondary;
     }
   }
@@ -507,10 +508,7 @@ export default function FeedScreen({ navigation }: any) {
             ) : null
           }
           ListEmptyComponent={
-            <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>📰</Text>
-              <Text style={styles.emptyText}>{t('feed.emptyPosts')}</Text>
-            </View>
+            <EmptyState icon="newspaper-outline" text={t('feed.emptyPosts')} />
           }
           ListFooterComponent={
             isLoading && posts.length > 0
@@ -646,18 +644,11 @@ function makeStyles(c: ColorPalette, topInset: number) {
     chipTextActive: { color: '#fff', fontWeight: Typography.fontWeightSemiBold },
     list: { padding: 14, gap: 14, paddingBottom: 96 },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-    empty: { alignItems: 'center', paddingTop: 80 },
-    emptyEmoji: { fontSize: 48, marginBottom: 12 },
-    emptyText: {
-      fontSize: Typography.fontSizeMD,
-      color: c.textSecondary,
-      textAlign: 'center',
-    },
     card: {
       backgroundColor: c.surface,
       borderRadius: 20,
       padding: 16,
-      shadowColor: '#6C35DE',
+      shadowColor: c.primary,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.08,
       shadowRadius: 12,
