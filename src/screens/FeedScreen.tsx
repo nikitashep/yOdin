@@ -496,7 +496,7 @@ export default function FeedScreen({ navigation }: any) {
           onScroll={handleScroll}
           scrollEventThrottle={16}
           ListHeaderComponent={
-            topQuestion ? (
+            topQuestion && selectedNations.length === 0 && filter === 'all' ? (
               <View style={styles.qodWrap}>
                 <QuestionOfDayCard
                   discussion={topQuestion}
