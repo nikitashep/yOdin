@@ -268,7 +268,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
       justifyContent: 'center',
     },
     topTitle: { flex: 1, textAlign: 'center', fontSize: Typography.fontSizeLG, fontWeight: Typography.fontWeightBold, color: '#fff' },
-    center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    center: { flexGrow: 1, alignItems: 'center', justifyContent: 'center' },
     header: {
       paddingHorizontal: 20,
       paddingVertical: 16,

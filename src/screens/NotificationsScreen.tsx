@@ -198,7 +198,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     backBtn: { width: 32 },
     clearBtn: { width: 32, alignItems: 'center', justifyContent: 'center' },
-    center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    center: { flexGrow: 1, alignItems: 'center', justifyContent: 'center' },
     item: {
       flexDirection: 'row',
       alignItems: 'flex-start',

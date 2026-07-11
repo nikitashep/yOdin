@@ -643,7 +643,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     chipTextActive: { color: '#fff', fontWeight: Typography.fontWeightSemiBold },
     list: { padding: 14, gap: 14, paddingBottom: 96 },
-    center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    center: { flexGrow: 1, alignItems: 'center', justifyContent: 'center' },
     card: {
       backgroundColor: c.surface,
       borderRadius: 20,

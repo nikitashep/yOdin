@@ -145,7 +145,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     tabActive: { borderBottomColor: c.primary },
     tabText: { fontSize: Typography.fontSizeSM, fontWeight: Typography.fontWeightMedium, color: c.textSecondary },
     tabTextActive: { color: c.primary, fontWeight: Typography.fontWeightSemiBold },
-    center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    center: { flexGrow: 1, alignItems: 'center', justifyContent: 'center' },
     row: {
       flexDirection: 'row',
       alignItems: 'center',

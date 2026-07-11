@@ -1044,7 +1044,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
       color: c.textSecondary,
     },
     tabTextActive: { color: c.primary, fontWeight: Typography.fontWeightSemiBold },
-    center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    center: { flexGrow: 1, alignItems: 'center', justifyContent: 'center' },
     avatarImage: {
       width: 80,
       height: 80,

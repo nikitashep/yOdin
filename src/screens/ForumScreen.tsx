@@ -151,6 +151,7 @@ export default function ForumScreen({ navigation }: any) {
   );
 
   useEffect(() => {
+    setDiscussions([]);
     loadFeed();
   }, [profile?.uid, selectedNations, answerFilter]);
 
@@ -608,7 +609,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     natChipTextActive: { color: '#fff', fontWeight: Typography.fontWeightSemiBold },
     list: { padding: 14, gap: 14, paddingBottom: 96 },
-    center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    center: { flexGrow: 1, alignItems: 'center', justifyContent: 'center' },
     card: {
       backgroundColor: c.surface,
       borderRadius: 20,
