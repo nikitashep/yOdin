@@ -18,6 +18,7 @@ import { Report, Post, ReportTargetType } from '../types';
 import { formatTime } from '../utils/formatTime';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
+import EmptyState from '../components/EmptyState';
 import PostDetailModal from './PostDetailModal';
 
 // Per-target-type badge styling. Each report can target a post, forum question,
@@ -183,10 +184,7 @@ export default function ReportsScreen({ navigation }: any) {
         contentContainerStyle={reports.length === 0 ? styles.center : { padding: 16, gap: 12 }}
         ListEmptyComponent={
           loading ? null : (
-            <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>✅</Text>
-              <Text style={styles.emptyText}>{t('moderation.empty')}</Text>
-            </View>
+            <EmptyState icon="checkmark-done-outline" text={t('moderation.empty')} />
           )
         }
       />
@@ -222,8 +220,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
     backBtn: { padding: 2 },
     title: { fontSize: Typography.fontSizeLG, fontWeight: Typography.fontWeightBold, color: c.textPrimary },
     center: { flexGrow: 1, alignItems: 'center', justifyContent: 'center' },
-    empty: { alignItems: 'center', paddingTop: 80 },
-    emptyEmoji: { fontSize: 44, marginBottom: 12 },
     emptyText: { fontSize: Typography.fontSizeMD, color: c.textSecondary, textAlign: 'center' },
     card: {
       backgroundColor: c.surface,

@@ -17,6 +17,7 @@ import { User } from '../types';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
+import EmptyState from '../components/EmptyState';
 import FollowButton from '../components/FollowButton';
 
 type Tab = 'followers' | 'following';
@@ -109,12 +110,11 @@ export default function FollowListScreen({ route, navigation }: any) {
           renderItem={renderRow}
           contentContainerStyle={data.length === 0 ? styles.center : { paddingVertical: 8 }}
           ListEmptyComponent={
-            <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>👥</Text>
-              <Text style={styles.emptyText}>
-                {tab === 'followers' ? t('profile.noFollowers') : t('profile.noFollowing')}
-              </Text>
-            </View>
+            <EmptyState
+              icon="people-outline"
+              text={tab === 'followers' ? t('profile.noFollowers') : t('profile.noFollowing')}
+              topOffset={60}
+            />
           }
         />
       )}
@@ -162,8 +162,5 @@ function makeStyles(c: ColorPalette, topInset: number) {
     info: { flex: 1 },
     name: { fontSize: Typography.fontSizeMD, fontWeight: Typography.fontWeightSemiBold, color: c.textPrimary },
     meta: { fontSize: Typography.fontSizeSM, color: c.textSecondary, marginTop: 2 },
-    empty: { alignItems: 'center', paddingTop: 60 },
-    emptyEmoji: { fontSize: 40, marginBottom: 12 },
-    emptyText: { fontSize: Typography.fontSizeMD, color: c.textSecondary },
   });
 }

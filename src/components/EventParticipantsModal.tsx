@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
+import EmptyState from './EmptyState';
 import { fetchUsersByIds } from '../services/userService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { User } from '../types';
@@ -103,10 +104,7 @@ export default function EventParticipantsModal({ visible, participantIds, onClos
               renderItem={renderRow}
               contentContainerStyle={users.length === 0 ? styles.center : { paddingVertical: 8 }}
               ListEmptyComponent={
-                <View style={styles.empty}>
-                  <Text style={styles.emptyEmoji}>🙋</Text>
-                  <Text style={styles.emptyText}>{t('participants.empty')}</Text>
-                </View>
+                <EmptyState icon="people-outline" text={t('participants.empty')} topOffset={20} />
               }
             />
           )}
@@ -157,8 +155,5 @@ function makeStyles(c: ColorPalette, bottomInset: number) {
     info: { flex: 1 },
     name: { fontSize: Typography.fontSizeMD, fontWeight: Typography.fontWeightSemiBold, color: c.textPrimary },
     meta: { fontSize: Typography.fontSizeSM, color: c.textSecondary, marginTop: 2 },
-    empty: { alignItems: 'center', paddingTop: 20 },
-    emptyEmoji: { fontSize: 40, marginBottom: 12 },
-    emptyText: { fontSize: Typography.fontSizeMD, color: c.textSecondary },
   });
 }

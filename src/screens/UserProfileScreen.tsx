@@ -23,6 +23,7 @@ import { getFlagEmoji } from '../utils/flagEmoji';
 import { formatTime } from '../utils/formatTime';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
+import EmptyState from '../components/EmptyState';
 import FollowButton from '../components/FollowButton';
 import PostDetailModal from './PostDetailModal';
 
@@ -222,12 +223,11 @@ export default function UserProfileScreen({ route, navigation }: any) {
             }
             contentContainerStyle={data.length === 0 ? styles.center : { padding: 16, gap: 12, paddingBottom: 96 }}
             ListEmptyComponent={
-              <View style={styles.empty}>
-                <Text style={styles.emptyEmoji}>{tab === 'posts' ? '📝' : '💬'}</Text>
-                <Text style={styles.emptyText}>
-                  {tab === 'posts' ? t('profile.noPosts') : t('profile.noDiscussions')}
-                </Text>
-              </View>
+              <EmptyState
+                icon={tab === 'posts' ? 'document-text-outline' : 'chatbubbles-outline'}
+                text={tab === 'posts' ? t('profile.noPosts') : t('profile.noDiscussions')}
+                topOffset={60}
+              />
             }
           />
         </>
@@ -308,7 +308,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
       backgroundColor: c.surface,
       borderRadius: 20,
       padding: 16,
-      shadowColor: '#6C35DE',
+      shadowColor: c.primary,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.07,
       shadowRadius: 10,
@@ -326,8 +326,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
     cardQuestion: { fontSize: Typography.fontSizeMD, color: c.textPrimary, lineHeight: 22, marginBottom: 6 },
     cardMetaRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     cardMeta: { fontSize: Typography.fontSizeSM, color: c.primary },
-    empty: { alignItems: 'center', paddingTop: 60 },
-    emptyEmoji: { fontSize: 40, marginBottom: 12 },
     emptyText: { fontSize: Typography.fontSizeMD, color: c.textSecondary },
   });
 }

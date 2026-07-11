@@ -41,6 +41,7 @@ import { getFlagEmoji } from '../utils/flagEmoji';
 import { usePostStore } from '../store/usePostStore';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
+import EmptyState from '../components/EmptyState';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const MENU_W = Math.min(SCREEN_WIDTH * 0.78, 310);
@@ -500,12 +501,11 @@ export default function ProfileScreen({ navigation }: any) {
           }
           contentContainerStyle={mainData.length === 0 ? styles.center : { padding: 16, gap: 12, paddingBottom: 96 }}
           ListEmptyComponent={
-            <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>{tab === 'posts' ? '📝' : '💬'}</Text>
-              <Text style={styles.emptyText}>
-                {tab === 'posts' ? t('profile.noPosts') : t('profile.noDiscussions')}
-              </Text>
-            </View>
+            <EmptyState
+              icon={tab === 'posts' ? 'document-text-outline' : 'chatbubbles-outline'}
+              text={tab === 'posts' ? t('profile.noPosts') : t('profile.noDiscussions')}
+              topOffset={60}
+            />
           }
         />
       )}
@@ -597,22 +597,22 @@ export default function ProfileScreen({ navigation }: any) {
         {/* Preferences group */}
         <View style={styles.menuGroup}>
           <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuVisible(false); setLangModal(true); }}>
-            <View style={[styles.menuIconWrap, { backgroundColor: '#34C75918' }]}>
-              <Ionicons name="globe-outline" size={18} color="#34C759" />
+            <View style={[styles.menuIconWrap, { backgroundColor: colors.primary + '18' }]}>
+              <Ionicons name="globe-outline" size={18} color={colors.primary} />
             </View>
             <Text style={styles.menuItemText}>{t('settings.language')}</Text>
             <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuVisible(false); setThemeModal(true); }}>
-            <View style={[styles.menuIconWrap, { backgroundColor: '#FF9F0A18' }]}>
-              <Ionicons name="contrast-outline" size={18} color="#FF9F0A" />
+            <View style={[styles.menuIconWrap, { backgroundColor: colors.accent + '18' }]}>
+              <Ionicons name="contrast-outline" size={18} color={colors.accent} />
             </View>
             <Text style={styles.menuItemText}>{t('settings.theme')}</Text>
             <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
           </TouchableOpacity>
           <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]} onPress={() => { setMenuVisible(false); setPrivacyModal(true); }}>
-            <View style={[styles.menuIconWrap, { backgroundColor: '#30D15818' }]}>
-              <Ionicons name="shield-checkmark-outline" size={18} color="#30D158" />
+            <View style={[styles.menuIconWrap, { backgroundColor: colors.success + '18' }]}>
+              <Ionicons name="shield-checkmark-outline" size={18} color={colors.success} />
             </View>
             <Text style={styles.menuItemText}>{t('settings.privacy')}</Text>
             <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
@@ -902,12 +902,11 @@ export default function ProfileScreen({ navigation }: any) {
                 : { padding: 16, gap: 12 }
             }
             ListEmptyComponent={
-              <View style={styles.empty}>
-                <Text style={styles.emptyEmoji}>🔖</Text>
-                <Text style={styles.emptyText}>
-                  {savedTab === 'posts' ? t('profile.noSavedPosts') : t('profile.noSaved')}
-                </Text>
-              </View>
+              <EmptyState
+                icon="bookmark-outline"
+                text={savedTab === 'posts' ? t('profile.noSavedPosts') : t('profile.noSaved')}
+                topOffset={60}
+              />
             }
           />
         </View>
@@ -1046,9 +1045,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     tabTextActive: { color: c.primary, fontWeight: Typography.fontWeightSemiBold },
     center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-    empty: { alignItems: 'center', paddingTop: 60 },
-    emptyEmoji: { fontSize: 40, marginBottom: 12 },
-    emptyText: { fontSize: Typography.fontSizeMD, color: c.textSecondary },
     avatarImage: {
       width: 80,
       height: 80,
@@ -1076,7 +1072,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
       backgroundColor: c.surface,
       borderRadius: 20,
       padding: 16,
-      shadowColor: '#6C35DE',
+      shadowColor: c.primary,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.07,
       shadowRadius: 10,
