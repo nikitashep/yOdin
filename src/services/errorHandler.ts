@@ -14,7 +14,9 @@ export function getErrorMessage(error: unknown, t: (key: string) => string): str
   if (error instanceof Error) {
     const code = (error as any).code as string | undefined;
     if (code && firebaseErrorKeys[code]) return t(firebaseErrorKeys[code]);
-    return error.message;
+    // Don't surface raw SDK/internal messages to the user — fall back to a
+    // localized generic message for anything not explicitly mapped above.
+    return t('errors.generic');
   }
   return t('errors.generic');
 }

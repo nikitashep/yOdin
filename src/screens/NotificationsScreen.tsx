@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -25,7 +25,7 @@ export default function NotificationsScreen({ navigation }: any) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const styles = makeStyles(colors, insets.top);
+  const styles = useMemo(() => makeStyles(colors, insets.top), [colors, insets.top]);
   // Data comes from the global realtime subscription (set up in TabNavigator);
   // this screen only renders it and marks items read when viewed.
   const notifications = useNotificationStore((s) => s.notifications);

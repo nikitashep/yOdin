@@ -52,6 +52,9 @@ export const onDiscussionCreated = onDocumentCreated(
         authorCountryCode: data.authorCountryCode ?? '',
         location: data.location ?? '',
         replyCount: 0,
+        // Seed the answered facet so the forum "answered/unanswered" search
+        // filter has a value to match from the moment the doc is indexed.
+        isAnswered: data.isAnswered ?? false,
         createdAt: data.createdAt?.toMillis?.() ?? Date.now(),
       },
     });
@@ -95,6 +98,11 @@ export const onDiscussionUpdated = onDocumentUpdated(
       if ((before.feedScore ?? 0) !== newFeedScore) {
         await db.doc(`discussions/${event.params.docId}`).update({ feedScore: newFeedScore });
       }
+    }
+    // Keep the answered facet in sync so search's answered/unanswered filter
+    // reflects reality (it flips true when an answer is accepted).
+    if (before.isAnswered !== after.isAnswered) {
+      updates.isAnswered = after.isAnswered ?? false;
     }
     if (after.acceptedReplyId && before.acceptedReplyId !== after.acceptedReplyId) {
       updates.acceptedReplyId = after.acceptedReplyId;

@@ -51,7 +51,7 @@ export default function ForumScreen({ navigation }: any) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const styles = makeStyles(colors, insets.top);
+  const styles = useMemo(() => makeStyles(colors, insets.top), [colors, insets.top]);
   const { profile } = useAuthStore();
   const { discussions, setDiscussions, appendDiscussions, setLoading, isLoading, setHasMore, hasMore, toggleSaved } = useFeedStore();
   const [refreshing, setRefreshing] = useState(false);
@@ -562,7 +562,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     filterBar: {
       backgroundColor: c.surface,
-      
     },
     headerTitle: {
       fontSize: Typography.fontSizeXL,
@@ -718,7 +717,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
       lineHeight: 22,
       marginBottom: 12,
     },
-    photoWrap: { marginBottom: 12, marginHorizontal: -16, overflow: 'hidden' },
     attachBlock: { marginBottom: 12 },
     attachBtn: {
       flexDirection: 'row',

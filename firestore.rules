@@ -74,7 +74,6 @@ service cloud.firestore {
         && request.resource.data.authorId == request.auth.uid
         && request.resource.data.feedScore == 0
         && request.resource.data.engagement == 0
-        && request.resource.data.location == myLocation()
         && request.resource.data.question is string
         && request.resource.data.question.size() > 0
         && request.resource.data.question.size() <= 500;
@@ -124,6 +123,10 @@ service cloud.firestore {
         && request.resource.data.toUserId is string
         && request.resource.data.fromUserName is string
         && request.resource.data.fromUserName.size() <= 100
+        // Clients may only create these types. Moderation notices (removed /
+        // blocked) are written server-side by the Admin SDK, which bypasses
+        // these rules — so a client can't forge a fake "you were banned" notice.
+        && request.resource.data.type in ['reply', 'accepted', 'participant']
         && (
           // Forum notification (reply / accepted answer).
           (request.resource.data.discussionId is string
@@ -211,10 +214,6 @@ service cloud.firestore {
 
     function onlyUpdatingField(req, field) {
       return req.resource.data.diff(resource.data).affectedKeys().hasOnly([field]);
-    }
-
-    function myLocation() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.location;
     }
 
     function ownUidArrayChange(before, after) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -32,7 +32,7 @@ export default function UserProfileScreen({ route, navigation }: any) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const styles = makeStyles(colors, insets.top);
+  const styles = useMemo(() => makeStyles(colors, insets.top), [colors, insets.top]);
   const myProfile = useAuthStore((s) => s.profile);
 
   const [user, setUser] = useState<User | null>(null);

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   View,
@@ -46,7 +46,7 @@ export default function FeedScreen({ navigation }: any) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const styles = makeStyles(colors, insets.top);
+  const styles = useMemo(() => makeStyles(colors, insets.top), [colors, insets.top]);
   const { profile } = useAuthStore();
   const { posts, filter, setFilter, setPosts, appendPosts, setLoading, isLoading, setHasMore, hasMore, removePost, setPostVote, togglePostSaved, toggleParticipant } = usePostStore();
   const [refreshing, setRefreshing] = useState(false);

@@ -42,7 +42,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const styles = makeStyles(colors, insets.top, insets.bottom);
+  const styles = useMemo(() => makeStyles(colors, insets.top, insets.bottom), [colors, insets.top, insets.bottom]);
   const { profile } = useAuthStore();
   const { incrementReplyCount, toggleSaved, setAcceptedReply } = useFeedStore();
   const [discussion, setDiscussion] = useState<Discussion | null>(null);

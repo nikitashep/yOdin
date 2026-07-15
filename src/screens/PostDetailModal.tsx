@@ -203,6 +203,8 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
       incrementCommentCount(post.id);
       setText('');
       setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 100);
+    } catch {
+      Alert.alert(t('errors.generic'));
     } finally {
       setSending(false);
     }

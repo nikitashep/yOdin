@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -25,6 +25,12 @@ interface Props {
 export default function PhotoViewer({ visible, images, initialIndex = 0, onClose }: Props) {
   const insets = useSafeAreaInsets();
   const [page, setPage] = useState(initialIndex);
+
+  // The component stays mounted while `visible` toggles, so reset the counter to
+  // the requested index each time it opens (otherwise it shows the last page).
+  useEffect(() => {
+    if (visible) setPage(initialIndex);
+  }, [visible, initialIndex]);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose} statusBarTranslucent>

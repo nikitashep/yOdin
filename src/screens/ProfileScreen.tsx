@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -80,7 +80,7 @@ export default function ProfileScreen({ navigation }: any) {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const styles = makeStyles(colors, insets.top);
+  const styles = useMemo(() => makeStyles(colors, insets.top), [colors, insets.top]);
   const preference = useThemeStore((s) => s.preference);
   const setPreference = useThemeStore((s) => s.setPreference);
   const { profile, setProfile, reset, isModerator } = useAuthStore();
