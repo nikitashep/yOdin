@@ -68,6 +68,17 @@ export default function FeedScreen({ navigation }: any) {
   const prevScrollY = useRef(0);
   const filterAnim = useRef(new Animated.Value(1)).current;
 
+  // Re-tapping the active tab scrolls the list to top (useScrollToTop); bring the
+  // collapsed filter bar back too, as if the user had scrolled up to the top.
+  useEffect(() => {
+    const unsub = navigation.getParent()?.addListener('tabPress', () => {
+      if (!navigation.isFocused()) return;
+      prevScrollY.current = 0;
+      Animated.timing(filterAnim, { toValue: 1, duration: 200, useNativeDriver: false }).start();
+    });
+    return unsub;
+  }, [navigation]);
+
   function handleScroll(e: any) {
     const y = e.nativeEvent.contentOffset.y;
     const diff = y - prevScrollY.current;

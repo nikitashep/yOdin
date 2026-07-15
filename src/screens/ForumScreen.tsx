@@ -84,6 +84,17 @@ export default function ForumScreen({ navigation }: any) {
   const listRef = useRef<FlatList>(null);
   useScrollToTop(listRef);
 
+  // Re-tapping the active tab scrolls the list to top; bring the collapsed
+  // filter bar back too, as if the user had scrolled up to the top.
+  useEffect(() => {
+    const unsub = navigation.getParent()?.addListener('tabPress', () => {
+      if (!navigation.isFocused()) return;
+      prevScrollY.current = 0;
+      Animated.timing(filterAnim, { toValue: 1, duration: 200, useNativeDriver: false }).start();
+    });
+    return unsub;
+  }, [navigation]);
+
   const CYCLE: Array<typeof answerFilter> = ['all', 'answered', 'unanswered'];
   const cycleIcon = answerFilter === 'answered' ? 'checkmark-circle' as const
     : answerFilter === 'unanswered' ? 'help-circle-outline' as const
