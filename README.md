@@ -2,7 +2,7 @@
 
 Social mobile app where people discuss topics across nationalities and locations.
 Built with **Expo SDK 54** · **Firebase** · **React Native** · **TypeScript**
-
+Two Offcial Developers . OnlyMaxon( Max ) 2 . NikitaShep ( Nikita ) 
 ---
 
 ## Prerequisites
