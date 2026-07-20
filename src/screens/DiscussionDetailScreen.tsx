@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-  Image,
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -33,6 +32,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
+import AppImage from '../components/AppImage';
 import PhotoGrid from '../components/PhotoGrid';
 import VideoPlayerView from '../components/VideoPlayerView';
 import ReportSheet from '../components/ReportSheet';
@@ -301,7 +301,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
             onPress={() => openProfile(item.authorId)}
           >
             {item.authorPhoto ? (
-              <Image source={{ uri: item.authorPhoto }} style={styles.msgAvatarImage} />
+              <AppImage source={{ uri: item.authorPhoto }} style={styles.msgAvatarImage} contentFit="cover" />
             ) : (
               <Text style={styles.msgAvatarText}>{initials}</Text>
             )}
@@ -457,7 +457,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
               >
                 <View style={styles.qAvatar}>
                   {discussion.authorPhoto ? (
-                    <Image source={{ uri: discussion.authorPhoto }} style={styles.qAvatarImage} />
+                    <AppImage source={{ uri: discussion.authorPhoto }} style={styles.qAvatarImage} contentFit="cover" />
                   ) : (
                     <Text style={styles.qAvatarText}>
                       {discussion.authorName?.charAt(0).toUpperCase()}

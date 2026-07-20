@@ -11,7 +11,6 @@ import {
   Platform,
   ActivityIndicator,
   Keyboard,
-  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +20,7 @@ import { createDiscussion, newDiscussionId } from '../services/discussionService
 import { uploadDiscussionImages, uploadDiscussionVideo } from '../services/storageService';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getErrorMessage } from '../services/errorHandler';
+import AppImage from '../components/AppImage';
 import MediaPicker, { AttachedVideo } from '../components/MediaPicker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
@@ -147,7 +147,7 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
             <View style={styles.authorCol}>
               <View style={styles.avatar}>
                 {profile?.photoURL ? (
-                  <Image source={{ uri: profile.photoURL }} style={styles.avatarImage} />
+                  <AppImage source={{ uri: profile.photoURL }} style={styles.avatarImage} contentFit="cover" />
                 ) : (
                   <Text style={styles.avatarText}>{initials.toUpperCase()}</Text>
                 )}

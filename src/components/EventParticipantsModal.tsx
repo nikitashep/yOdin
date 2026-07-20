@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   Modal,
   FlatList,
@@ -15,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
+import AppImage from './AppImage';
 import EmptyState from './EmptyState';
 import { fetchUsersByIds } from '../services/userService';
 import { getFlagEmoji } from '../utils/flagEmoji';
@@ -62,7 +62,7 @@ export default function EventParticipantsModal({ visible, participantIds, onClos
       >
         <View style={styles.avatar}>
           {item.photoURL ? (
-            <Image source={{ uri: item.photoURL }} style={styles.avatarImage} />
+            <AppImage source={{ uri: item.photoURL }} style={styles.avatarImage} contentFit="cover" />
           ) : (
             <Text style={styles.avatarText}>{initials}</Text>
           )}

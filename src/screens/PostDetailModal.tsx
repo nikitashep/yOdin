@@ -6,7 +6,6 @@ import {
   Modal,
   Animated,
   Dimensions,
-  Image,
   ScrollView,
   FlatList,
   TextInput,
@@ -28,6 +27,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
+import AppImage from '../components/AppImage';
 import MediaCarousel from '../components/MediaCarousel';
 import EventParticipantsModal from '../components/EventParticipantsModal';
 import ReportSheet from '../components/ReportSheet';
@@ -247,7 +247,7 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
           onPress={() => item.authorId && onOpenProfile?.(item.authorId)}
         >
           {item.authorPhoto ? (
-            <Image source={{ uri: item.authorPhoto }} style={styles.commentAvatarImg} />
+            <AppImage source={{ uri: item.authorPhoto }} style={styles.commentAvatarImg} contentFit="cover" />
           ) : (
             <Text style={styles.commentAvatarText}>{initials}</Text>
           )}
@@ -313,7 +313,7 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
                 >
                   <View style={styles.avatar}>
                     {post.authorPhoto ? (
-                      <Image source={{ uri: post.authorPhoto }} style={styles.avatarImg} />
+                      <AppImage source={{ uri: post.authorPhoto }} style={styles.avatarImg} contentFit="cover" />
                     ) : (
                       <Text style={styles.avatarText}>{post.authorName?.charAt(0).toUpperCase()}</Text>
                     )}

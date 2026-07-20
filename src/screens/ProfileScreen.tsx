@@ -41,6 +41,7 @@ import { getFlagEmoji } from '../utils/flagEmoji';
 import { usePostStore } from '../store/usePostStore';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
+import AppImage from '../components/AppImage';
 import EmptyState from '../components/EmptyState';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -364,7 +365,7 @@ export default function ProfileScreen({ navigation }: any) {
     return (
       <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={() => openPostDetail(item)}>
         {item.imageURLs && item.imageURLs.length > 0 ? (
-          <Image source={{ uri: item.imageURLs[0] }} style={styles.postCardImage} resizeMode="cover" />
+          <AppImage source={{ uri: item.imageURLs[0] }} style={styles.postCardImage} contentFit="cover" />
         ) : null}
         <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
         <Text style={styles.cardDesc} numberOfLines={2}>{item.description}</Text>
@@ -412,7 +413,7 @@ export default function ProfileScreen({ navigation }: any) {
             <TouchableOpacity onPress={handlePickPhoto} disabled={uploadingPhoto}>
               <View style={styles.avatar}>
                 {profile?.photoURL ? (
-                  <Image source={{ uri: profile.photoURL }} style={styles.avatarImage} />
+                  <AppImage source={{ uri: profile.photoURL }} style={styles.avatarImage} contentFit="cover" />
                 ) : (
                   <Text style={styles.avatarText}>{initials}</Text>
                 )}
@@ -537,7 +538,7 @@ export default function ProfileScreen({ navigation }: any) {
         <TouchableOpacity style={styles.menuUserCard} onPress={openEditProfile} activeOpacity={0.82}>
           <View style={styles.menuAvatarWrap}>
             {profile?.photoURL
-              ? <Image source={{ uri: profile.photoURL }} style={styles.menuAvatarImg} />
+              ? <AppImage source={{ uri: profile.photoURL }} style={styles.menuAvatarImg} contentFit="cover" />
               : <Text style={styles.menuAvatarText}>{initials}</Text>
             }
           </View>
@@ -652,7 +653,7 @@ export default function ProfileScreen({ navigation }: any) {
                 <TouchableOpacity onPress={handlePickPhoto} disabled={uploadingPhoto} activeOpacity={0.8}>
                   <View style={styles.editAvatarWrap}>
                     {profile?.photoURL
-                      ? <Image source={{ uri: profile.photoURL }} style={styles.editAvatarImg} />
+                      ? <AppImage source={{ uri: profile.photoURL }} style={styles.editAvatarImg} contentFit="cover" />
                       : <Text style={styles.editAvatarInitials}>{initials}</Text>
                     }
                     {uploadingPhoto && (
