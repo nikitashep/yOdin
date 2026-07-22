@@ -8,9 +8,9 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#5B4FE8"
+      "backgroundColor": "#6C35DE"
     },
     "ios": {
       "supportsTablet": true,
@@ -20,7 +20,7 @@
       "package": "az.birklik.yodin",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#5B4FE8"
+        "backgroundColor": "#6C35DE"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { onAuthStateChanged, User } from 'firebase/auth';
+import * as SplashScreen from 'expo-splash-screen';
 import { auth } from '../services/firebase';
 import { getUserProfile } from '../services/authService';
 import { useAuthStore } from '../store/useAuthStore';
@@ -75,10 +76,18 @@ export default function RootNavigator() {
     }
   }, [pendingEmailVerification, appState, routeForUser]);
 
+  // Hide the native splash only once the first real screen is known, so the user
+  // goes straight from splash → screen with no lavender loading flash in between.
+  useEffect(() => {
+    if (appState !== 'loading') SplashScreen.hideAsync().catch(() => {});
+  }, [appState]);
+
   if (appState === 'loading') {
+    // Kept on brand (matches the splash) as a fallback — normally the native
+    // splash still covers this frame because it isn't hidden until we leave 'loading'.
     return (
-      <View style={{ flex: 1, backgroundColor: LightColors.background, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color={LightColors.primary} />
+      <View style={{ flex: 1, backgroundColor: LightColors.primary, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color="#fff" />
       </View>
     );
   }

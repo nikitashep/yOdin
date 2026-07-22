@@ -2,6 +2,12 @@ import i18n, { initLanguage } from './src/services/i18n';
 import { enableScreens } from 'react-native-screens';
 enableScreens();
 
+import * as SplashScreen from 'expo-splash-screen';
+// Keep the native splash on screen until the first real screen is ready
+// (RootNavigator hides it once auth state resolves). Prevents a flash of the
+// loading screen between the splash and the app.
+SplashScreen.preventAutoHideAsync().catch(() => {});
+
 import React, { useEffect, useMemo, useState } from 'react';
 import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
