@@ -67,7 +67,8 @@
   "newDiscussion": {
     "title": "نقاش جديد",
     "placeholder": "ما الذي يدور في ذهنك؟",
-    "post": "نشر"
+    "post": "نشر",
+    "published": "تم نشر السؤال"
   },
   "notifications": {
     "title": "الإشعارات",
@@ -187,7 +188,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "اختر الصور",
     "done": "تم",
-    "cancel": "إلغاء"
+    "cancel": "إلغاء",
+    "published": "تم نشر المنشور"
   },
   "forum": {
     "title": "المنتدى",

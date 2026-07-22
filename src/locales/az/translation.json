@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "Yeni müzakirə",
     "placeholder": "Nə düşünürsən?",
-    "post": "Paylaş"
+    "post": "Paylaş",
+    "published": "Sual dərc edildi"
   },
   "notifications": {
     "title": "Bildirişlər",
@@ -183,7 +184,8 @@
     "maxPhotos": "{{count}} fotoya qədər",
     "selectPhotos": "Şəkil seçin",
     "done": "Hazır",
-    "cancel": "Ləğv et"
+    "cancel": "Ləğv et",
+    "published": "Post dərc edildi"
   },
   "forum": {
     "title": "Forum",

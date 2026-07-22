@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "Perbincangan Baru",
     "placeholder": "Apa yang ada di fikiran anda?",
-    "post": "Hantar"
+    "post": "Hantar",
+    "published": "Soalan diterbitkan"
   },
   "notifications": {
     "title": "Pemberitahuan",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "Pilih Foto",
     "done": "Selesai",
-    "cancel": "Batal"
+    "cancel": "Batal",
+    "published": "Siaran diterbitkan"
   },
   "forum": {
     "title": "Forum",

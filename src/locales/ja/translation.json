@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "新しいディスカッション",
     "placeholder": "何を考えていますか？",
-    "post": "投稿"
+    "post": "投稿",
+    "published": "質問を公開しました"
   },
   "notifications": {
     "title": "通知",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "写真を選択",
     "done": "完了",
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "published": "投稿を公開しました"
   },
   "forum": {
     "title": "フォーラム",

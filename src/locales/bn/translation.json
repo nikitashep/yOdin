@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "নতুন আলোচনা",
     "placeholder": "আপনি কী ভাবছেন?",
-    "post": "পোস্ট করুন"
+    "post": "পোস্ট করুন",
+    "published": "প্রশ্ন প্রকাশিত হয়েছে"
   },
   "notifications": {
     "title": "বিজ্ঞপ্তি",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "ছবি নির্বাচন করুন",
     "done": "সম্পন্ন",
-    "cancel": "বাতিল করুন"
+    "cancel": "বাতিল করুন",
+    "published": "পোস্ট প্রকাশিত হয়েছে"
   },
   "forum": {
     "title": "ফোরাম",

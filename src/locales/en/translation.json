@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "New Discussion",
     "placeholder": "What's on your mind?",
-    "post": "Post"
+    "post": "Post",
+    "published": "Question published"
   },
   "notifications": {
     "title": "Notifications",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "Select Photos",
     "done": "Done",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "published": "Post published"
   },
   "forum": {
     "title": "Forum",

@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "การสนทนาใหม่",
     "placeholder": "คุณกำลังคิดอะไรอยู่?",
-    "post": "โพสต์"
+    "post": "โพสต์",
+    "published": "เผยแพร่คำถามแล้ว"
   },
   "notifications": {
     "title": "การแจ้งเตือน",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "เลือกรูปภาพ",
     "done": "เสร็จสิ้น",
-    "cancel": "ยกเลิก"
+    "cancel": "ยกเลิก",
+    "published": "เผยแพร่โพสต์แล้ว"
   },
   "forum": {
     "title": "ฟอรัม",

@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { I18nextProvider } from 'react-i18next';
 import RootNavigator from './src/navigation/RootNavigator';
+import Toast from './src/components/Toast';
 import { initTheme } from './src/store/useThemeStore';
 import { useTheme } from './src/hooks/useTheme';
 
@@ -35,6 +36,7 @@ function AppContent() {
       <NavigationContainer theme={navTheme}>
         <RootNavigator />
       </NavigationContainer>
+      <Toast />
     </>
   );
 }

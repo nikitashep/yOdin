@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
+import { useToastStore } from '../store/useToastStore';
 import { createDiscussion, newDiscussionId } from '../services/discussionService';
 import { uploadDiscussionImages, uploadDiscussionVideo } from '../services/storageService';
 import { getFlagEmoji } from '../utils/flagEmoji';
@@ -41,6 +42,7 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
   const styles = makeStyles(colors, insets.bottom);
   const { profile } = useAuthStore();
   const { prependDiscussion } = useFeedStore();
+  const showToast = useToastStore((s) => s.show);
   const [question, setQuestion] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [video, setVideo] = useState<AttachedVideo | null>(null);
@@ -110,6 +112,7 @@ export default function NewDiscussionModal({ visible, onClose }: Props) {
       await createDiscussion(data, id);
       prependDiscussion({ id, ...data, createdAt: Date.now(), replyCount: 0 });
       onClose();
+      showToast(t('newDiscussion.published'));
     } catch (e) {
       setError(getErrorMessage(e, t));
     } finally {

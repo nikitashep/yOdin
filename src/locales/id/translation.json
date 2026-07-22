@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "Diskusi Baru",
     "placeholder": "Apa yang ada di pikiran Anda?",
-    "post": "Posting"
+    "post": "Posting",
+    "published": "Pertanyaan dipublikasikan"
   },
   "notifications": {
     "title": "Notifikasi",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "Pilih Foto",
     "done": "Selesai",
-    "cancel": "Batal"
+    "cancel": "Batal",
+    "published": "Postingan dipublikasikan"
   },
   "forum": {
     "title": "Forum",

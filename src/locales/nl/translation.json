@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "Nieuwe Discussie",
     "placeholder": "Wat heb je op je gedachten?",
-    "post": "Plaatsen"
+    "post": "Plaatsen",
+    "published": "Vraag geplaatst"
   },
   "notifications": {
     "title": "Meldingen",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "Foto's kiezen",
     "done": "Klaar",
-    "cancel": "Annuleren"
+    "cancel": "Annuleren",
+    "published": "Bericht geplaatst"
   },
   "forum": {
     "title": "Forum",

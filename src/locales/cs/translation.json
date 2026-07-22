@@ -64,7 +64,8 @@
   "newDiscussion": {
     "title": "Nová diskuse",
     "placeholder": "Na co myslíte?",
-    "post": "Zveřejnit"
+    "post": "Zveřejnit",
+    "published": "Otázka byla zveřejněna"
   },
   "notifications": {
     "title": "Oznámení",
@@ -184,7 +185,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "Vybrat fotografie",
     "done": "Hotovo",
-    "cancel": "Zrušit"
+    "cancel": "Zrušit",
+    "published": "Příspěvek byl zveřejněn"
   },
   "forum": {
     "title": "Fórum",

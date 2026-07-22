@@ -19,6 +19,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePostStore } from '../store/usePostStore';
+import { useToastStore } from '../store/useToastStore';
 import { createPost, newPostId } from '../services/postService';
 import { uploadPostImages, uploadPostVideo } from '../services/storageService';
 import MediaPicker, { AttachedVideo } from '../components/MediaPicker';
@@ -43,6 +44,7 @@ export default function NewPostModal({ visible, onClose }: Props) {
   const styles = makeStyles(colors, insets.bottom);
   const { profile } = useAuthStore();
   const { prependPost, filter } = usePostStore();
+  const showToast = useToastStore((s) => s.show);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   // No category is preselected — the author must pick one to publish.
@@ -146,6 +148,7 @@ export default function NewPostModal({ visible, onClose }: Props) {
         prependPost({ id, ...data, createdAt: Date.now() });
       }
       onClose();
+      showToast(t('newPost.published'));
     } catch (e) {
       setError(getErrorMessage(e, t));
     } finally {

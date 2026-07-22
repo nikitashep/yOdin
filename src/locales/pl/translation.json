@@ -65,7 +65,8 @@
   "newDiscussion": {
     "title": "Nowa dyskusja",
     "placeholder": "Co masz na myśli?",
-    "post": "Opublikuj"
+    "post": "Opublikuj",
+    "published": "Pytanie opublikowane"
   },
   "notifications": {
     "title": "Powiadomienia",
@@ -185,7 +186,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "Wybierz zdjęcia",
     "done": "Gotowe",
-    "cancel": "Anuluj"
+    "cancel": "Anuluj",
+    "published": "Post opublikowany"
   },
   "forum": {
     "title": "Forum",
