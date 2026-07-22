@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "Thảo luận mới",
     "placeholder": "Bạn đang nghĩ gì?",
-    "post": "Đăng"
+    "post": "Đăng",
+    "published": "Đã đăng câu hỏi"
   },
   "notifications": {
     "title": "Thông báo",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "Chọn ảnh",
     "done": "Xong",
-    "cancel": "Hủy"
+    "cancel": "Hủy",
+    "published": "Đã đăng bài"
   },
   "forum": {
     "title": "Diễn đàn",

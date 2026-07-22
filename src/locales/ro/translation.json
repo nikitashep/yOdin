@@ -64,7 +64,8 @@
   "newDiscussion": {
     "title": "Discuție Nouă",
     "placeholder": "La ce te gândești?",
-    "post": "Publică"
+    "post": "Publică",
+    "published": "Întrebare publicată"
   },
   "notifications": {
     "title": "Notificări",
@@ -184,7 +185,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "Selectează fotografii",
     "done": "Gata",
-    "cancel": "Anulează"
+    "cancel": "Anulează",
+    "published": "Postare publicată"
   },
   "forum": {
     "title": "Forum",

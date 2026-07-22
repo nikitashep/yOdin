@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "Ny diskussion",
     "placeholder": "Vad tänker du på?",
-    "post": "Publicera"
+    "post": "Publicera",
+    "published": "Frågan publicerad"
   },
   "notifications": {
     "title": "Aviseringar",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "Välj foton",
     "done": "Klar",
-    "cancel": "Avbryt"
+    "cancel": "Avbryt",
+    "published": "Inlägget publicerat"
   },
   "forum": {
     "title": "Forum",

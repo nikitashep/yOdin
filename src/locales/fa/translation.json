@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "بحث جدید",
     "placeholder": "چه فکری در سرتان است؟",
-    "post": "ارسال"
+    "post": "ارسال",
+    "published": "سؤال منتشر شد"
   },
   "notifications": {
     "title": "اعلان‌ها",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "انتخاب عکس",
     "done": "انجام شد",
-    "cancel": "لغو"
+    "cancel": "لغو",
+    "published": "پست منتشر شد"
   },
   "forum": {
     "title": "انجمن",

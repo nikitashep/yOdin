@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "Yeni Tartışma",
     "placeholder": "Aklınızda ne var?",
-    "post": "Paylaş"
+    "post": "Paylaş",
+    "published": "Soru yayınlandı"
   },
   "notifications": {
     "title": "Bildirimler",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "Fotoğraf seçin",
     "done": "Bitti",
-    "cancel": "İptal"
+    "cancel": "İptal",
+    "published": "Gönderi yayınlandı"
   },
   "forum": {
     "title": "Forum",

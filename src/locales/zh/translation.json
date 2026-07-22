@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "新讨论",
     "placeholder": "您在想什么？",
-    "post": "发布"
+    "post": "发布",
+    "published": "问题已发布"
   },
   "notifications": {
     "title": "通知",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "选择照片",
     "done": "完成",
-    "cancel": "取消"
+    "cancel": "取消",
+    "published": "帖子已发布"
   },
   "forum": {
     "title": "论坛",

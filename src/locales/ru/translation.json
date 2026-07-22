@@ -64,7 +64,8 @@
   "newDiscussion": {
     "title": "Новая дискуссия",
     "placeholder": "О чём думаешь?",
-    "post": "Опубликовать"
+    "post": "Опубликовать",
+    "published": "Вопрос опубликован"
   },
   "notifications": {
     "title": "Уведомления",
@@ -184,7 +185,8 @@
     "maxPhotos": "До {{count}} фото",
     "selectPhotos": "Выберите фото",
     "done": "Готово",
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "published": "Пост опубликован"
   },
   "forum": {
     "title": "Форум",

@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "새 토론",
     "placeholder": "무슨 생각을 하고 계신가요?",
-    "post": "게시"
+    "post": "게시",
+    "published": "질문이 게시되었습니다"
   },
   "notifications": {
     "title": "알림",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "사진 선택",
     "done": "완료",
-    "cancel": "취소"
+    "cancel": "취소",
+    "published": "게시물이 게시되었습니다"
   },
   "forum": {
     "title": "포럼",

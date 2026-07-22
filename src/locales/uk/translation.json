@@ -64,7 +64,8 @@
   "newDiscussion": {
     "title": "Нове обговорення",
     "placeholder": "Що у вас на думці?",
-    "post": "Опублікувати"
+    "post": "Опублікувати",
+    "published": "Питання опубліковано"
   },
   "notifications": {
     "title": "Сповіщення",
@@ -184,7 +185,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "Оберіть фото",
     "done": "Готово",
-    "cancel": "Скасувати"
+    "cancel": "Скасувати",
+    "published": "Допис опубліковано"
   },
   "forum": {
     "title": "Форум",

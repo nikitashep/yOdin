@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "Nuova Discussione",
     "placeholder": "A cosa stai pensando?",
-    "post": "Pubblica"
+    "post": "Pubblica",
+    "published": "Domanda pubblicata"
   },
   "notifications": {
     "title": "Notifiche",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "Scegli foto",
     "done": "Fatto",
-    "cancel": "Annulla"
+    "cancel": "Annulla",
+    "published": "Post pubblicato"
   },
   "forum": {
     "title": "Forum",

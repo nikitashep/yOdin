@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "דיון חדש",
     "placeholder": "על מה אתה חושב?",
-    "post": "פרסם"
+    "post": "פרסם",
+    "published": "השאלה פורסמה"
   },
   "notifications": {
     "title": "התראות",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "בחר תמונות",
     "done": "סיום",
-    "cancel": "ביטול"
+    "cancel": "ביטול",
+    "published": "הפוסט פורסם"
   },
   "forum": {
     "title": "פורום",

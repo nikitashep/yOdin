@@ -63,7 +63,8 @@
   "newDiscussion": {
     "title": "नई चर्चा",
     "placeholder": "आप क्या सोच रहे हैं?",
-    "post": "पोस्ट करें"
+    "post": "पोस्ट करें",
+    "published": "प्रश्न प्रकाशित हुआ"
   },
   "notifications": {
     "title": "सूचनाएं",
@@ -183,7 +184,8 @@
     "maxPhotos": "Up to {{count}} photos",
     "selectPhotos": "फ़ोटो चुनें",
     "done": "हो गया",
-    "cancel": "रद्द करें"
+    "cancel": "रद्द करें",
+    "published": "पोस्ट प्रकाशित हुई"
   },
   "forum": {
     "title": "फ़ोरम",
