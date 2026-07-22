@@ -36,7 +36,8 @@
           "photosPermission": "Allow yOdin to access your photos to attach them to discussions and posts.",
           "isAccessMediaLocationEnabled": false
         }
-      ]
+      ],
+      "expo-localization"
     ]
   }
 }
