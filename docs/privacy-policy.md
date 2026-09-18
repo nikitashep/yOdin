@@ -1,3 +1,9 @@
+---
+layout: default
+title: Privacy Policy — yOdin
+permalink: /privacy-policy/
+---
+
 # Privacy Policy for yOdin
 
 **Last updated:** 17 September 2026
