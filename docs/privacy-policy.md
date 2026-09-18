@@ -6,14 +6,12 @@ permalink: /privacy-policy/
 
 # Privacy Policy for yOdin
 
-**Last updated:** 17 September 2026
-**Effective date:** 17 September 2026
+**Last updated:** 18 September 2026
+**Effective date:** 18 September 2026
 
-<!-- TODO before publishing: replace every [PLACEHOLDER] below. -->
-
-yOdin ("the App", "we", "us") is operated by **[LEGAL ENTITY NAME]**, [ADDRESS].
+yOdin ("the App", "we", "us") is operated by **Jalil Orujli**, Chmielna 69.
 This policy explains what personal data the App collects, why, and what rights
-you have. Contact us any time at **[CONTACT EMAIL]**.
+you have. Contact us any time at **hello@onlymaxon.com**.
 
 By creating an account you agree to this policy. If you do not agree, please do
 not use the App.
@@ -164,7 +162,7 @@ Depending on where you live, you have the right to:
 - **Withdraw consent** where processing is based on consent
 - **Complain** to your national data-protection authority
 
-To exercise any of these, write to **[CONTACT EMAIL]**. We respond within 30
+To exercise any of these, write to **hello@onlymaxon.com**. We respond within 30
 days.
 
 ### Deleting your account
@@ -181,7 +179,7 @@ we will delete the account for you.
 
 yOdin is not intended for children under 13, and we do not knowingly collect
 data from them. If you believe a child under 13 has created an account, contact
-us at **[CONTACT EMAIL]** and we will remove it. Where local law sets a higher
+us at **hello@onlymaxon.com** and we will remove it. Where local law sets a higher
 minimum age for consent to data processing, that age applies instead.
 
 ---
@@ -206,9 +204,9 @@ use the App after a change means you accept the updated policy.
 
 ## 12. Contact
 
-**[LEGAL ENTITY NAME]**
-[ADDRESS]
-Email: **[CONTACT EMAIL]**
+**Jalil Orujli**
+Chmielna 69
+Email: **hello@onlymaxon.com**
 
 <!--
 Data-protection officer, if you appoint one:
