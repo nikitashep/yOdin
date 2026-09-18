@@ -14,10 +14,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "az.birklik.yodin"
+      "bundleIdentifier": "app.yodin"
     },
     "android": {
-      "package": "az.birklik.yodin",
+      "package": "app.yodin",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#6C35DE"
