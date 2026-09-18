@@ -70,9 +70,10 @@ We want to be explicit about this, because many social apps do collect it:
 | Permission | When it is asked | What we do with it |
 |---|---|---|
 | Photos / media library | Only when you attach media to a post or discussion, or set a profile photo | The files you pick are uploaded as your content. We do not scan or index your library |
+| Camera | Only when you choose to take a photo instead of picking an existing one | The photo you take is uploaded as your content. The App does not record video or audio, and does not access the camera in the background |
 
-You can revoke this permission in Android settings at any time; the App remains
-usable without it, minus the ability to attach media.
+You can revoke either permission in Android settings at any time; the App
+remains usable without them, minus the ability to attach media.
 
 ---
 
