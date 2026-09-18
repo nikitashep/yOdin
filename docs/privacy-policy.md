@@ -17,7 +17,7 @@ not use the App.
 ## 1. Who this policy covers
 
 This policy applies to the yOdin mobile application (Android package
-`az.birklik.yodin`) and the backend services it talks to. It does not cover
+`app.yodin`) and the backend services it talks to. It does not cover
 third-party websites that other users may link to from their posts.
 
 ---
