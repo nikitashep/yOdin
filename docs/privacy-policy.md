@@ -9,9 +9,9 @@ permalink: /privacy-policy/
 **Last updated:** 18 September 2026
 **Effective date:** 18 September 2026
 
-yOdin ("the App", "we", "us") is operated by **Jalil Orujli**, Chmielna 69.
-This policy explains what personal data the App collects, why, and what rights
-you have. Contact us any time at **hello@onlymaxon.com**.
+yOdin ("the App", "we", "us") is operated by **Jalil Orujli**, Chmielna 69,
+Warsaw, Poland. This policy explains what personal data the App collects, why,
+and what rights you have. Contact us any time at **hello@onlymaxon.com**.
 
 By creating an account you agree to this policy. If you do not agree, please do
 not use the App.
@@ -206,6 +206,7 @@ use the App after a change means you accept the updated policy.
 
 **Jalil Orujli**
 Chmielna 69
+Warsaw, Poland
 Email: **hello@onlymaxon.com**
 
 <!--
