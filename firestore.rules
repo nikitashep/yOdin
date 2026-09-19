@@ -163,6 +163,13 @@ service cloud.firestore {
         && resource.data.uid == request.auth.uid;
     }
 
+    // Keyed hashes of rule-breakers' emails, kept for a year after they delete
+    // their account so they can't re-register straight away. Server-only: the
+    // account-deletion functions read and write them through the Admin SDK.
+    match /blockedEmails/{hash} {
+      allow read, write: if false;
+    }
+
     // Moderator status is carried by a Firebase custom claim on the ID token.
     function isModerator() {
       return request.auth != null && request.auth.token.moderator == true;
