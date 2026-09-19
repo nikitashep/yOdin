@@ -41,7 +41,9 @@
     "notVerifiedYet": "Email non ancora verificata. Apri il link nella posta, poi tocca qui.",
     "useAnotherAccount": "Usa un altro account",
     "openEmailApp": "Apri app email",
-    "sendEmail": "Invia e-mail"
+    "sendEmail": "Invia e-mail",
+    "registrationBlockedTitle": "Registrazione non disponibile",
+    "registrationBlocked": "Questo indirizzo email al momento non può essere usato per registrarsi. Se pensi che sia un errore, scrivi a hello@onlymaxon.com."
   },
   "feed": {
     "title": "Feed",
@@ -113,7 +115,7 @@
     "themeDark": "Scuro",
     "notifications": "Notifiche",
     "privacy": "Privacy",
-    "privacyText": "yOdin raccoglie solo i dati che fornisci: nome, nazionalità, posizione e foto del profilo. Queste informazioni vengono utilizzate esclusivamente per personalizzare il tuo feed e mostrare la tua identità nelle discussioni.\n\nI tuoi dati sono archiviati in modo sicuro su Firebase e non vengono mai venduti o condivisi con terze parti.\n\nPuoi eliminare il tuo account e tutti i dati associati in qualsiasi momento contattando il supporto.",
+    "privacyText": "yOdin raccoglie solo i dati che fornisci: nome, nazionalità, posizione e foto del profilo. Queste informazioni vengono utilizzate esclusivamente per personalizzare il tuo feed e mostrare la tua identità nelle discussioni.\n\nI tuoi dati sono archiviati in modo sicuro su Firebase e non vengono mai venduti o condivisi con terze parti.\n\nPuoi eliminare il tuo account e tutti i dati associati in qualsiasi momento: Profilo → Impostazioni → Elimina account.",
     "restartTitle": "Riavvio richiesto",
     "restartMessage": "Chiudi e riapri l'app per applicare la nuova direzione del layout.",
     "about": "Informazioni su yOdin"
@@ -263,5 +265,20 @@
   "participants": {
     "title": "Partecipanti",
     "empty": "Ancora nessun iscritto"
+  },
+  "common": {
+    "deletedAccount": "Account eliminato"
+  },
+  "deleteAccount": {
+    "title": "Elimina account",
+    "message": "Questa azione è irreversibile. Il tuo profilo, i tuoi post e le discussioni, le foto e i video verranno eliminati definitivamente.",
+    "kept": "Le risposte e i commenti che hai lasciato sotto i contenuti di altri restano, così le discussioni mantengono senso, ma non porteranno più il tuo nome.",
+    "password": "Conferma con la tua password",
+    "passwordPlaceholder": "La tua password",
+    "confirm": "Elimina definitivamente",
+    "cancel": "Annulla",
+    "wrongPassword": "Password errata.",
+    "tooManyRequests": "Troppi tentativi. Riprova più tardi.",
+    "failed": "Impossibile eliminare l'account. Riprova."
   }
 }

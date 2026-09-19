@@ -18,7 +18,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from '@react-navigation/native';
-import { logoutUser, updateUserProfile } from '../services/authService';
+import { logoutUser, updateUserProfile, deleteOwnAccount } from '../services/authService';
 import { uploadAvatar } from '../services/storageService';
 import { deleteDiscussion, unsaveDiscussion, fetchUserDiscussions, fetchSavedDiscussions } from '../services/discussionService';
 import { deletePost, unsavePost, fetchUserPosts, fetchSavedPosts } from '../services/postService';
@@ -109,6 +109,9 @@ export default function ProfileScreen({ navigation }: any) {
   const [langSearch, setLangSearch] = useState('');
   const [themeModal, setThemeModal] = useState(false);
   const [privacyModal, setPrivacyModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleting, setDeleting] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
   const [editFirstName, setEditFirstName] = useState('');
   const [editLastName, setEditLastName] = useState('');
@@ -324,13 +327,42 @@ export default function ProfileScreen({ navigation }: any) {
     }
   }
 
-  async function handleLogout() {
-    setMenuVisible(false);
-    await logoutUser();
+  // Signing out and deleting leave the same stale caches behind.
+  function clearSession() {
     reset();
     useFeedStore.setState({ discussions: [], hasMore: true, isLoading: false });
     usePostStore.setState({ posts: [], hasMore: true, isLoading: false, filter: 'all' });
     useNotificationStore.getState().setNotifications([]);
+  }
+
+  async function handleLogout() {
+    setMenuVisible(false);
+    await logoutUser();
+    clearSession();
+  }
+
+  async function handleDeleteAccount() {
+    if (!deletePassword || deleting) return;
+    setDeleting(true);
+    try {
+      await deleteOwnAccount(deletePassword);
+      setDeleteModal(false);
+      setMenuVisible(false);
+      clearSession();
+    } catch (e) {
+      const code = (e as { code?: string })?.code ?? '';
+      // Firebase reports a wrong password as invalid-credential on newer SDKs.
+      const message =
+        code.includes('wrong-password') || code.includes('invalid-credential')
+          ? t('deleteAccount.wrongPassword')
+          : code.includes('too-many-requests')
+            ? t('deleteAccount.tooManyRequests')
+            : t('deleteAccount.failed');
+      Alert.alert(t('deleteAccount.title'), message);
+    } finally {
+      setDeleting(false);
+      setDeletePassword('');
+    }
   }
 
   const flag = profile?.countryCode ? getFlagEmoji(profile.countryCode) : '🌐';
@@ -657,6 +689,17 @@ export default function ProfileScreen({ navigation }: any) {
               {t('profile.logout')}
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.menuItem, styles.menuItemLast]}
+            onPress={() => { setMenuVisible(false); setDeletePassword(''); setDeleteModal(true); }}
+          >
+            <View style={[styles.menuIconWrap, { backgroundColor: colors.notification + '18' }]}>
+              <Ionicons name="trash-outline" size={18} color={colors.notification} />
+            </View>
+            <Text style={[styles.menuItemText, { color: colors.notification }]}>
+              {t('deleteAccount.title')}
+            </Text>
+          </TouchableOpacity>
         </View>
       </Animated.View>
 
@@ -912,6 +955,53 @@ export default function ProfileScreen({ navigation }: any) {
           </View>
           <ScrollView contentContainerStyle={styles.privacyBody}>
             <Text style={styles.privacyText}>{t('settings.privacyText')}</Text>
+          </ScrollView>
+        </View>
+      </Modal>
+
+      {/* Delete account */}
+      <Modal visible={deleteModal} transparent animationType="slide" onRequestClose={() => setDeleteModal(false)}>
+        <View style={styles.privacySheet}>
+          <View style={styles.privacyHeader}>
+            <Text style={styles.privacyTitle}>{t('deleteAccount.title')}</Text>
+            <TouchableOpacity onPress={() => setDeleteModal(false)} disabled={deleting}>
+              <Text style={styles.privacyClose}>✕</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView contentContainerStyle={styles.privacyBody} keyboardShouldPersistTaps="handled">
+            <View style={styles.deleteWarning}>
+              <Ionicons name="warning-outline" size={20} color={colors.notification} />
+              <Text style={styles.deleteWarningText}>{t('deleteAccount.message')}</Text>
+            </View>
+            <Text style={styles.privacyText}>{t('deleteAccount.kept')}</Text>
+
+            <Text style={[styles.editLabel, { marginTop: 28 }]}>{t('deleteAccount.password')}</Text>
+            <TextInput
+              style={styles.editInput}
+              value={deletePassword}
+              onChangeText={setDeletePassword}
+              placeholder={t('deleteAccount.passwordPlaceholder')}
+              placeholderTextColor={colors.textSecondary}
+              secureTextEntry
+              autoCapitalize="none"
+              autoComplete="current-password"
+              editable={!deleting}
+            />
+
+            <TouchableOpacity
+              style={[styles.deleteButton, (!deletePassword || deleting) && styles.deleteButtonDisabled]}
+              onPress={handleDeleteAccount}
+              disabled={!deletePassword || deleting}
+            >
+              {deleting ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.deleteButtonText}>{t('deleteAccount.confirm')}</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setDeleteModal(false)} disabled={deleting}>
+              <Text style={styles.deleteCancelText}>{t('deleteAccount.cancel')}</Text>
+            </TouchableOpacity>
           </ScrollView>
         </View>
       </Modal>
@@ -1407,6 +1497,41 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     privacyClose: { fontSize: 20, color: c.textSecondary, padding: 4 },
     privacyBody: { padding: 24 },
+    deleteWarning: {
+      flexDirection: 'row',
+      gap: 12,
+      alignItems: 'flex-start',
+      backgroundColor: c.notification + '14',
+      borderRadius: 14,
+      padding: 16,
+      marginBottom: 16,
+    },
+    deleteWarningText: {
+      flex: 1,
+      fontSize: Typography.fontSizeMD,
+      color: c.textPrimary,
+      lineHeight: 22,
+    },
+    deleteButton: {
+      backgroundColor: c.notification,
+      borderRadius: 14,
+      paddingVertical: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: 54,
+    },
+    deleteButtonDisabled: { opacity: 0.5 },
+    deleteButtonText: {
+      color: '#fff',
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightSemiBold,
+    },
+    deleteCancelText: {
+      textAlign: 'center',
+      paddingVertical: 16,
+      fontSize: Typography.fontSizeMD,
+      color: c.textSecondary,
+    },
     privacyText: {
       fontSize: Typography.fontSizeMD,
       color: c.textSecondary,
