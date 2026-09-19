@@ -44,6 +44,13 @@ const ANONYMOUS_AUTHOR = {
 const MEDIA_BUCKET = 'yodin-23362';
 const LEGACY_BUCKET = 'yodin-23362.firebasestorage.app';
 
+// index.ts sets the global region in its body, but this module is imported at
+// the top of that file, so its function definitions run first and never see it.
+// Firestore triggers still land correctly (their region comes from the database
+// location), but a callable would silently deploy to us-central1 — sending the
+// deletion of an EU user's data through the US. Pinned explicitly instead.
+const REGION = 'europe-west1';
+
 // The client re-authenticates with the password right before calling. Checking
 // the token's auth_time server-side means a phone left signed in can't skip
 // that step by calling the function directly.
@@ -221,7 +228,7 @@ async function purgeAccount(uid: string): Promise<void> {
 }
 
 export const deleteAccount = onCall(
-  { secrets: [EMAIL_HASH_KEY], timeoutSeconds: 540, memory: '512MiB' },
+  { region: REGION, secrets: [EMAIL_HASH_KEY], timeoutSeconds: 540, memory: '512MiB' },
   async (request) => {
     const uid = request.auth?.uid;
     if (!uid) throw new HttpsError('unauthenticated', 'Sign in to delete your account.');
@@ -240,7 +247,7 @@ export const deleteAccount = onCall(
 // this trigger undoes the whole signup if the email belongs to a blocked
 // rule-breaker. The app then finds its Auth user gone and shows why.
 export const onUserProfileCreated = onDocumentCreated(
-  { document: 'users/{uid}', secrets: [EMAIL_HASH_KEY] },
+  { region: REGION, document: 'users/{uid}', secrets: [EMAIL_HASH_KEY] },
   async (event) => {
     const uid = event.params.uid;
     const user = await auth().getUser(uid).catch((e) => {
