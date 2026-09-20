@@ -47,7 +47,9 @@ third-party websites that other users may link to from their posts.
 replies, event participation (RSVP), the photos and videos you attach, and the
 reports you file about other users' content.
 
-**Social data**: the accounts you follow, and the reputation points you earn.
+**Social data**: the accounts you follow, the reputation points you earn, and
+the accounts you block. Your block list is private — it is readable only by you,
+and never by the people on it.
 
 ### 2.2 Information generated automatically
 
@@ -143,8 +145,12 @@ disclosed to the reported user.
 | Data | Retention |
 |---|---|
 | Account and profile | Until you delete your account |
-| Posts, discussions, comments, media | Until you delete them, or your account |
+| Your own posts and discussions, and their media | Until you delete them, or your account |
+| Replies and comments you left under other people's content | Kept after account deletion, with every author field removed so they no longer identify you |
+| Your @handle | Reserved indefinitely after deletion, so nobody can take it over and inherit mentions of you |
+| Block lists | Until you remove the block, or delete your account |
 | Moderation records (strikes, bans) | For the life of the account |
+| A one-way keyed hash of the email address of an account that had moderation strikes or bans | 12 months after deletion, to prevent immediate re-registration. It cannot be reversed into an email address, and accounts with a clean record leave no such record |
 | Reports | 12 months after resolution |
 | Backups | Up to 30 days after deletion from the live database |
 
@@ -168,10 +174,23 @@ days.
 ### Deleting your account
 
 You can delete your account from within the App: **Profile → Settings → Delete
-account**. Deletion removes your profile, your content and your uploaded media.
-Content others have quoted or replied to may remain visible in the form of those
-replies. If you cannot access the App, email us from your registered address and
-we will delete the account for you.
+account**. You confirm with your password, and deletion starts immediately —
+there is no waiting period and no way to undo it.
+
+This removes your account, your profile and photo, your own posts and
+discussions together with everything under them, your uploaded media, your
+likes, saved items, event sign-ups and follows, and the notifications addressed
+to you.
+
+Replies and comments you left under **other people's** posts and discussions
+stay, because deleting them would tear holes in conversations other readers
+rely on — but every author field is stripped from them, so they no longer
+identify you. Section 7 lists this and everything else that outlives an account.
+
+If you no longer have the App installed, email us from your registered address
+and we will delete the account for you. Step-by-step instructions are also
+published at
+[nikitashep.github.io/yOdin/delete-account](https://nikitashep.github.io/yOdin/delete-account/).
 
 ---
 
