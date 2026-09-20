@@ -41,7 +41,9 @@
     "notVerifiedYet": "E-mel belum disahkan. Buka pautan dalam peti masuk, kemudian ketik di sini.",
     "useAnotherAccount": "Guna akaun lain",
     "openEmailApp": "Buka Aplikasi E-mel",
-    "sendEmail": "Hantar e-mel"
+    "sendEmail": "Hantar e-mel",
+    "registrationBlockedTitle": "Pendaftaran tidak tersedia",
+    "registrationBlocked": "Alamat e-mel ini tidak boleh digunakan untuk mendaftar buat masa ini. Jika anda rasa ini satu kesilapan, hubungi hello@onlymaxon.com."
   },
   "feed": {
     "title": "Suapan",
@@ -113,7 +115,7 @@
     "themeDark": "Gelap",
     "notifications": "Pemberitahuan",
     "privacy": "Privasi",
-    "privacyText": "yOdin hanya mengumpul data yang anda berikan: nama, kebangsaan, lokasi dan foto profil anda. Maklumat ini digunakan semata-mata untuk memperibadikan suapan anda dan menunjukkan identiti anda dalam perbincangan.\n\nData anda disimpan dengan selamat di Firebase dan tidak pernah dijual atau dikongsi dengan pihak ketiga.\n\nAnda boleh memadamkan akaun dan semua data berkaitan pada bila-bila masa dengan menghubungi sokongan.",
+    "privacyText": "yOdin hanya mengumpul data yang anda berikan: nama, kebangsaan, lokasi dan foto profil anda. Maklumat ini digunakan semata-mata untuk memperibadikan suapan anda dan menunjukkan identiti anda dalam perbincangan.\n\nData anda disimpan dengan selamat di Firebase dan tidak pernah dijual atau dikongsi dengan pihak ketiga.\n\nAnda boleh memadam akaun dan semua data berkaitan pada bila-bila masa: Profil → Tetapan → Padam akaun.",
     "restartTitle": "Perlu mulakan semula",
     "restartMessage": "Tutup dan buka semula aplikasi untuk menggunakan arah susun atur baharu.",
     "about": "Tentang yOdin"
@@ -263,5 +265,20 @@
   "participants": {
     "title": "Peserta",
     "empty": "Belum ada yang mendaftar"
+  },
+  "common": {
+    "deletedAccount": "Akaun dipadam"
+  },
+  "deleteAccount": {
+    "title": "Padam akaun",
+    "message": "Tindakan ini tidak boleh dibatalkan. Profil, siaran dan perbincangan, serta foto dan video anda akan dipadam secara kekal.",
+    "kept": "Balasan dan komen yang anda tinggalkan pada kandungan orang lain akan kekal supaya perbincangan itu masih difahami, tetapi tidak lagi membawa nama anda.",
+    "password": "Sahkan dengan kata laluan",
+    "passwordPlaceholder": "Kata laluan anda",
+    "confirm": "Padam secara kekal",
+    "cancel": "Batal",
+    "wrongPassword": "Kata laluan salah.",
+    "tooManyRequests": "Terlalu banyak percubaan. Cuba lagi nanti.",
+    "failed": "Akaun tidak dapat dipadam. Sila cuba lagi."
   }
 }

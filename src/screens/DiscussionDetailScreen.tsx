@@ -41,6 +41,7 @@ import Avatar from '../components/Avatar';
 import PhotoGrid from '../components/PhotoGrid';
 import VideoPlayerView from '../components/VideoPlayerView';
 import ReportSheet from '../components/ReportSheet';
+import { isDeletedAuthor } from '../utils/author';
 
 // Enable the collapse/expand animation for the question attachment on old-arch Android.
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -352,7 +353,8 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
   }
 
   function openProfile(userId?: string) {
-    if (!userId) return;
+    // A deleted author has no profile to open.
+    if (!userId || isDeletedAuthor(userId)) return;
     navigation.navigate('UserProfile', { userId });
   }
 

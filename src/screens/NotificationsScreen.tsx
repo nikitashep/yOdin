@@ -21,6 +21,7 @@ import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 import EmptyState from '../components/EmptyState';
+import { isDeletedAuthor } from '../utils/author';
 
 export default function NotificationsScreen({ navigation }: any) {
   const { t } = useTranslation();
@@ -135,7 +136,9 @@ export default function NotificationsScreen({ navigation }: any) {
         </View>
         <View style={styles.content}>
           <Text style={styles.text}>
-            <Text style={styles.bold}>{item.fromUserName}</Text>
+            <Text style={styles.bold}>
+              {isDeletedAuthor(item.fromUserId) ? t('common.deletedAccount') : item.fromUserName}
+            </Text>
             {' '}{t(
               item.type === 'participant'
                 ? 'notifications.joinedEvent'

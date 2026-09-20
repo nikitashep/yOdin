@@ -41,7 +41,9 @@
     "notVerifiedYet": "邮箱尚未验证。请打开收件箱中的链接，然后点击这里。",
     "useAnotherAccount": "使用其他账号",
     "openEmailApp": "打开邮件应用",
-    "sendEmail": "发送邮件"
+    "sendEmail": "发送邮件",
+    "registrationBlockedTitle": "无法注册",
+    "registrationBlocked": "该邮箱地址目前无法用于注册。如果你认为这是误判，请发信至 hello@onlymaxon.com。"
   },
   "feed": {
     "title": "动态",
@@ -113,7 +115,7 @@
     "themeDark": "深色",
     "notifications": "通知",
     "privacy": "隐私",
-    "privacyText": "yOdin 仅收集您提供的数据：您的姓名、国籍、位置和头像。这些信息仅用于个性化您的动态并在讨论中展示您的身份。\n\n您的数据安全存储在 Firebase 中，绝不会出售给第三方或与其共享。\n\n您可以随时联系客服删除您的账户及所有相关数据。",
+    "privacyText": "yOdin 仅收集您提供的数据：您的姓名、国籍、位置和头像。这些信息仅用于个性化您的动态并在讨论中展示您的身份。\n\n您的数据安全存储在 Firebase 中，绝不会出售给第三方或与其共享。\n\n你可以随时删除账号及所有相关数据：个人资料 → 设置 → 删除账号。",
     "restartTitle": "需要重启",
     "restartMessage": "请关闭并重新打开应用以应用新的布局方向。",
     "about": "关于 yOdin"
@@ -263,5 +265,20 @@
   "participants": {
     "title": "参与者",
     "empty": "还没有人报名"
+  },
+  "common": {
+    "deletedAccount": "已注销的账号"
+  },
+  "deleteAccount": {
+    "title": "删除账号",
+    "message": "此操作无法撤销。你的个人资料、发布的内容和讨论、照片和视频都将被永久删除。",
+    "kept": "你在他人内容下留下的回复和评论会保留，以免讨论失去上下文，但不再显示你的名字。",
+    "password": "请输入密码确认",
+    "passwordPlaceholder": "你的密码",
+    "confirm": "永久删除",
+    "cancel": "取消",
+    "wrongPassword": "密码错误。",
+    "tooManyRequests": "尝试次数过多，请稍后再试。",
+    "failed": "无法删除账号，请重试。"
   }
 }

@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import {
   Animated,
-  View,
+  View,
+
   FlatList,
-  StyleSheet,
+  StyleSheet,
+
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
@@ -378,9 +380,9 @@ export default function ForumScreen({ navigation }: any) {
               <Text style={styles.answerLabel}>{t('discussion.acceptedAnswer')}</Text>
             </View>
             <Text style={styles.answerText} numberOfLines={3}>{item.acceptedReplyText}</Text>
-            {item.acceptedReplyAuthorName ? (
-              <Text style={styles.answerAuthor}>— {item.acceptedReplyAuthorName}</Text>
-            ) : null}
+            <Text style={styles.answerAuthor}>
+              — {item.acceptedReplyAuthorName || t('common.deletedAccount')}
+            </Text>
           </View>
         ) : null}
         <View style={styles.cardFooter}>
