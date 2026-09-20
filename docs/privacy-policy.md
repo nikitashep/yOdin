@@ -6,8 +6,8 @@ permalink: /privacy-policy/
 
 # Privacy Policy for yOdin
 
-**Last updated:** 18 September 2026
-**Effective date:** 18 September 2026
+**Last updated:** 20 September 2026
+**Effective date:** 20 September 2026
 
 yOdin ("the App", "we", "us") is operated by **Jalil Orujli**, Chmielna 69,
 Warsaw, Poland. This policy explains what personal data the App collects, why,
@@ -38,7 +38,7 @@ third-party websites that other users may link to from their posts.
 | Password | Yes | Authentication. Stored only by Google Firebase Authentication — we never see or store your password ourselves |
 | First and last name | Yes | Displayed on your profile and next to your content |
 | Username (@handle) | Yes | Unique identifier so other users can mention you |
-| Nationality, country, city | Yes | Community filtering — lets users find people and content from their region |
+| Nationality and country of residence | Yes | Community filtering — lets users find people and content from their community. Both are picked from a fixed list of countries; the App has no field for a city or street address |
 | Profile photo | No | Shown on your profile |
 | Bio | No | Short description shown on your profile |
 | Languages you speak | No | Helps match you with relevant discussions |
@@ -62,8 +62,9 @@ and never by the people on it.
 
 We want to be explicit about this, because many social apps do collect it:
 
-- **No GPS or precise location.** The country and city on your profile are text
-  you type yourself. The App never reads your device location.
+- **No GPS or location of any kind.** The nationality and country on your
+  profile are values you pick from a list yourself. The App never reads your
+  device location, and asks for no location permission.
 - **No analytics or behavioural tracking.** There is no analytics SDK in the App.
 - **No advertising identifiers, no ad networks, no third-party trackers.**
 - **No push notification tokens.** Notifications are shown inside the App only.
@@ -91,11 +92,30 @@ remains usable without them, minus the ability to attach media.
 | Displaying your content and profile to other users | Performance of a contract |
 | Verifying your email address | Performance of a contract |
 | Moderating content, handling reports, enforcing bans | Legitimate interest in a safe community |
+| Letting you block other accounts | Legitimate interest in your safety |
+| Preventing a banned account from immediately returning under a new registration | Legitimate interest in preventing abuse |
 | Responding to your support requests | Legitimate interest |
 | Complying with lawful requests from authorities | Legal obligation |
 
-We do not sell your personal data, and we do not use it for advertising or
-automated profiling that produces legal effects.
+We do not sell your personal data, and we do not use it for advertising or for
+building a profile of you.
+
+### Decisions made automatically
+
+Two restrictions are applied by software rather than by a person, so we would
+rather spell them out than hide behind a blanket denial:
+
+- **Comment bans.** A moderator decides every content removal; the count of
+  removals is then kept automatically, and each fifth confirmed removal triggers
+  a temporary ban on commenting that lengthens with repetition (3 → 7 → 30
+  days). The judgement is human; only the arithmetic and the timer are not.
+- **Blocked re-registration.** If an account with moderation history is deleted,
+  a one-way hash of its email address is kept for a year, and a matching signup
+  is undone automatically.
+
+Neither decision has legal effects, and both are reversible. If you believe one
+was applied wrongly, write to **hello@onlymaxon.com** and a person will look at
+it.
 
 ---
 
@@ -103,9 +123,10 @@ automated profiling that produces legal effects.
 
 ### 5.1 Other users
 
-Your name, username, profile photo, bio, nationality, country, city, languages,
+Your name, username, profile photo, bio, nationality, country, languages,
 points, and everything you post are **visible to other users of the App**. Treat
-anything you post as public. Your email address is never shown to other users.
+anything you post as public. Your email address is never shown to other users,
+and neither is the list of accounts you have blocked.
 
 ### 5.2 Service providers
 
@@ -135,8 +156,23 @@ offence. We keep these records for as long as the account exists, because
 discarding them would reset a repeat offender's history.
 
 Reports are not anonymous to us: we store which account filed each report, so
-that we can act on abuse of the reporting system itself. Reporters are not
-disclosed to the reported user.
+that we can act on abuse of the reporting system itself. Reporters are never
+disclosed to the reported user, but they are visible to moderators, who are
+trusted community members rather than only us. Moderators can see reported
+content, including content that is otherwise hard to reach, and nothing else
+about your account.
+
+### Blocking
+
+You can block another account. Blocking is not only a filter on what you see:
+the blocked account cannot reply in your discussions, comment on your posts, or
+reach you with a mention, and the two of you stop following each other.
+
+Your block list is private — it is stored so that only you can read it, and it
+is never shown to anyone, including the people on it. One consequence is
+unavoidable and worth stating: for their app to stop showing them your content,
+their device has to learn that a block exists, so a blocked person can work out
+that you blocked them.
 
 ---
 
