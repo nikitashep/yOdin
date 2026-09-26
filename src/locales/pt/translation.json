@@ -299,5 +299,11 @@
     "blockedExplainer": "As publicações e respostas desta pessoa estão ocultas para ti, e ela não te consegue contactar. Desbloqueia para voltar a ver o perfil.",
     "failedTitle": "Algo correu mal",
     "failed": "Não foi possível atualizar o bloqueio. Tenta novamente."
+  },
+  "terms": {
+    "title": "Termos de utilização",
+    "acceptLabel": "Aceito os termos de utilização",
+    "open": "Abrir os termos de utilização",
+    "required": "Aceita os termos de utilização para continuar."
   }
 }

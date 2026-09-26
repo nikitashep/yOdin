@@ -13,8 +13,9 @@ yOdin ("the App", "we", "us") is operated by **Jalil Orujli**, Chmielna 69,
 Warsaw, Poland. This policy explains what personal data the App collects, why,
 and what rights you have. Contact us any time at **hello@onlymaxon.com**.
 
-By creating an account you agree to this policy. If you do not agree, please do
-not use the App.
+By creating an account you agree to this policy and to the
+[terms of use](/yOdin/terms-of-use/), which set out the community rules and what
+happens when they are broken. If you do not agree, please do not use the App.
 
 ---
 

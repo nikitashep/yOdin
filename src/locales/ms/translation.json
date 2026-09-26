@@ -299,5 +299,11 @@
     "blockedExplainer": "Siaran dan balasannya disembunyikan daripada anda, dan dia tidak boleh menghubungi anda. Nyahsekat untuk melihat profilnya semula.",
     "failedTitle": "Ada yang tidak kena",
     "failed": "Sekatan tidak dapat dikemas kini. Sila cuba lagi."
+  },
+  "terms": {
+    "title": "Terma penggunaan",
+    "acceptLabel": "Saya menerima terma penggunaan",
+    "open": "Buka terma penggunaan",
+    "required": "Terima terma penggunaan untuk meneruskan."
   }
 }

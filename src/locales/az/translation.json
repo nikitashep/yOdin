@@ -299,5 +299,11 @@
     "blockedExplainer": "Onun paylaşımları və cavabları sizdən gizlədilib, o sizinlə əlaqə saxlaya bilmir. Profili yenidən görmək üçün bloku açın.",
     "failedTitle": "Nəsə səhv getdi",
     "failed": "Bloku dəyişmək mümkün olmadı. Yenidən cəhd edin."
+  },
+  "terms": {
+    "title": "İstifadə şərtləri",
+    "acceptLabel": "İstifadə şərtlərini qəbul edirəm",
+    "open": "İstifadə şərtlərini aç",
+    "required": "Davam etmək üçün istifadə şərtlərini qəbul edin."
   }
 }

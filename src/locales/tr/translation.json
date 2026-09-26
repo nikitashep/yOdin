@@ -299,5 +299,11 @@
     "blockedExplainer": "Gönderileri ve yanıtları sizden gizli, size ulaşamıyor. Profili yeniden görmek için engeli kaldırın.",
     "failedTitle": "Bir şeyler ters gitti",
     "failed": "Engelleme güncellenemedi. Lütfen tekrar deneyin."
+  },
+  "terms": {
+    "title": "Kullanım koşulları",
+    "acceptLabel": "Kullanım koşullarını kabul ediyorum",
+    "open": "Kullanım koşullarını aç",
+    "required": "Devam etmek için kullanım koşullarını kabul edin."
   }
 }

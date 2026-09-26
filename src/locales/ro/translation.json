@@ -300,5 +300,11 @@
     "blockedExplainer": "Postările și răspunsurile lui sunt ascunse pentru tine, iar el nu te poate contacta. Deblochează pentru a vedea din nou profilul.",
     "failedTitle": "Ceva n-a mers bine",
     "failed": "Blocarea nu a putut fi actualizată. Încearcă din nou."
+  },
+  "terms": {
+    "title": "Termeni de utilizare",
+    "acceptLabel": "Accept termenii de utilizare",
+    "open": "Deschide termenii de utilizare",
+    "required": "Acceptă termenii de utilizare pentru a continua."
   }
 }

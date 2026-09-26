@@ -299,5 +299,11 @@
     "blockedExplainer": "对方的帖子和回复对你隐藏，也无法联系你。解除屏蔽后可重新查看其主页。",
     "failedTitle": "出了点问题",
     "failed": "无法更新屏蔽状态，请重试。"
+  },
+  "terms": {
+    "title": "使用条款",
+    "acceptLabel": "我接受使用条款",
+    "open": "打开使用条款",
+    "required": "请先接受使用条款后继续。"
   }
 }

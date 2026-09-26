@@ -299,5 +299,11 @@
     "blockedExplainer": "Ses publications et réponses vous sont masquées, et elle ne peut pas vous joindre. Débloquez-la pour revoir son profil.",
     "failedTitle": "Une erreur est survenue",
     "failed": "Impossible de modifier le blocage. Veuillez réessayer."
+  },
+  "terms": {
+    "title": "Conditions d'utilisation",
+    "acceptLabel": "J'accepte les conditions d'utilisation",
+    "open": "Ouvrir les conditions d'utilisation",
+    "required": "Veuillez accepter les conditions d'utilisation pour continuer."
   }
 }
