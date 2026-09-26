@@ -280,5 +280,18 @@
     "wrongPassword": "Fel lösenord.",
     "tooManyRequests": "För många försök. Försök igen senare.",
     "failed": "Kontot kunde inte raderas. Försök igen."
+  },
+  "block": {
+    "listTitle": "Blockerade konton",
+    "listEmpty": "Du har inte blockerat någon.",
+    "block": "Blockera",
+    "unblock": "Avblockera",
+    "cancel": "Avbryt",
+    "confirmTitle": "Blockera {{name}}?",
+    "confirmMessage": "Personen kan inte längre svara i dina diskussioner, kommentera dina inlägg eller nämna dig. Ni slutar se varandras innehåll och båda följningarna avslutas.",
+    "blockedTitle": "Du har blockerat det här kontot",
+    "blockedExplainer": "Personens inlägg och svar är dolda för dig, och hen når dig inte. Avblockera för att se profilen igen.",
+    "failedTitle": "Något gick fel",
+    "failed": "Det gick inte att uppdatera blockeringen. Försök igen."
   }
 }

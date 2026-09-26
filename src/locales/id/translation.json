@@ -280,5 +280,18 @@
     "wrongPassword": "Kata sandi salah.",
     "tooManyRequests": "Terlalu banyak percobaan. Coba lagi nanti.",
     "failed": "Akun tidak dapat dihapus. Silakan coba lagi."
+  },
+  "block": {
+    "listTitle": "Akun yang diblokir",
+    "listEmpty": "Kamu belum memblokir siapa pun.",
+    "block": "Blokir",
+    "unblock": "Buka blokir",
+    "cancel": "Batal",
+    "confirmTitle": "Blokir {{name}}?",
+    "confirmMessage": "Orang ini tidak akan bisa membalas di diskusimu, mengomentari postinganmu, atau menyebutmu. Kalian berhenti melihat konten satu sama lain, dan saling berhenti mengikuti.",
+    "blockedTitle": "Kamu memblokir akun ini",
+    "blockedExplainer": "Postingan dan balasannya disembunyikan darimu, dan dia tidak bisa menghubungimu. Buka blokir untuk melihat profilnya lagi.",
+    "failedTitle": "Terjadi kesalahan",
+    "failed": "Blokir tidak dapat diperbarui. Silakan coba lagi."
   }
 }

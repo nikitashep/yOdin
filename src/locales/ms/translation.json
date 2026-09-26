@@ -280,5 +280,18 @@
     "wrongPassword": "Kata laluan salah.",
     "tooManyRequests": "Terlalu banyak percubaan. Cuba lagi nanti.",
     "failed": "Akaun tidak dapat dipadam. Sila cuba lagi."
+  },
+  "block": {
+    "listTitle": "Akaun disekat",
+    "listEmpty": "Anda belum menyekat sesiapa.",
+    "block": "Sekat",
+    "unblock": "Nyahsekat",
+    "cancel": "Batal",
+    "confirmTitle": "Sekat {{name}}?",
+    "confirmMessage": "Orang ini tidak akan dapat membalas dalam perbincangan anda, mengulas siaran anda atau menyebut anda. Anda berdua berhenti melihat kandungan masing-masing dan ikutan kedua-dua pihak dihentikan.",
+    "blockedTitle": "Anda telah menyekat akaun ini",
+    "blockedExplainer": "Siaran dan balasannya disembunyikan daripada anda, dan dia tidak boleh menghubungi anda. Nyahsekat untuk melihat profilnya semula.",
+    "failedTitle": "Ada yang tidak kena",
+    "failed": "Sekatan tidak dapat dikemas kini. Sila cuba lagi."
   }
 }

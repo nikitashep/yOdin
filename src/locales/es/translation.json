@@ -280,5 +280,18 @@
     "wrongPassword": "Contraseña incorrecta.",
     "tooManyRequests": "Demasiados intentos. Inténtalo más tarde.",
     "failed": "No se pudo eliminar la cuenta. Inténtalo de nuevo."
+  },
+  "block": {
+    "listTitle": "Cuentas bloqueadas",
+    "listEmpty": "No has bloqueado a nadie.",
+    "block": "Bloquear",
+    "unblock": "Desbloquear",
+    "cancel": "Cancelar",
+    "confirmTitle": "¿Bloquear a {{name}}?",
+    "confirmMessage": "Esta persona no podrá responder en tus debates, comentar tus publicaciones ni mencionarte. Dejaréis de ver el contenido del otro y se romperán los seguimientos en ambos sentidos.",
+    "blockedTitle": "Has bloqueado esta cuenta",
+    "blockedExplainer": "Sus publicaciones y respuestas están ocultas para ti, y no puede contactarte. Desbloquéala para volver a ver su perfil.",
+    "failedTitle": "Algo salió mal",
+    "failed": "No se pudo actualizar el bloqueo. Inténtalo de nuevo."
   }
 }

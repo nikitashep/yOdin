@@ -280,5 +280,18 @@
     "wrongPassword": "Parola yanlış.",
     "tooManyRequests": "Çok fazla deneme. Daha sonra tekrar deneyin.",
     "failed": "Hesap silinemedi. Lütfen tekrar deneyin."
+  },
+  "block": {
+    "listTitle": "Engellenen hesaplar",
+    "listEmpty": "Kimseyi engellemediniz.",
+    "block": "Engelle",
+    "unblock": "Engeli kaldır",
+    "cancel": "İptal",
+    "confirmTitle": "{{name}} engellensin mi?",
+    "confirmMessage": "Bu kişi tartışmalarınızda yanıt veremez, gönderilerinize yorum yapamaz ve sizden bahsedemez. Birbirinizin içeriklerini görmeyi bırakırsınız ve iki yöndeki takipler sona erer.",
+    "blockedTitle": "Bu hesabı engellediniz",
+    "blockedExplainer": "Gönderileri ve yanıtları sizden gizli, size ulaşamıyor. Profili yeniden görmek için engeli kaldırın.",
+    "failedTitle": "Bir şeyler ters gitti",
+    "failed": "Engelleme güncellenemedi. Lütfen tekrar deneyin."
   }
 }

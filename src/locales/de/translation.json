@@ -280,5 +280,18 @@
     "wrongPassword": "Falsches Passwort.",
     "tooManyRequests": "Zu viele Versuche. Bitte später erneut versuchen.",
     "failed": "Das Konto konnte nicht gelöscht werden. Bitte versuche es erneut."
+  },
+  "block": {
+    "listTitle": "Blockierte Konten",
+    "listEmpty": "Du hast niemanden blockiert.",
+    "block": "Blockieren",
+    "unblock": "Blockierung aufheben",
+    "cancel": "Abbrechen",
+    "confirmTitle": "{{name}} blockieren?",
+    "confirmMessage": "Diese Person kann dann nicht mehr in deinen Diskussionen antworten, deine Beiträge kommentieren oder dich erwähnen. Ihr seht die Inhalte des anderen nicht mehr, und beide Folgen werden beendet.",
+    "blockedTitle": "Du hast dieses Konto blockiert",
+    "blockedExplainer": "Beiträge und Antworten dieser Person sind für dich ausgeblendet, und sie kann dich nicht erreichen. Hebe die Blockierung auf, um das Profil wieder zu sehen.",
+    "failedTitle": "Etwas ist schiefgelaufen",
+    "failed": "Die Blockierung konnte nicht geändert werden. Bitte versuche es erneut."
   }
 }

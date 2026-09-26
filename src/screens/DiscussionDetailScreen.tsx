@@ -42,6 +42,7 @@ import PhotoGrid from '../components/PhotoGrid';
 import VideoPlayerView from '../components/VideoPlayerView';
 import ReportSheet from '../components/ReportSheet';
 import { isDeletedAuthor } from '../utils/author';
+import { useWithoutBlocked } from '../hooks/useWithoutBlocked';
 
 // Enable the collapse/expand animation for the question attachment on old-arch Android.
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -182,6 +183,8 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
   // Telegram-style chat: messages stay in a flat chronological stream. A reply
   // to a specific message just references it (parentReplyId) and shows a quote;
   // this map lets a bubble render the quoted message and jump to it.
+  const visibleReplies = useWithoutBlocked(replies, (r) => r.authorId);
+
   const replyById = useMemo(() => {
     const m = new Map<string, Reply>();
     for (const r of replies) m.set(r.id, r);
@@ -617,7 +620,7 @@ export default function DiscussionDetailScreen({ route, navigation }: any) {
           <FlatList
             ref={listRef}
             style={styles.list}
-            data={replies}
+            data={visibleReplies}
             keyExtractor={(item) => item.id}
             renderItem={renderReply}
             contentContainerStyle={styles.repliesList}

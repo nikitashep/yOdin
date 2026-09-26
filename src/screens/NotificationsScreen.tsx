@@ -22,6 +22,7 @@ import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 import EmptyState from '../components/EmptyState';
 import { isDeletedAuthor } from '../utils/author';
+import { useWithoutBlocked } from '../hooks/useWithoutBlocked';
 
 export default function NotificationsScreen({ navigation }: any) {
   const { t } = useTranslation();
@@ -31,6 +32,8 @@ export default function NotificationsScreen({ navigation }: any) {
   // Data comes from the global realtime subscription (set up in TabNavigator);
   // this screen only renders it and marks items read when viewed.
   const notifications = useNotificationStore((s) => s.notifications);
+  // Someone you blocked should not reach you through a notification either.
+  const visibleNotifications = useWithoutBlocked(notifications, (n) => n.fromUserId);
   const loaded = useNotificationStore((s) => s.loaded);
   const removeNotifications = useNotificationStore((s) => s.removeNotifications);
   const [clearingRead, setClearingRead] = useState(false);
@@ -185,7 +188,7 @@ export default function NotificationsScreen({ navigation }: any) {
         </View>
       ) : (
         <FlatList
-          data={notifications}
+          data={visibleNotifications}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           contentContainerStyle={notifications.length === 0 ? styles.center : { paddingTop: 8, paddingBottom: 96 }}

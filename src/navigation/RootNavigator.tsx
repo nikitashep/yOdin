@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { auth } from '../services/firebase';
 import { getUserProfile } from '../services/authService';
 import { useAuthStore } from '../store/useAuthStore';
+import { useBlockStore } from '../store/useBlockStore';
 import { isModerator } from '../config/moderation';
 import i18n from '../services/i18n';
 import { LightColors } from '../theme/colors';
@@ -55,6 +56,9 @@ export default function RootNavigator() {
     setPendingEmailVerification(false);
     const p = await getUserProfile(user.uid);
     setProfile(p);
+    // Load the block lists before the first list renders, so blocked content
+    // never flashes on screen and then disappears.
+    await useBlockStore.getState().load(user.uid);
     setAppState(p?.nationality ? 'main' : 'onboarding');
   }, []);
 
@@ -67,6 +71,9 @@ export default function RootNavigator() {
         if (!user) {
           setIsModerator(false);
           setPendingEmailVerification(false);
+          // Block lists are personal; the next person to sign in on this device
+          // must not inherit them.
+          useBlockStore.getState().reset();
           setAppState('auth');
           return;
         }

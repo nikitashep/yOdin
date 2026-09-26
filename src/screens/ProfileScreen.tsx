@@ -18,7 +18,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from '@react-navigation/native';
-import { logoutUser, updateUserProfile, deleteOwnAccount } from '../services/authService';
+import { logoutUser, updateUserProfile, deleteOwnAccount, getUserProfile } from '../services/authService';
+import { useBlockStore } from '../store/useBlockStore';
 import { uploadAvatar } from '../services/storageService';
 import { deleteDiscussion, unsaveDiscussion, fetchUserDiscussions, fetchSavedDiscussions } from '../services/discussionService';
 import { deletePost, unsavePost, fetchUserPosts, fetchSavedPosts } from '../services/postService';
@@ -36,7 +37,7 @@ import { useTheme } from '../hooks/useTheme';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFeedStore } from '../store/useFeedStore';
 import { useNotificationStore } from '../store/useNotificationStore';
-import { Discussion, Post } from '../types';
+import { Discussion, Post, User } from '../types';
 import { COUNTRIES, Country } from '../data/countries';
 import { getRank } from '../utils/rank';
 import { getFlagEmoji } from '../utils/flagEmoji';
@@ -109,6 +110,9 @@ export default function ProfileScreen({ navigation }: any) {
   const [langSearch, setLangSearch] = useState('');
   const [themeModal, setThemeModal] = useState(false);
   const [privacyModal, setPrivacyModal] = useState(false);
+  const [blockedModal, setBlockedModal] = useState(false);
+  const [blockedProfiles, setBlockedProfiles] = useState<User[]>([]);
+  const [blockedLoading, setBlockedLoading] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleting, setDeleting] = useState(false);
@@ -327,12 +331,36 @@ export default function ProfileScreen({ navigation }: any) {
     }
   }
 
+  // The block list holds uids; the list screen needs people, so their profiles
+  // are fetched when it opens rather than kept in the store.
+  async function openBlockedList() {
+    setMenuVisible(false);
+    setBlockedModal(true);
+    setBlockedLoading(true);
+    const ids = useBlockStore.getState().blocked;
+    const people = await Promise.all(ids.map((id) => getUserProfile(id).catch(() => null)));
+    setBlockedProfiles(people.filter((p): p is User => p !== null));
+    setBlockedLoading(false);
+  }
+
+  async function handleUnblock(uid: string) {
+    if (!profile?.uid) return;
+    setBlockedProfiles((prev) => prev.filter((p) => p.uid !== uid));
+    try {
+      await useBlockStore.getState().unblock(profile.uid, uid);
+    } catch {
+      Alert.alert(t('block.failedTitle'), t('block.failed'));
+      openBlockedList();
+    }
+  }
+
   // Signing out and deleting leave the same stale caches behind.
   function clearSession() {
     reset();
     useFeedStore.setState({ discussions: [], hasMore: true, isLoading: false });
     usePostStore.setState({ posts: [], hasMore: true, isLoading: false, filter: 'all' });
     useNotificationStore.getState().setNotifications([]);
+    useBlockStore.getState().reset();
   }
 
   async function handleLogout() {
@@ -675,6 +703,13 @@ export default function ProfileScreen({ navigation }: any) {
             <Text style={styles.menuItemText}>{t('settings.privacy')}</Text>
             <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
           </TouchableOpacity>
+          <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]} onPress={openBlockedList}>
+            <View style={[styles.menuIconWrap, { backgroundColor: colors.textSecondary + '18' }]}>
+              <Ionicons name="hand-left-outline" size={18} color={colors.textSecondary} />
+            </View>
+            <Text style={styles.menuItemText}>{t('block.listTitle')}</Text>
+            <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
+          </TouchableOpacity>
         </View>
 
         <View style={{ flex: 1 }} />
@@ -956,6 +991,42 @@ export default function ProfileScreen({ navigation }: any) {
           <ScrollView contentContainerStyle={styles.privacyBody}>
             <Text style={styles.privacyText}>{t('settings.privacyText')}</Text>
           </ScrollView>
+        </View>
+      </Modal>
+
+      {/* Blocked accounts */}
+      <Modal visible={blockedModal} transparent animationType="slide" onRequestClose={() => setBlockedModal(false)}>
+        <View style={styles.privacySheet}>
+          <View style={styles.privacyHeader}>
+            <Text style={styles.privacyTitle}>{t('block.listTitle')}</Text>
+            <TouchableOpacity onPress={() => setBlockedModal(false)}>
+              <Text style={styles.privacyClose}>✕</Text>
+            </TouchableOpacity>
+          </View>
+          {blockedLoading ? (
+            <ActivityIndicator style={{ marginTop: 32 }} color={colors.primary} />
+          ) : (
+            <FlatList
+              data={blockedProfiles}
+              keyExtractor={(item) => item.uid}
+              contentContainerStyle={blockedProfiles.length === 0 ? { flex: 1 } : { padding: 16, gap: 8 }}
+              ListEmptyComponent={
+                <EmptyState icon="hand-left-outline" text={t('block.listEmpty')} topOffset={60} />
+              }
+              renderItem={({ item }) => (
+                <View style={styles.blockedRow}>
+                  <Avatar photoURL={item.photoURL} name={`${item.firstName} ${item.lastName}`} size={40} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.blockedName}>{item.firstName} {item.lastName}</Text>
+                    {item.username ? <Text style={styles.blockedHandle}>@{item.username}</Text> : null}
+                  </View>
+                  <TouchableOpacity style={styles.unblockChip} onPress={() => handleUnblock(item.uid)}>
+                    <Text style={styles.unblockChipText}>{t('block.unblock')}</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
+          )}
         </View>
       </Modal>
 
@@ -1497,6 +1568,34 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     privacyClose: { fontSize: 20, color: c.textSecondary, padding: 4 },
     privacyBody: { padding: 24 },
+    blockedRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      backgroundColor: c.surface,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: c.border,
+      padding: 12,
+    },
+    blockedName: {
+      fontSize: Typography.fontSizeMD,
+      fontWeight: Typography.fontWeightSemiBold,
+      color: c.textPrimary,
+    },
+    blockedHandle: { fontSize: Typography.fontSizeSM, color: c.textSecondary },
+    unblockChip: {
+      borderWidth: 1.5,
+      borderColor: c.primary,
+      borderRadius: 999,
+      paddingVertical: 7,
+      paddingHorizontal: 14,
+    },
+    unblockChipText: {
+      color: c.primary,
+      fontSize: Typography.fontSizeSM,
+      fontWeight: Typography.fontWeightSemiBold,
+    },
     deleteWarning: {
       flexDirection: 'row',
       gap: 12,
