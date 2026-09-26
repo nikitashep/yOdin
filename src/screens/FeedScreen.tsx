@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
-  View,
+  View,
   FlatList,
   StyleSheet,
   TouchableOpacity,
@@ -35,6 +35,7 @@ import NationFilterDrawer from '../components/NationFilterDrawer';
 import Card from '../components/Card';
 import Avatar from '../components/Avatar';
 import Chip from '../components/Chip';
+import { CATEGORY_META } from '../theme/colors';
 import { Spacing } from '../theme/spacing';
 import MediaCarousel from '../components/MediaCarousel';
 import EventParticipantsModal from '../components/EventParticipantsModal';
@@ -42,8 +43,8 @@ import EventDateBlock from '../components/EventDateBlock';
 import QuestionOfDayCard from '../components/QuestionOfDayCard';
 import EmptyState from '../components/EmptyState';
 import { weightedSort } from '../utils/weightedSort';
-import { COUNTRIES } from '../data/countries';
 import { useWithoutBlocked } from '../hooks/useWithoutBlocked';
+import { COUNTRIES } from '../data/countries';
 
 const FILTERS: FeedFilter[] = ['all', ...POST_CATEGORIES];
 
@@ -237,14 +238,9 @@ export default function FeedScreen({ navigation }: any) {
     );
   }
 
+  // Category accent — matches the Figma badge palette (see CATEGORY_META).
   function categoryColor(category: PostCategory): string {
-    switch (category) {
-      case 'news': return colors.primary;
-      case 'events': return colors.accent;
-      case 'places': return colors.success;
-      case 'lifestyle': return colors.pink;
-      default: return colors.textSecondary;
-    }
+    return CATEGORY_META[category]?.color ?? colors.textSecondary;
   }
 
   async function handleJoinEvent(item: Post) {
@@ -357,7 +353,7 @@ export default function FeedScreen({ navigation }: any) {
               <Ionicons
                 name={isParticipant ? 'checkmark-circle' : 'people'}
                 size={16}
-                color={isParticipant ? colors.primary : '#fff'}
+                color={isParticipant ? colors.secondaryText : '#fff'}
               />
               <Text style={[styles.joinBtnText, isParticipant && styles.joinBtnTextLeave]}>
                 {isParticipant ? t('post.leaveEvent') : eventFull ? t('post.eventFull') : t('post.participate')}
@@ -440,6 +436,8 @@ export default function FeedScreen({ navigation }: any) {
             <Chip
               key={f}
               label={f === 'all' ? t('categories.all') : t(`categories.${f}`)}
+              emoji={f === 'all' ? undefined : CATEGORY_META[f].emoji}
+              color={f === 'all' ? undefined : CATEGORY_META[f].color}
               active={filter === f}
               onPress={() => setFilter(f)}
             />
@@ -451,7 +449,7 @@ export default function FeedScreen({ navigation }: any) {
             onPress={() => setDrawerOpen(true)}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Ionicons name="menu" size={22} color={selectedNations.length > 0 ? colors.primary : colors.textPrimary} />
+            <Ionicons name="menu" size={22} color={selectedNations.length > 0 ? colors.secondaryText : colors.textPrimary} />
             {selectedNations.length > 0 && (
               <View style={styles.drawerBadge}>
                 <Text style={styles.drawerBadgeText}>{selectedNations.length}</Text>
@@ -594,7 +592,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     headerTitle: {
       fontSize: Typography.fontSizeXL,
       fontWeight: Typography.fontWeightBold,
-      color: c.primary,
+      color: c.textPrimary,
     },
     filterBar: {
       backgroundColor: c.surface,
@@ -619,9 +617,9 @@ function makeStyles(c: ColorPalette, topInset: number) {
       width: 36,
       height: 36,
       borderRadius: 18,
-      backgroundColor: c.background,
+      backgroundColor: c.muted,
       borderWidth: 1,
-      borderColor: c.border,
+      borderColor: 'transparent',
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -644,9 +642,9 @@ function makeStyles(c: ColorPalette, topInset: number) {
       paddingHorizontal: 14,
       paddingVertical: 7,
       borderRadius: 18,
-      backgroundColor: c.background,
+      backgroundColor: c.muted,
       borderWidth: 1,
-      borderColor: c.border,
+      borderColor: 'transparent',
     },
     chipActive: {
       backgroundColor: c.primary,
@@ -714,7 +712,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     joinBtnLeave: { backgroundColor: c.primaryLight },
     joinBtnDisabled: { opacity: 0.5 },
     joinBtnText: { color: '#fff', fontSize: Typography.fontSizeSM, fontWeight: Typography.fontWeightSemiBold },
-    joinBtnTextLeave: { color: c.primary },
+    joinBtnTextLeave: { color: c.secondaryText },
     participantsBtn: {
       flexDirection: 'row',
       alignItems: 'center',
