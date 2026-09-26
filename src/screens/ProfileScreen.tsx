@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import TextInput from '../components/AppTextInput';
 import Text from '../components/AppText';
-import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from '@react-navigation/native';
@@ -28,6 +27,8 @@ import { useUsernameCheck } from '../hooks/useUsernameCheck';
 import { isValidUsername, normalizeUsername } from '../utils/mentions';
 import { subscribeReports } from '../services/reportService';
 import { formatTime } from '../utils/formatTime';
+import { optimizeImage } from '../utils/imageOptimize';
+import PhotoPickerSheet, { PickedAsset } from '../components/PhotoPickerSheet';
 import PostDetailModal from './PostDetailModal';
 import { setAppLanguage } from '../services/i18n';
 import type { AppLang } from '../services/i18n';
@@ -106,6 +107,7 @@ export default function ProfileScreen({ navigation }: any) {
   const [menuVisible, setMenuVisible] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoError, setPhotoError] = useState('');
+  const [avatarSheetVisible, setAvatarSheetVisible] = useState(false);
   const [langModal, setLangModal] = useState(false);
   const [langSearch, setLangSearch] = useState('');
   const [themeModal, setThemeModal] = useState(false);
@@ -175,24 +177,20 @@ export default function ProfileScreen({ navigation }: any) {
     }
   }
 
-  async function handlePickPhoto() {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') return;
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.7,
-    });
-
-    if (result.canceled || !result.assets[0]) return;
-    if (!profile?.uid) return;
+  // Avatar picking goes through the app's own PhotoPickerSheet (same grid used
+  // for post media) rather than the OS picker + its dated square-crop sheet.
+  // The photo is downscaled by optimizeImage and rendered contentFit="cover",
+  // so any aspect ratio fills the circle without a crop step.
+  async function handleAvatarPicked(picked: PickedAsset[]) {
+    setAvatarSheetVisible(false);
+    const asset = picked[0];
+    if (!asset || !profile?.uid) return;
 
     setUploadingPhoto(true);
     setPhotoError('');
     try {
-      const url = await uploadAvatar(profile.uid, result.assets[0].uri);
+      const optimized = await optimizeImage(asset.uri, asset.width || undefined, asset.height || undefined);
+      const url = await uploadAvatar(profile.uid, optimized);
       await updateUserProfile(profile.uid, { photoURL: url });
       setProfile({ ...profile, photoURL: url });
     } catch {
@@ -448,12 +446,17 @@ export default function ProfileScreen({ navigation }: any) {
   function renderPostCard(item: Post, variant: 'mine' | 'saved') {
     return (
       <TouchableOpacity style={styles.card} activeOpacity={0.85} onPress={() => openPostDetail(item)}>
-        {item.imageURLs && item.imageURLs.length > 0 ? (
-          <AppImage source={{ uri: item.imageURLs[0] }} style={styles.postCardImage} contentFit="cover" />
-        ) : null}
-        <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
-        <Text style={styles.cardDesc} numberOfLines={2}>{item.description}</Text>
-        <View style={styles.cardFooter}>
+        <View style={styles.postCardRow}>
+          {item.imageURLs && item.imageURLs.length > 0 ? (
+            <AppImage source={{ uri: item.imageURLs[0] }} style={styles.postThumb} contentFit="cover" />
+          ) : (
+            <View style={[styles.postThumb, styles.postThumbEmpty]}>
+              <Ionicons name="document-text-outline" size={22} color={colors.textSecondary} />
+            </View>
+          )}
+          <View style={styles.postCardBody}>
+            <Text style={styles.cardTitle} numberOfLines={2}>{item.title}</Text>
+            <View style={styles.cardFooter}>
           <View style={styles.postMetaRow}>
             <Ionicons name="heart-outline" size={14} color={colors.textSecondary} />
             <Text style={styles.cardMetaMuted}>{item.likes?.length ?? 0}</Text>
@@ -476,10 +479,24 @@ export default function ProfileScreen({ navigation }: any) {
               <Ionicons name="bookmark" size={18} color={colors.primary} />
             </TouchableOpacity>
           )}
+            </View>
+          </View>
         </View>
       </TouchableOpacity>
     );
   }
+
+  // Rendered next to whichever surface is on top: a Modal only shows when it
+  // sits in the visible tree, so the picker goes inside the edit sheet while
+  // that's open and at the screen root otherwise.
+  const avatarSheet = (
+    <PhotoPickerSheet
+      visible={avatarSheetVisible}
+      maxSelect={1}
+      onDone={handleAvatarPicked}
+      onCancel={() => setAvatarSheetVisible(false)}
+    />
+  );
 
   return (
     <View style={styles.container}>
@@ -494,7 +511,7 @@ export default function ProfileScreen({ navigation }: any) {
 
         <View style={styles.profileContent}>
           <View style={styles.headerTopRow}>
-            <TouchableOpacity onPress={handlePickPhoto} disabled={uploadingPhoto}>
+            <TouchableOpacity onPress={() => setAvatarSheetVisible(true)} disabled={uploadingPhoto}>
               <View style={styles.avatar}>
                 {profile?.photoURL ? (
                   <AppImage source={{ uri: profile.photoURL }} style={styles.avatarImage} contentFit="cover" />
@@ -511,27 +528,11 @@ export default function ProfileScreen({ navigation }: any) {
                 </View>
               </View>
             </TouchableOpacity>
-            <View style={styles.stats}>
-              <View style={styles.statItem}>
-                <Text style={styles.statNum}>{myPosts.length}</Text>
-                <Text style={styles.statLabel}>{t('profile.posts')}</Text>
-              </View>
-              <TouchableOpacity
-                style={styles.statItem}
-                activeOpacity={0.7}
-                onPress={() => profile?.uid && navigation.navigate('FollowList', { userId: profile.uid, initialTab: 'followers' })}
-              >
-                <Text style={styles.statNum}>{followersCount}</Text>
-                <Text style={styles.statLabel}>{t('profile.followers')}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.statItem}
-                activeOpacity={0.7}
-                onPress={() => profile?.uid && navigation.navigate('FollowList', { userId: profile.uid, initialTab: 'following' })}
-              >
-                <Text style={styles.statNum}>{profile?.following?.length ?? 0}</Text>
-                <Text style={styles.statLabel}>{t('profile.followingCount')}</Text>
-              </TouchableOpacity>
+            <View style={styles.rankPill}>
+              <Ionicons name="ribbon" size={14} color="#fff" />
+              <Text style={styles.rankPillText} numberOfLines={1}>
+                {t(`rank.${rankKey}`)} · {t('rank.points', { count: points })}
+              </Text>
             </View>
           </View>
 
@@ -543,12 +544,30 @@ export default function ProfileScreen({ navigation }: any) {
             <Text style={styles.location}>{profile?.location}</Text>
           </View>
           {profile?.bio ? <Text style={styles.bio}>{profile.bio}</Text> : null}
-          <View style={styles.rankRow}>
-            <View style={styles.rankBadge}>
-              <Ionicons name="ribbon" size={12} color={colors.primary} />
-              <Text style={styles.rankBadgeText}>{t(`rank.${rankKey}`)}</Text>
+
+          <View style={styles.statsCard}>
+            <View style={styles.statItem}>
+              <Text style={styles.statNum}>{myPosts.length}</Text>
+              <Text style={styles.statLabel}>{t('profile.posts')}</Text>
             </View>
-            <Text style={styles.rankPoints}>{t('rank.points', { count: points })}</Text>
+            <View style={styles.statDivider} />
+            <TouchableOpacity
+              style={styles.statItem}
+              activeOpacity={0.7}
+              onPress={() => profile?.uid && navigation.navigate('FollowList', { userId: profile.uid, initialTab: 'followers' })}
+            >
+              <Text style={styles.statNum}>{followersCount}</Text>
+              <Text style={styles.statLabel}>{t('profile.followers')}</Text>
+            </TouchableOpacity>
+            <View style={styles.statDivider} />
+            <TouchableOpacity
+              style={styles.statItem}
+              activeOpacity={0.7}
+              onPress={() => profile?.uid && navigation.navigate('FollowList', { userId: profile.uid, initialTab: 'following' })}
+            >
+              <Text style={styles.statNum}>{profile?.following?.length ?? 0}</Text>
+              <Text style={styles.statLabel}>{t('profile.followingCount')}</Text>
+            </TouchableOpacity>
           </View>
           {photoError ? <Text style={styles.photoError}>{photoError}</Text> : null}
         </View>
@@ -645,14 +664,14 @@ export default function ProfileScreen({ navigation }: any) {
         <View style={styles.menuGroup}>
           <TouchableOpacity style={styles.menuItem} onPress={openEditProfile}>
             <View style={[styles.menuIconWrap, { backgroundColor: colors.primaryLight }]}>
-              <Ionicons name="person-outline" size={18} color={colors.primary} />
+              <Ionicons name="person-outline" size={18} color={colors.secondaryText} />
             </View>
             <Text style={styles.menuItemText}>{t('settings.editProfile')}</Text>
             <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
           </TouchableOpacity>
           <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]} onPress={() => { setMenuVisible(false); setSavedTab('posts'); setSavedVisible(true); }}>
             <View style={[styles.menuIconWrap, { backgroundColor: colors.primaryLight }]}>
-              <Ionicons name="bookmark-outline" size={18} color={colors.primary} />
+              <Ionicons name="bookmark-outline" size={18} color={colors.secondaryText} />
             </View>
             <Text style={styles.menuItemText}>{t('profile.saved')}</Text>
             <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
@@ -753,7 +772,7 @@ export default function ProfileScreen({ navigation }: any) {
 
               {/* Avatar */}
               <View style={styles.editAvatarSection}>
-                <TouchableOpacity onPress={handlePickPhoto} disabled={uploadingPhoto} activeOpacity={0.8}>
+                <TouchableOpacity onPress={() => setAvatarSheetVisible(true)} disabled={uploadingPhoto} activeOpacity={0.8}>
                   <View style={styles.editAvatarWrap}>
                     {profile?.photoURL
                       ? <AppImage source={{ uri: profile.photoURL }} style={styles.editAvatarImg} contentFit="cover" />
@@ -904,6 +923,7 @@ export default function ProfileScreen({ navigation }: any) {
               />
             </>
           )}
+          {editVisible ? avatarSheet : null}
         </View>
       </Modal>
 
@@ -1141,6 +1161,8 @@ export default function ProfileScreen({ navigation }: any) {
           setTimeout(() => navigation.navigate('UserProfile', { userId }), 250);
         }}
       />
+
+      {!editVisible ? avatarSheet : null}
     </View>
   );
 }
@@ -1204,10 +1226,31 @@ function makeStyles(c: ColorPalette, topInset: number) {
     avatarText: {
       fontSize: Typography.fontSizeXXL,
       fontWeight: Typography.fontWeightBold,
-      color: c.primary,
+      color: c.secondaryText,
     },
-    stats: { flex: 1, flexDirection: 'row', justifyContent: 'space-around' },
-    statItem: { alignItems: 'center' },
+    rankPill: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      backgroundColor: c.primary,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 16,
+      maxWidth: 190,
+    },
+    rankPillText: { color: '#fff', fontSize: Typography.fontSizeXS, fontWeight: Typography.fontWeightBold, flexShrink: 1 },
+    statsCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: c.surface,
+      borderWidth: 1,
+      borderColor: c.border,
+      borderRadius: 16,
+      paddingVertical: 14,
+      marginTop: 14,
+    },
+    statItem: { flex: 1, alignItems: 'center' },
+    statDivider: { width: 1, height: 30, backgroundColor: c.border },
     statNum: { fontSize: Typography.fontSizeLG, fontWeight: Typography.fontWeightBold, color: c.textPrimary },
     statLabel: { fontSize: Typography.fontSizeXS, color: c.textSecondary, marginTop: 2 },
     name: {
@@ -1224,22 +1267,6 @@ function makeStyles(c: ColorPalette, topInset: number) {
     location: { fontSize: Typography.fontSizeSM, color: c.textSecondary },
     handle: { fontSize: Typography.fontSizeSM, color: c.primary, fontWeight: Typography.fontWeightMedium, marginBottom: 6 },
     bio: { fontSize: Typography.fontSizeSM, color: c.textPrimary, lineHeight: 20, marginTop: 8 },
-    rankRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
-    rankBadge: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 4,
-      backgroundColor: c.primaryLight,
-      paddingHorizontal: 8,
-      paddingVertical: 3,
-      borderRadius: 10,
-    },
-    rankBadgeText: {
-      fontSize: Typography.fontSizeXS,
-      fontWeight: Typography.fontWeightSemiBold,
-      color: c.primary,
-    },
-    rankPoints: { fontSize: Typography.fontSizeXS, color: c.textSecondary },
     photoError: {
       fontSize: Typography.fontSizeXS,
       color: c.notification,
@@ -1247,24 +1274,27 @@ function makeStyles(c: ColorPalette, topInset: number) {
     },
     tabs: {
       flexDirection: 'row',
-      backgroundColor: c.surface,
-      borderBottomWidth: 1,
-      borderBottomColor: c.border,
+      gap: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      backgroundColor: c.background,
     },
     tab: {
       flex: 1,
-      paddingVertical: 14,
+      paddingVertical: 10,
       alignItems: 'center',
-      borderBottomWidth: 2,
-      borderBottomColor: 'transparent',
+      borderRadius: 12,
+      backgroundColor: c.surface,
+      borderWidth: 1,
+      borderColor: c.border,
     },
-    tabActive: { borderBottomColor: c.primary },
+    tabActive: { backgroundColor: c.primary, borderColor: c.primary },
     tabText: {
       fontSize: Typography.fontSizeSM,
-      fontWeight: Typography.fontWeightMedium,
+      fontWeight: Typography.fontWeightSemiBold,
       color: c.textSecondary,
     },
-    tabTextActive: { color: c.primary, fontWeight: Typography.fontWeightSemiBold },
+    tabTextActive: { color: '#fff' },
     center: { flexGrow: 1, alignItems: 'center', justifyContent: 'center' },
     avatarImage: {
       width: 80,
@@ -1318,18 +1348,10 @@ function makeStyles(c: ColorPalette, topInset: number) {
       color: c.textPrimary,
       marginBottom: 4,
     },
-    cardDesc: {
-      fontSize: Typography.fontSizeSM,
-      color: c.textSecondary,
-      lineHeight: 20,
-    },
-    postCardImage: {
-      width: '100%',
-      height: 140,
-      borderRadius: 10,
-      marginBottom: 10,
-      backgroundColor: c.background,
-    },
+    postCardRow: { flexDirection: 'row', gap: 12 },
+    postThumb: { width: 76, height: 76, borderRadius: 12, backgroundColor: c.background },
+    postThumbEmpty: { alignItems: 'center', justifyContent: 'center' },
+    postCardBody: { flex: 1, justifyContent: 'space-between', minHeight: 76 },
     postMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
     cardMetaMuted: { fontSize: Typography.fontSizeXS, color: c.textSecondary },
     cardTime: { fontSize: Typography.fontSizeXS, color: c.textSecondary, marginLeft: 12 },
@@ -1491,7 +1513,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     editAvatarInitials: {
       fontSize: 32,
       fontWeight: Typography.fontWeightBold,
-      color: c.primary,
+      color: c.secondaryText,
     },
     editAvatarCamera: {
       position: 'absolute',

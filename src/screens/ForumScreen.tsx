@@ -2,10 +2,8 @@ import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import {
   Animated,
   View,
-
   FlatList,
   StyleSheet,
-
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
@@ -35,6 +33,7 @@ import { useTheme } from '../hooks/useTheme';
 import { ColorPalette } from '../theme/colors';
 import { Typography } from '../theme/typography';
 import { weightedSort } from '../utils/weightedSort';
+import { useWithoutBlocked } from '../hooks/useWithoutBlocked';
 import FollowButton from '../components/FollowButton';
 import NationFilterDrawer from '../components/NationFilterDrawer';
 import Card from '../components/Card';
@@ -46,7 +45,6 @@ import VideoPreview from '../components/VideoPreview';
 import QuestionOfDayCard from '../components/QuestionOfDayCard';
 import EmptyState from '../components/EmptyState';
 import { COUNTRIES } from '../data/countries';
-import { useWithoutBlocked } from '../hooks/useWithoutBlocked';
 
 // Enable the expand/collapse animation for the attachments panel on old-arch Android.
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -106,7 +104,7 @@ export default function ForumScreen({ navigation }: any) {
     : answerFilter === 'unanswered' ? 'help-circle-outline' as const
     : 'apps-outline' as const;
   const cycleColor = answerFilter === 'answered' ? colors.success
-    : answerFilter === 'unanswered' ? colors.primary
+    : answerFilter === 'unanswered' ? colors.secondaryText
     : colors.textSecondary;
 
   function cycleAnswerFilter() {
@@ -346,14 +344,14 @@ export default function ForumScreen({ navigation }: any) {
               onPress={() => toggleAttach(item.id)}
               activeOpacity={0.7}
             >
-              <Ionicons name="attach" size={16} color={colors.primary} />
+              <Ionicons name="attach" size={16} color={colors.secondaryText} />
               <Text style={styles.attachBtnText}>
                 {t('forum.attachments')} · {attachCount}
               </Text>
               <Ionicons
                 name={attachExpanded ? 'chevron-up' : 'chevron-down'}
                 size={16}
-                color={colors.primary}
+                color={colors.secondaryText}
               />
             </TouchableOpacity>
             {attachExpanded ? (
@@ -456,7 +454,7 @@ export default function ForumScreen({ navigation }: any) {
             onPress={() => setDrawerOpen(true)}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Ionicons name="menu" size={22} color={selectedNations.length > 0 ? colors.primary : colors.textPrimary} />
+            <Ionicons name="menu" size={22} color={selectedNations.length > 0 ? colors.secondaryText : colors.textPrimary} />
             {selectedNations.length > 0 && (
               <View style={styles.drawerBadge}>
                 <Text style={styles.drawerBadgeText}>{selectedNations.length}</Text>
@@ -585,7 +583,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     headerTitle: {
       fontSize: Typography.fontSizeXL,
       fontWeight: Typography.fontWeightBold,
-      color: c.primary,
+      color: c.textPrimary,
     },
     headerSearch: {
       flex: 1,
@@ -616,9 +614,9 @@ function makeStyles(c: ColorPalette, topInset: number) {
       width: 36,
       height: 36,
       borderRadius: 18,
-      backgroundColor: c.background,
+      backgroundColor: c.muted,
       borderWidth: 1,
-      borderColor: c.border,
+      borderColor: 'transparent',
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -630,9 +628,9 @@ function makeStyles(c: ColorPalette, topInset: number) {
       width: 36,
       height: 36,
       borderRadius: 18,
-      backgroundColor: c.background,
+      backgroundColor: c.muted,
       borderWidth: 1,
-      borderColor: c.border,
+      borderColor: 'transparent',
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -709,7 +707,7 @@ function makeStyles(c: ColorPalette, topInset: number) {
     attachBtnText: {
       fontSize: Typography.fontSizeSM,
       fontWeight: Typography.fontWeightSemiBold,
-      color: c.primary,
+      color: c.secondaryText,
     },
     attachMedia: { marginTop: 10, gap: 8 },
     answerBox: {
