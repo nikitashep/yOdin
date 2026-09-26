@@ -299,5 +299,11 @@
     "blockedExplainer": "Sus publicaciones y respuestas están ocultas para ti, y no puede contactarte. Desbloquéala para volver a ver su perfil.",
     "failedTitle": "Algo salió mal",
     "failed": "No se pudo actualizar el bloqueo. Inténtalo de nuevo."
+  },
+  "terms": {
+    "title": "Condiciones de uso",
+    "acceptLabel": "Acepto las condiciones de uso",
+    "open": "Abrir las condiciones de uso",
+    "required": "Acepta las condiciones de uso para continuar."
   }
 }

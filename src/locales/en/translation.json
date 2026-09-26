@@ -299,5 +299,11 @@
     "blockedExplainer": "Their posts and replies are hidden from you, and they can't reach you. Unblock to see their profile again.",
     "failedTitle": "Something went wrong",
     "failed": "Could not update the block. Please try again."
+  },
+  "terms": {
+    "title": "Terms of Use",
+    "acceptLabel": "I accept the Terms of Use",
+    "open": "Open the Terms of Use",
+    "required": "Please accept the Terms of Use to continue."
   }
 }

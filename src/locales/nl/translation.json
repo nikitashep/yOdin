@@ -299,5 +299,11 @@
     "blockedExplainer": "Hun berichten en reacties zijn voor jou verborgen en ze kunnen je niet bereiken. Deblokkeer om het profiel weer te zien.",
     "failedTitle": "Er ging iets mis",
     "failed": "De blokkering kon niet worden bijgewerkt. Probeer het opnieuw."
+  },
+  "terms": {
+    "title": "Gebruiksvoorwaarden",
+    "acceptLabel": "Ik accepteer de gebruiksvoorwaarden",
+    "open": "Gebruiksvoorwaarden openen",
+    "required": "Accepteer de gebruiksvoorwaarden om door te gaan."
   }
 }

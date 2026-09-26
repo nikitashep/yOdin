@@ -301,5 +301,11 @@
     "blockedExplainer": "Posty i odpowiedzi tej osoby są dla Ciebie ukryte i nie może się z Tobą skontaktować. Odblokuj, aby znowu zobaczyć profil.",
     "failedTitle": "Coś poszło nie tak",
     "failed": "Nie udało się zmienić blokady. Spróbuj ponownie."
+  },
+  "terms": {
+    "title": "Warunki korzystania",
+    "acceptLabel": "Akceptuję warunki korzystania",
+    "open": "Otwórz warunki korzystania",
+    "required": "Zaakceptuj warunki korzystania, aby kontynuować."
   }
 }

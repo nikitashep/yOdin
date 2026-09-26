@@ -301,10 +301,12 @@ visibility but leaves the follows broken.
 ### Public documents
 
 `docs/` is published as a GitHub Pages site (`docs/_config.yml` + a
-self-contained layout, no theme gem, light and dark): the privacy policy and the
-account-deletion page Play links to. `play-store-listing.md` is excluded from the
-build — it is internal working copy. Jekyll only renders Markdown that carries
-front matter; without it the file is served as raw text.
+self-contained layout, no theme gem, light and dark): the privacy policy, the
+account-deletion page Play links to, and the terms of use. Their URLs live in one
+place, `src/config/links.ts`, because the app links to all three.
+`play-store-listing.md` is excluded from the build — it is internal working copy.
+Jekyll only renders Markdown that carries front matter; without it the file is
+served as raw text.
 
 ---
 
@@ -433,10 +435,13 @@ bugs. Listed so nobody rediscovers them the hard way.
   these to a private subcollection (`users/{uid}/private/moderation`).
 - Auth token lives in AsyncStorage, not SecureStore (deferred).
 - App Check / Google Sign-In are deferred (need a dev build).
-- **No Terms of Use yet.** Play's UGC policy requires users to accept terms
-  *before* they can create or upload content, which means a document plus a
-  consent step at registration. Neither exists. This is the last unmet UGC
-  requirement — reporting, blocking and moderation are all in place.
+- **Terms of Use are consented to once, at registration.** Play requires
+  acceptance *before* a user can create content, so the gate sits on the signup
+  button rather than on the first post. The document lives on the Pages site, not
+  in the app, which keeps it editable without an app update but means it needs
+  network to read. If the terms change materially, there is currently no
+  mechanism to ask existing users to accept the new version — announcing it in
+  the app, as §8 of the terms promises, is a manual job for now.
 - **The block list is private, the ban-evasion hash is not reversible, but
   neither hides the obvious.** A blocked person can infer the block from
   content disappearing; a banned person can register with a fresh address. Both

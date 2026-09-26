@@ -299,5 +299,11 @@
     "blockedExplainer": "Beiträge und Antworten dieser Person sind für dich ausgeblendet, und sie kann dich nicht erreichen. Hebe die Blockierung auf, um das Profil wieder zu sehen.",
     "failedTitle": "Etwas ist schiefgelaufen",
     "failed": "Die Blockierung konnte nicht geändert werden. Bitte versuche es erneut."
+  },
+  "terms": {
+    "title": "Nutzungsbedingungen",
+    "acceptLabel": "Ich akzeptiere die Nutzungsbedingungen",
+    "open": "Nutzungsbedingungen öffnen",
+    "required": "Bitte akzeptiere die Nutzungsbedingungen, um fortzufahren."
   }
 }

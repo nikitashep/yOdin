@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   View,
+  Linking,
   StyleSheet,
   TouchableOpacity,
   FlatList,
@@ -19,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from '@react-navigation/native';
 import { logoutUser, updateUserProfile, deleteOwnAccount, getUserProfile } from '../services/authService';
 import { useBlockStore } from '../store/useBlockStore';
+import { TERMS_URL } from '../config/links';
 import { uploadAvatar } from '../services/storageService';
 import { deleteDiscussion, unsaveDiscussion, fetchUserDiscussions, fetchSavedDiscussions } from '../services/discussionService';
 import { deletePost, unsavePost, fetchUserPosts, fetchSavedPosts } from '../services/postService';
@@ -721,6 +723,13 @@ export default function ProfileScreen({ navigation }: any) {
             </View>
             <Text style={styles.menuItemText}>{t('settings.privacy')}</Text>
             <Ionicons name="chevron-forward" size={15} color={colors.textSecondary} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={() => Linking.openURL(TERMS_URL)}>
+            <View style={[styles.menuIconWrap, { backgroundColor: colors.primary + '18' }]}>
+              <Ionicons name="document-text-outline" size={18} color={colors.primary} />
+            </View>
+            <Text style={styles.menuItemText}>{t('terms.title')}</Text>
+            <Ionicons name="open-outline" size={15} color={colors.textSecondary} />
           </TouchableOpacity>
           <TouchableOpacity style={[styles.menuItem, styles.menuItemLast]} onPress={openBlockedList}>
             <View style={[styles.menuIconWrap, { backgroundColor: colors.textSecondary + '18' }]}>

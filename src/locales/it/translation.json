@@ -299,5 +299,11 @@
     "blockedExplainer": "I suoi post e le sue risposte sono nascosti per te e non può contattarti. Sbloccalo per rivedere il profilo.",
     "failedTitle": "Qualcosa è andato storto",
     "failed": "Impossibile aggiornare il blocco. Riprova."
+  },
+  "terms": {
+    "title": "Condizioni d'uso",
+    "acceptLabel": "Accetto le condizioni d'uso",
+    "open": "Apri le condizioni d'uso",
+    "required": "Accetta le condizioni d'uso per continuare."
   }
 }

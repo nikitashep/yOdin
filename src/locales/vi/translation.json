@@ -299,5 +299,11 @@
     "blockedExplainer": "Bài đăng và câu trả lời của họ bị ẩn với bạn, và họ không thể liên hệ với bạn. Bỏ chặn để xem lại hồ sơ.",
     "failedTitle": "Đã xảy ra lỗi",
     "failed": "Không thể cập nhật trạng thái chặn. Vui lòng thử lại."
+  },
+  "terms": {
+    "title": "Điều khoản sử dụng",
+    "acceptLabel": "Tôi đồng ý với điều khoản sử dụng",
+    "open": "Mở điều khoản sử dụng",
+    "required": "Vui lòng đồng ý với điều khoản sử dụng để tiếp tục."
   }
 }

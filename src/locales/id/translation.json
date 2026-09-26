@@ -299,5 +299,11 @@
     "blockedExplainer": "Postingan dan balasannya disembunyikan darimu, dan dia tidak bisa menghubungimu. Buka blokir untuk melihat profilnya lagi.",
     "failedTitle": "Terjadi kesalahan",
     "failed": "Blokir tidak dapat diperbarui. Silakan coba lagi."
+  },
+  "terms": {
+    "title": "Ketentuan penggunaan",
+    "acceptLabel": "Saya menerima ketentuan penggunaan",
+    "open": "Buka ketentuan penggunaan",
+    "required": "Terima ketentuan penggunaan untuk melanjutkan."
   }
 }

@@ -300,5 +300,11 @@
     "blockedExplainer": "Jeho příspěvky a odpovědi jsou pro tebe skryté a nemůže se k tobě dostat. Odblokuj ho, aby ses znovu dostal na profil.",
     "failedTitle": "Něco se pokazilo",
     "failed": "Blokování se nepodařilo změnit. Zkus to prosím znovu."
+  },
+  "terms": {
+    "title": "Podmínky použití",
+    "acceptLabel": "Přijímám podmínky použití",
+    "open": "Otevřít podmínky použití",
+    "required": "Pro pokračování přijmi podmínky použití."
   }
 }

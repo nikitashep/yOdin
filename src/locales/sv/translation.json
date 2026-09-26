@@ -299,5 +299,11 @@
     "blockedExplainer": "Personens inlägg och svar är dolda för dig, och hen når dig inte. Avblockera för att se profilen igen.",
     "failedTitle": "Något gick fel",
     "failed": "Det gick inte att uppdatera blockeringen. Försök igen."
+  },
+  "terms": {
+    "title": "Användarvillkor",
+    "acceptLabel": "Jag godkänner användarvillkoren",
+    "open": "Öppna användarvillkoren",
+    "required": "Godkänn användarvillkoren för att fortsätta."
   }
 }
