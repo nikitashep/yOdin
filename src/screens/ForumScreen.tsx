@@ -46,6 +46,7 @@ import VideoPreview from '../components/VideoPreview';
 import QuestionOfDayCard from '../components/QuestionOfDayCard';
 import EmptyState from '../components/EmptyState';
 import { COUNTRIES } from '../data/countries';
+import { useWithoutBlocked } from '../hooks/useWithoutBlocked';
 
 // Enable the expand/collapse animation for the attachments panel on old-arch Android.
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -409,7 +410,10 @@ export default function ForumScreen({ navigation }: any) {
     );
   }
 
-  const visibleList = isSearching ? searchResults : discussions;
+  const visibleList = useWithoutBlocked(
+    isSearching ? searchResults : discussions,
+    (d) => d.authorId,
+  );
 
 
   return (

@@ -34,6 +34,7 @@ import ReportSheet from '../components/ReportSheet';
 import { createParticipantNotification, notifyMentions } from '../services/notificationService';
 import { createReport } from '../services/reportService';
 import { isDeletedAuthor } from '../utils/author';
+import { useWithoutBlocked } from '../hooks/useWithoutBlocked';
 
 const SCREEN_H = Dimensions.get('window').height;
 
@@ -61,6 +62,7 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
   const toggleParticipant = usePostStore((s) => s.toggleParticipant);
 
   const [comments, setComments] = useState<PostComment[]>([]);
+  const visibleComments = useWithoutBlocked(comments, (c) => c.authorId);
   const [loadingComments, setLoadingComments] = useState(false);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
@@ -409,7 +411,7 @@ export default function PostDetailModal({ visible, postId, startWithComments, on
             <FlatList
               ref={listRef}
               style={styles.list}
-              data={comments}
+              data={visibleComments}
               keyExtractor={(item) => item.id}
               renderItem={renderComment}
               ListHeaderComponent={postHeader}

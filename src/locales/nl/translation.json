@@ -280,5 +280,18 @@
     "wrongPassword": "Onjuist wachtwoord.",
     "tooManyRequests": "Te veel pogingen. Probeer het later opnieuw.",
     "failed": "Het account kon niet worden verwijderd. Probeer het opnieuw."
+  },
+  "block": {
+    "listTitle": "Geblokkeerde accounts",
+    "listEmpty": "Je hebt niemand geblokkeerd.",
+    "block": "Blokkeren",
+    "unblock": "Deblokkeren",
+    "cancel": "Annuleren",
+    "confirmTitle": "{{name}} blokkeren?",
+    "confirmMessage": "Deze persoon kan niet meer reageren in jouw discussies, jouw berichten becommentariëren of je noemen. Jullie zien elkaars content niet meer en beide volgrelaties worden verbroken.",
+    "blockedTitle": "Je hebt dit account geblokkeerd",
+    "blockedExplainer": "Hun berichten en reacties zijn voor jou verborgen en ze kunnen je niet bereiken. Deblokkeer om het profiel weer te zien.",
+    "failedTitle": "Er ging iets mis",
+    "failed": "De blokkering kon niet worden bijgewerkt. Probeer het opnieuw."
   }
 }

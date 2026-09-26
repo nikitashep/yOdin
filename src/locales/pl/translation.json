@@ -282,5 +282,18 @@
     "wrongPassword": "Nieprawidłowe hasło.",
     "tooManyRequests": "Zbyt wiele prób. Spróbuj później.",
     "failed": "Nie udało się usunąć konta. Spróbuj ponownie."
+  },
+  "block": {
+    "listTitle": "Zablokowane konta",
+    "listEmpty": "Nikogo nie zablokowałeś.",
+    "block": "Zablokuj",
+    "unblock": "Odblokuj",
+    "cancel": "Anuluj",
+    "confirmTitle": "Zablokować {{name}}?",
+    "confirmMessage": "Ta osoba nie będzie mogła odpowiadać w Twoich dyskusjach, komentować Twoich postów ani Cię wspominać. Przestaniecie widzieć swoje treści, a obserwacje w obie strony zostaną przerwane.",
+    "blockedTitle": "Zablokowałeś to konto",
+    "blockedExplainer": "Posty i odpowiedzi tej osoby są dla Ciebie ukryte i nie może się z Tobą skontaktować. Odblokuj, aby znowu zobaczyć profil.",
+    "failedTitle": "Coś poszło nie tak",
+    "failed": "Nie udało się zmienić blokady. Spróbuj ponownie."
   }
 }

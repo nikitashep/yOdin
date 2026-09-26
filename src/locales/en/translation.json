@@ -280,5 +280,18 @@
     "wrongPassword": "Wrong password.",
     "tooManyRequests": "Too many attempts. Try again later.",
     "failed": "Could not delete the account. Please try again."
+  },
+  "block": {
+    "listTitle": "Blocked accounts",
+    "listEmpty": "You haven't blocked anyone.",
+    "block": "Block",
+    "unblock": "Unblock",
+    "cancel": "Cancel",
+    "confirmTitle": "Block {{name}}?",
+    "confirmMessage": "They won't be able to reply in your discussions, comment on your posts, or mention you. You'll stop seeing each other's content, and you'll both stop following each other.",
+    "blockedTitle": "You blocked this account",
+    "blockedExplainer": "Their posts and replies are hidden from you, and they can't reach you. Unblock to see their profile again.",
+    "failedTitle": "Something went wrong",
+    "failed": "Could not update the block. Please try again."
   }
 }

@@ -281,5 +281,18 @@
     "wrongPassword": "Parolă incorectă.",
     "tooManyRequests": "Prea multe încercări. Încearcă mai târziu.",
     "failed": "Contul nu a putut fi șters. Încearcă din nou."
+  },
+  "block": {
+    "listTitle": "Conturi blocate",
+    "listEmpty": "Nu ai blocat pe nimeni.",
+    "block": "Blochează",
+    "unblock": "Deblochează",
+    "cancel": "Anulează",
+    "confirmTitle": "Blochezi {{name}}?",
+    "confirmMessage": "Această persoană nu va mai putea răspunde în discuțiile tale, comenta postările tale sau să te menționeze. Nu veți mai vedea conținutul celuilalt, iar abonările în ambele sensuri vor fi oprite.",
+    "blockedTitle": "Ai blocat acest cont",
+    "blockedExplainer": "Postările și răspunsurile lui sunt ascunse pentru tine, iar el nu te poate contacta. Deblochează pentru a vedea din nou profilul.",
+    "failedTitle": "Ceva n-a mers bine",
+    "failed": "Blocarea nu a putut fi actualizată. Încearcă din nou."
   }
 }

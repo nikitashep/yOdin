@@ -280,5 +280,18 @@
     "wrongPassword": "Password errata.",
     "tooManyRequests": "Troppi tentativi. Riprova più tardi.",
     "failed": "Impossibile eliminare l'account. Riprova."
+  },
+  "block": {
+    "listTitle": "Account bloccati",
+    "listEmpty": "Non hai bloccato nessuno.",
+    "block": "Blocca",
+    "unblock": "Sblocca",
+    "cancel": "Annulla",
+    "confirmTitle": "Bloccare {{name}}?",
+    "confirmMessage": "Questa persona non potrà rispondere nelle tue discussioni, commentare i tuoi post o menzionarti. Smetterete di vedere i contenuti l'uno dell'altro e i follow in entrambe le direzioni verranno interrotti.",
+    "blockedTitle": "Hai bloccato questo account",
+    "blockedExplainer": "I suoi post e le sue risposte sono nascosti per te e non può contattarti. Sbloccalo per rivedere il profilo.",
+    "failedTitle": "Qualcosa è andato storto",
+    "failed": "Impossibile aggiornare il blocco. Riprova."
   }
 }

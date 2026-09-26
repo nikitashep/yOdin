@@ -280,5 +280,18 @@
     "wrongPassword": "密码错误。",
     "tooManyRequests": "尝试次数过多，请稍后再试。",
     "failed": "无法删除账号，请重试。"
+  },
+  "block": {
+    "listTitle": "已屏蔽的账号",
+    "listEmpty": "你还没有屏蔽任何人。",
+    "block": "屏蔽",
+    "unblock": "解除屏蔽",
+    "cancel": "取消",
+    "confirmTitle": "屏蔽 {{name}}？",
+    "confirmMessage": "对方将无法在你的讨论中回复、评论你的帖子或提及你。你们将看不到彼此的内容，双向关注也会取消。",
+    "blockedTitle": "你已屏蔽该账号",
+    "blockedExplainer": "对方的帖子和回复对你隐藏，也无法联系你。解除屏蔽后可重新查看其主页。",
+    "failedTitle": "出了点问题",
+    "failed": "无法更新屏蔽状态，请重试。"
   }
 }

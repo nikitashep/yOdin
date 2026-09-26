@@ -280,5 +280,18 @@
     "wrongPassword": "Mot de passe incorrect.",
     "tooManyRequests": "Trop de tentatives. Réessayez plus tard.",
     "failed": "Impossible de supprimer le compte. Veuillez réessayer."
+  },
+  "block": {
+    "listTitle": "Comptes bloqués",
+    "listEmpty": "Vous n'avez bloqué personne.",
+    "block": "Bloquer",
+    "unblock": "Débloquer",
+    "cancel": "Annuler",
+    "confirmTitle": "Bloquer {{name}} ?",
+    "confirmMessage": "Cette personne ne pourra plus répondre dans vos discussions, commenter vos publications ni vous mentionner. Vous cesserez de voir le contenu de l'autre, et les abonnements des deux côtés seront rompus.",
+    "blockedTitle": "Vous avez bloqué ce compte",
+    "blockedExplainer": "Ses publications et réponses vous sont masquées, et elle ne peut pas vous joindre. Débloquez-la pour revoir son profil.",
+    "failedTitle": "Une erreur est survenue",
+    "failed": "Impossible de modifier le blocage. Veuillez réessayer."
   }
 }
